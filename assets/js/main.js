@@ -13,7 +13,7 @@ require.config({
   }
 });
 
-require(['controllers/game_controller'], function(GameController) {
+require(['controller/game_controller'], function(GameController) {
   (new GameController()).start();
 });
 

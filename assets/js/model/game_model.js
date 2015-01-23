@@ -1,5 +1,6 @@
 define([
-], function() {
+    'model/player'
+], function(Player) {
 
   'use strict';
 
@@ -8,15 +9,22 @@ define([
     height: 20
   };
 
+  var _viewAdpt;
+  var _player;
+
   function getGridSpecs() {
     return GRID_DIMENSIONS;
   }
 
   function start() {
+    _player = new Player();
+    _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
   }
 
-  return function GameModel(view) {
+  return function GameModel(viewAdpt) {
     console.log('constructing a game model');
+
+    _viewAdpt = viewAdpt;
 
     this.getGridSpecs = getGridSpecs;
     this.start = start;
