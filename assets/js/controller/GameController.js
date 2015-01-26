@@ -23,6 +23,10 @@ define([
             return playerModel.getSpeed();
           },
 
+          setSpeed: function(speed) {
+            return playerModel.setSpeed(speed);
+          },
+
           onSpeedIncClick: function() {
             playerModel.setSpeed(playerModel.getSpeed() + 1);
           },
@@ -36,7 +40,7 @@ define([
           /* Player View Adapter */
 
           onSpeedChange: function(newSpeed) {
-            playerView.fourway(newSpeed);
+            // playerView.fourway(newSpeed);
           }
         }
       }
