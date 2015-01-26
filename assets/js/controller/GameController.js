@@ -1,6 +1,6 @@
 define([
-    'model/game_model',
-    'view/game_view'
+    'model/GameModel',
+    'view/GameView'
 ], function(GameModel, GameView) {
   'use strict';
 

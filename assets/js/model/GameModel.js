@@ -1,5 +1,5 @@
 define([
-    'model/player'
+    'model/Player'
 ], function(Player) {
 
   'use strict';
