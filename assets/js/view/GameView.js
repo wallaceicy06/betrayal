@@ -32,14 +32,17 @@ define([
   function initCrafty() {
     Crafty.c('Player', {
       init: function() {
-        this.requires('2D, Canvas, Fourway, Collision, SpritePlayer, SpriteAnimation')
-            .fourway(_playerModelAdpt.getSpeed())
-            .reel('PlayerMovingRight',600, 0, 0, 1)
-            .reel('PlayerMovingUp',   600, 1, 0, 1)
-            .reel('PlayerMovingLeft', 600, 2, 0, 1)
-            .reel('PlayerMovingDown', 600, 3, 0, 1)
-            .onHit('Solid', this.stopMovement)
-        .onHit('Door', this.useDoor);
+        this.requires('2D, Canvas, Fourway, Collision, SpritePlayer, SpriteAnimation');
+
+        this.fourway(_playerModelAdpt.getSpeed());
+
+        this.reel('PlayerMovingRight',600, 0, 0, 1);
+        this.reel('PlayerMovingUp',   600, 1, 0, 1);
+        this.reel('PlayerMovingLeft', 600, 2, 0, 1);
+        this.reel('PlayerMovingDown', 600, 3, 0, 1);
+
+        this.onHit('Solid', this.stopMovement);
+        this.onHit('Door', this.useDoor);
 
         this.bind('NewDirection', function(data) {
           if (data.x > 0) {
