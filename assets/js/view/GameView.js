@@ -66,7 +66,7 @@ define([
 
       useDoor: function(doorParts) {
         console.log(doorParts[0].obj.doorID);
-        //Model stuff.
+        _modelAdpt.onDoorVisit(doorParts[0].obj.doorID);
       }
 
     });
