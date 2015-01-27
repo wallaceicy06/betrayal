@@ -80,13 +80,13 @@ define([
 
     Crafty.c('Wall', {
       init: function() {
-        this.requires('2D, Canvas, Solid, SpriteWall');
+        this.requires('2D, Canvas, Solid, SpriteWall, RoomItem');
       }
     });
 
     Crafty.c('Door', {
       init: function() {
-        this.requires('2D, Canvas, SpriteDoor');
+        this.requires('2D, Canvas, SpriteDoor, RoomItem');
       }
     });
 
@@ -103,10 +103,10 @@ define([
   }
 
   function loadRoom(roomConfig) {
-    Crafty('obj').each(function() { this.destroy(); });
+    Crafty('RoomItem').each(function() { this.destroy(); });
     Crafty.background(roomConfig.background);
     setupBarriers(roomConfig.doors);
-    _player = Crafty.e('Player').attr({x: _playerModelAdpt.getX(), y: _playerModelAdpt.getY()});
+    _player.attr({x: _playerModelAdpt.getX(), y: _playerModelAdpt.getY()});
   }
 
   function makePlayerView(playerModelAdpt) {
