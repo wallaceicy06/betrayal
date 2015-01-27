@@ -38,16 +38,17 @@ define([
 
   function onDoorVisit(doorID) {
     if (doorID === 'north') {
-      _player.setY(DIMENSIONS.height - 1);
+      _player.setY(DIMENSIONS.height - 65);
     } else if (doorID === 'east') {
-      _player.setX(0);
+      _player.setX(32);
     } else if (doorID === 'south') {
-      _player.setY(0);
+      _player.setY(32);
     } else if (doorID === 'west') {
-      _player.setX(DIMENSIONS.width - 1);
+      _player.setX(DIMENSIONS.width - 65);
     }
 
-    _viewAdpt.loadRoom(ROOMS[ROOMS[_currentRoom]['doors'][doorID]]);
+    _currentRoom = ROOMS[_currentRoom]['doors'][doorID];
+    _viewAdpt.loadRoom(ROOMS[_currentRoom]);
   }
 
   return function GameModel(viewAdpt) {
