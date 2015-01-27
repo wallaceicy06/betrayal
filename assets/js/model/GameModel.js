@@ -31,8 +31,8 @@ define([
 
   function start() {
     _player = new Player();
-    _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
     _viewAdpt.loadRoom(ROOMS[1]);
+    _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
   }
 
   function onDoorVisit(doorID) {
