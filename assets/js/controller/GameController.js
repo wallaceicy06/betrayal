@@ -40,7 +40,7 @@ define([
           },
 
           setY: function(y) {
-            return playerModel.setX(y);
+            return playerModel.setY(y);
           },
 
           onSpeedIncClick: function() {
@@ -54,7 +54,6 @@ define([
 
         return {
           /* Player View Adapter */
-
           onSpeedChange: function(newSpeed) {
             playerView.speed({x : newSpeed, y : newSpeed});
           }
