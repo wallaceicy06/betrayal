@@ -29,19 +29,19 @@ define([
 
           getX: function() {
             return playerModel.getX();
-          }
+          },
 
           setX: function(x) {
             return playerModel.setX(x);
-          }
+          },
 
           getY: function() {
             return playerModel.getY();
-          }
+          },
 
           setY: function(y) {
             return playerModel.setX(y);
-          }
+          },
 
           onSpeedIncClick: function() {
             playerModel.setSpeed(playerModel.getSpeed() + 1);

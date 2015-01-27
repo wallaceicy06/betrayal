@@ -36,7 +36,7 @@ define([
   }
 
   function onDoorVisit(doorID) {
-    _viewAdpt.loadRoom(ROOM[doorID]);
+    _viewAdpt.loadRoom(ROOMS[doorID]);
   }
 
   return function GameModel(viewAdpt) {
