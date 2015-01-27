@@ -17,7 +17,7 @@ define([
    */
   return function GameController() {
     _model = new GameModel({
-      makePlayerView: function(playerModel) {
+      makePlayerViewAdpt: function(playerModel) {
         var playerView = _view.makePlayerView({
           getSpeed: function() {
             return playerModel.getSpeed();

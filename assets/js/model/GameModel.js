@@ -20,7 +20,7 @@ define([
     return {north: 1,
             east: 2,
             south: 3,
-            west}
+            west: 4}
   }
 
   function start() {
