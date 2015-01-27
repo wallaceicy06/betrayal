@@ -46,6 +46,7 @@ define([
 
     this.getGateways = getGateways;
     this.getGridSpecs = getGridSpecs;
+    this.onDoorVisit = onDoorVisit;
     this.start = start;
   }
 });
