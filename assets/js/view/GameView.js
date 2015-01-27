@@ -133,7 +133,7 @@ define([
         Crafty.e('Door').attr({x: 0, y: i * TILE_WIDTH, doorID: gateways['west']});
       }
       if(!('east' in gateways && (i == _modelAdpt.getGridSpecs().height/2 || i == _modelAdpt.getGridSpecs().height/2-1))) {
-          Crafty.e('Wall').attr({x: (_modelAdpt.getGridSpecs().width - 1) * TILE_WIDTH, y: i * TILE_WIDTH});
+        Crafty.e('Wall').attr({x: (_modelAdpt.getGridSpecs().width - 1) * TILE_WIDTH, y: i * TILE_WIDTH});
       }
       else {
         Crafty.e('Door').attr({x: (_modelAdpt.getGridSpecs().width - 1) * TILE_WIDTH, y: i * TILE_WIDTH, doorID: gateways['east']});
