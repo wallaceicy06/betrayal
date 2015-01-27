@@ -86,8 +86,8 @@ define([
       }
     });
 
-    Crafty.init(_modelAdpt.getGridSpecs().width * TILE_WIDTH,
-                _modelAdpt.getGridSpecs().height * TILE_WIDTH,
+    Crafty.init(_modelAdpt.getDimensions().width * TILE_WIDTH,
+                _modelAdpt.getDimensions().height * TILE_WIDTH,
                 document.getElementById('game-stage'));
 
     Crafty.load(ASSETS, function() {
@@ -114,34 +114,36 @@ define([
   }
 
   function setupBarriers(gateways) {
+    var widthInTiles = _modelAdpt.getDimensions().width;
+    var heightInTiles = _modelAdpt.getDimensions().height;
 
-    for (var j = 0; j < _modelAdpt.getGridSpecs().width; j++) {
-      if(!('north' in gateways && (j == _modelAdpt.getGridSpecs().width/2 || j == _modelAdpt.getGridSpecs().width/2-1))) {
+    for (var j = 0; j < widthInTiles; j++) {
+      if(!('north' in gateways && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
         Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: 0});
       }
       else {
         Crafty.e('Door').attr({x: j * TILE_WIDTH, y: 0, doorID: gateways['north']});
       }
-      if(!('south' in gateways && (j == _modelAdpt.getGridSpecs().width/2 || j == _modelAdpt.getGridSpecs().width/2-1))) {
-        Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: (_modelAdpt.getGridSpecs().height - 1) * TILE_WIDTH});
+      if(!('south' in gateways && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
+        Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: (heightInTiles - 1) * TILE_WIDTH});
       }
       else {
-        Crafty.e('Door').attr({x: j * TILE_WIDTH, y: (_modelAdpt.getGridSpecs().height - 1) * TILE_WIDTH, doorID: gateways['south']});
+        Crafty.e('Door').attr({x: j * TILE_WIDTH, y: (heightInTiles - 1) * TILE_WIDTH, doorID: gateways['south']});
       }
     }
 
-    for (var i = 0; i < _modelAdpt.getGridSpecs().height; i++) {
-      if(!('west' in gateways && (i == _modelAdpt.getGridSpecs().height/2 || i == _modelAdpt.getGridSpecs().height/2-1))) {
+    for (var i = 0; i < heightInTiles; i++) {
+      if(!('west' in gateways && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
         Crafty.e('Wall').attr({x: 0, y: i * TILE_WIDTH});
       }
       else {
         Crafty.e('Door').attr({x: 0, y: i * TILE_WIDTH, doorID: gateways['west']});
       }
-      if(!('east' in gateways && (i == _modelAdpt.getGridSpecs().height/2 || i == _modelAdpt.getGridSpecs().height/2-1))) {
-        Crafty.e('Wall').attr({x: (_modelAdpt.getGridSpecs().width - 1) * TILE_WIDTH, y: i * TILE_WIDTH});
+      if(!('east' in gateways && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
+        Crafty.e('Wall').attr({x: (widthInTiles - 1) * TILE_WIDTH, y: i * TILE_WIDTH});
       }
       else {
-        Crafty.e('Door').attr({x: (_modelAdpt.getGridSpecs().width - 1) * TILE_WIDTH, y: i * TILE_WIDTH, doorID: gateways['east']});
+        Crafty.e('Door').attr({x: (widthInTiles - 1) * TILE_WIDTH, y: i * TILE_WIDTH, doorID: gateways['east']});
       }
     }
 
