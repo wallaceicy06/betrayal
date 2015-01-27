@@ -156,6 +156,7 @@ define([
 
     initCrafty();
 
+    this.loadRoom = loadRoom;
     this.start = start;
     this.makePlayerView = makePlayerView;
   }
