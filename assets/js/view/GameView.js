@@ -93,9 +93,11 @@ define([
   }
 
   function start() {
-    Crafty.background('blue');
+  }
 
-    setupBarriers();
+  function loadRoom(roomConfig) {
+    Crafty.background(roomConfig.background);
+    setupBarriers(roomConfig.doors);
   }
 
   function makePlayerView(playerModelAdpt) {

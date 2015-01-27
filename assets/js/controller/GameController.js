@@ -43,6 +43,10 @@ define([
             playerView.speed({x : newSpeed, y : newSpeed});
           }
         }
+      },
+
+      loadRoom: function(roomConfig) {
+        _view.loadRoom(roomConfig);
       }
     });
 
