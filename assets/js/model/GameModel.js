@@ -4,9 +4,9 @@ define([
 
   'use strict';
 
-  var GRID_DIMENSIONS = {
-    width: 24,
-    height: 20
+  var DIMENSIONS = {
+    width: 768,
+    height: 640
   };
   var ROOMS = {
     1: {background: 'blue', doors: {east: 2, south: 3}},
@@ -17,9 +17,10 @@ define([
 
   var _viewAdpt;
   var _player;
+  var _currentRoom;
 
-  function getGridSpecs() {
-    return GRID_DIMENSIONS;
+  function getDimensions() {
+    return DIMENSIONS;
   }
 
   function getGateways() {
@@ -32,17 +33,29 @@ define([
   function start() {
     _player = new Player();
     _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
-    _viewAdpt.loadRoom(ROOMS[1]);
+    _viewAdpt.loadRoom(ROOMS[_currentRoom]);
   }
 
   function onDoorVisit(doorID) {
-    _viewAdpt.loadRoom(ROOMS[doorID]);
+    if (doorID === 'north') {
+      _player.setY(DIMENSIONS.height - 1);
+    } else if (doorID === 'east') {
+      _player.setX(0);
+    } else if (doorID === 'south') {
+      _player.setY(0);
+    } else if (doorID === 'west') {
+      _player.setX(DIMENSIONS.width - 1);
+    }
+
+    _viewAdpt.loadRoom(ROOMS[ROOMS[_currentRoom]['doors'][doorID]]);
   }
 
   return function GameModel(viewAdpt) {
     console.log('constructing a game model');
 
     _viewAdpt = viewAdpt;
+
+    _currentRoom = 1;
 
     this.getGateways = getGateways;
     this.getGridSpecs = getGridSpecs;

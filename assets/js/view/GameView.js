@@ -56,7 +56,11 @@ define([
           } else {
             this.pauseAnimation();
           }
+        });
 
+        this.bind('Moved', function(oldPosition) {
+          _playerModelAdpt.setX(this.x);
+          _playerModelAdpt.setY(this.y);
         });
       },
 
@@ -102,7 +106,7 @@ define([
     Crafty('obj').each(function() { this.destroy(); });
     Crafty.background(roomConfig.background);
     setupBarriers(roomConfig.doors);
-    Crafty.e('Player').attr({x: _playerModelAdpt.getX(), y: _playerModelAdpt.getY()});
+    _player = Crafty.e('Player').attr({x: _playerModelAdpt.getX(), y: _playerModelAdpt.getY()});
   }
 
   function makePlayerView(playerModelAdpt) {
@@ -122,13 +126,13 @@ define([
         Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: 0});
       }
       else {
-        Crafty.e('Door').attr({x: j * TILE_WIDTH, y: 0, doorID: gateways['north']});
+        Crafty.e('Door').attr({x: j * TILE_WIDTH, y: 0, doorID: 'north'});
       }
       if(!('south' in gateways && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
         Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: (heightInTiles - 1) * TILE_WIDTH});
       }
       else {
-        Crafty.e('Door').attr({x: j * TILE_WIDTH, y: (heightInTiles - 1) * TILE_WIDTH, doorID: gateways['south']});
+        Crafty.e('Door').attr({x: j * TILE_WIDTH, y: (heightInTiles - 1) * TILE_WIDTH, doorID: 'south'});
       }
     }
 
@@ -137,13 +141,13 @@ define([
         Crafty.e('Wall').attr({x: 0, y: i * TILE_WIDTH});
       }
       else {
-        Crafty.e('Door').attr({x: 0, y: i * TILE_WIDTH, doorID: gateways['west']});
+        Crafty.e('Door').attr({x: 0, y: i * TILE_WIDTH, doorID: 'west'});
       }
       if(!('east' in gateways && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
         Crafty.e('Wall').attr({x: (widthInTiles - 1) * TILE_WIDTH, y: i * TILE_WIDTH});
       }
       else {
-        Crafty.e('Door').attr({x: (widthInTiles - 1) * TILE_WIDTH, y: i * TILE_WIDTH, doorID: gateways['east']});
+        Crafty.e('Door').attr({x: (widthInTiles - 1) * TILE_WIDTH, y: i * TILE_WIDTH, doorID: 'east'});
       }
     }
 
