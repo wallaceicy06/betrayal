@@ -90,8 +90,8 @@ define([
       }
     });
 
-    Crafty.init(_modelAdpt.getDimensions().width * TILE_WIDTH,
-                _modelAdpt.getDimensions().height * TILE_WIDTH,
+    Crafty.init(_modelAdpt.getDimensions().width,
+                _modelAdpt.getDimensions().height,
                 document.getElementById('game-stage'));
 
     Crafty.load(ASSETS, function() {
@@ -118,8 +118,8 @@ define([
   }
 
   function setupBarriers(gateways) {
-    var widthInTiles = _modelAdpt.getDimensions().width;
-    var heightInTiles = _modelAdpt.getDimensions().height;
+    var widthInTiles = _modelAdpt.getDimensions().width/TILE_WIDTH;
+    var heightInTiles = _modelAdpt.getDimensions().height/TILE_WIDTH;
 
     for (var j = 0; j < widthInTiles; j++) {
       if(!('north' in gateways && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
