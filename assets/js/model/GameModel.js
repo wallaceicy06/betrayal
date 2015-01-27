@@ -58,7 +58,7 @@ define([
     _currentRoom = 1;
 
     this.getGateways = getGateways;
-    this.getGridSpecs = getGridSpecs;
+    this.getDimensions = getDimensions;
     this.onDoorVisit = onDoorVisit;
     this.start = start;
   }
