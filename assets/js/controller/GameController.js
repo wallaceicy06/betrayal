@@ -70,8 +70,8 @@ define([
         return _model.getGateways();
       },
 
-      getGridSpecs: function() {
-        return _model.getGridSpecs();
+      getDimensions: function() {
+        return _model.getDimensions();
       },
 
       onDoorVisit: function(doorID) {
