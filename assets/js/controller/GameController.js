@@ -4,21 +4,21 @@ define([
 ], function(GameModel, GameView) {
   'use strict';
 
-  var _modelAdpt;
-  var _viewAdpt;
+  var _model;
+  var _view;
 
   function start() {
-    _modelAdpt.start();
-    _viewAdpt.start();
+    _model.start();
+    _view.start();
   }
 
   /*
    * Constructor for the GameController.
    */
   return function GameController() {
-    _modelAdpt = new GameModel({
-      makePlayerViewAdpt: function(playerModel) {
-        var playerView = _viewAdpt.makePlayerView({
+    _model = new GameModel({
+      makePlayerView: function(playerModel) {
+        var playerView = _view.makePlayerView({
           getSpeed: function() {
             return playerModel.getSpeed();
           },
@@ -46,13 +46,13 @@ define([
       }
     });
 
-    _viewAdpt = new GameView({
+    _view = new GameView({
       getGateways: function() {
-        return [];
+        return _model.getGateways();
       },
 
       getGridSpecs: function() {
-        return _modelAdpt.getGridSpecs();
+        return _model.getGridSpecs();
       }
     });
 

@@ -16,6 +16,13 @@ define([
     return GRID_DIMENSIONS;
   }
 
+  function getGateways() {
+    return {north: 1,
+            east: 2,
+            south: 3,
+            west}
+  }
+
   function start() {
     _player = new Player();
     _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
@@ -26,6 +33,7 @@ define([
 
     _viewAdpt = viewAdpt;
 
+    this.getGateways = getGateways;
     this.getGridSpecs = getGridSpecs;
     this.start = start;
   }
