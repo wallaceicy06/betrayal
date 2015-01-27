@@ -9,6 +9,8 @@ define([
   var _health;
   var _maxHealth;
   var _might;
+  var _x;
+  var _y;
 
   function getSpeed() {
     return _speed;
@@ -17,6 +19,22 @@ define([
   function setSpeed(speed) {
     _speed = speed;
     _playerViewAdpt.onSpeedChange(_speed);
+  }
+
+  function getX() {
+    return _x;
+  }
+
+  function setX(x) {
+    _x = x;
+  }
+
+  function getY() {
+    return _y;
+  }
+
+  function setY(y) {
+    _y = y;
   }
 
   function installViewAdpt(playerViewAdpt) {
@@ -31,9 +49,13 @@ define([
 
     _playerViewAdpt = playerViewAdpt;
 
-    this.getSpeed = getSpeed;
-    this.setSpeed = setSpeed;
     this.installViewAdpt = installViewAdpt;
+    this.getSpeed = getSpeed;
+    this.getX = getX;
+    this.getY = getY;
+    this.setSpeed = setSpeed;
+    this.setX = setX;
+    this.setY = setY;
   }
 
 });
