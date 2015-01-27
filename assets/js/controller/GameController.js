@@ -40,7 +40,7 @@ define([
           /* Player View Adapter */
 
           onSpeedChange: function(newSpeed) {
-            // playerView.fourway(newSpeed);
+            playerView.speed({x : newSpeed, y : newSpeed});
           }
         }
       }
