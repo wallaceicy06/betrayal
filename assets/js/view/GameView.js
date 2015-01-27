@@ -99,13 +99,13 @@ define([
     Crafty('obj').each(function() { this.destroy(); });
     Crafty.background(roomConfig.background);
     setupBarriers(roomConfig.doors);
+    _player.attr({x: _playerModelAdpt.getX(), y: _playerModelAdpt.getY()});
   }
 
   function makePlayerView(playerModelAdpt) {
     _playerModelAdpt = playerModelAdpt;
 
-    _player = Crafty.e('Player').attr({x: TILE_WIDTH * 2, y: TILE_WIDTH * 2});
-                                // .fourway(_playerModelAdpt.getSpeed());
+    _player = Crafty.e('Player');
 
     return _player;
   }
