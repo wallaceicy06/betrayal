@@ -46,6 +46,8 @@ define([
     _health = 5;
     _maxHealth = 5;
     _might = 2;
+    _x = 64;
+    _y = 64;
 
     _playerViewAdpt = playerViewAdpt;
 
