@@ -107,8 +107,7 @@ define([
     return _player;
   }
 
-  function setupBarriers() {
-    var gateways = _modelAdpt.getGateways();
+  function setupBarriers(gateways) {
 
     for (var j = 0; j < _modelAdpt.getGridSpecs().width; j++) {
       if(!('north' in gateways && (j == _modelAdpt.getGridSpecs().width/2 || j == _modelAdpt.getGridSpecs().width/2-1))) {
