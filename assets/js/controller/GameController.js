@@ -47,6 +47,10 @@ define([
     });
 
     _viewAdpt = new GameView({
+      getGateways: function() {
+        return [];
+      },
+
       getGridSpecs: function() {
         return _modelAdpt.getGridSpecs();
       }
