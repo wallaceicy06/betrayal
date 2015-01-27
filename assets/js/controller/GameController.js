@@ -53,6 +53,10 @@ define([
 
       getGridSpecs: function() {
         return _model.getGridSpecs();
+      },
+
+      onDoorVisit: function(doorID) {
+        return _model.onDoorVisit(doorID);
       }
     });
 
