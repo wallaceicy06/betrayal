@@ -65,7 +65,7 @@ define([
       },
 	  
 	  useDoor: function(doorParts) {
-	    console.log(doorParts[0]);
+	    console.log(doorParts[0].obj.doorID);
 		//Model stuff.
 	  }
 
