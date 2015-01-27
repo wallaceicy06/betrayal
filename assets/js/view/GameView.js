@@ -96,6 +96,7 @@ define([
   }
 
   function loadRoom(roomConfig) {
+    Crafty('obj').each(function() { this.destroy(); });
     Crafty.background(roomConfig.background);
     setupBarriers(roomConfig.doors);
   }
