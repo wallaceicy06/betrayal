@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
     roomFrom: {model: 'room',
-               required: true}
+               required: true},
     roomTo: {model: 'room',
              required: true}
   }

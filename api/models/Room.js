@@ -11,7 +11,7 @@ module.exports = {
     name: {type: 'string',
            required: true},
     gatewaysOut: {collection: 'gateway',
-                  via: 'roomFrom'}
+                  via: 'roomFrom'},
     gatewaysIn: {collection: 'gateway',
                  via: 'roomTo'}
   }
