@@ -39,9 +39,9 @@ define([
       fetchRoom(_currentRoom, function (room) {
         _currentRoom = room;
         var doors = {};
-        for (var i = 0; i < room['gatewaysOut'].length; i++) {
-          var gateway = room['gatewaysOut'][i];
-          doors[gateway['direction']] = gateway['roomTo'];
+        for (var i = 0; i < room.gatewaysOut.length; i++) {
+          var gateway = room.gatewaysOut[i];
+          doors[gateway.direction] = gateway.roomTo;
         }
         _viewAdpt.loadRoom({background: room.name, doors: doors});
       });
