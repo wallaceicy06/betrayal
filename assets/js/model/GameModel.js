@@ -31,7 +31,21 @@ define([
   }
 
   function joinGame(name) {
-    io.socket.post('/player', {name: name}, function (room){ cb(room); });
+    io.socket.post('/player', {name: name}, function (player) {
+      _player = new Player(player.id, player.name);
+      _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
+      _currentRoom = player.room;
+
+      fetchRoom(_currentRoom, function (room) {
+        _currentRoom = room;
+        var doors = {};
+        for (var i = 0; i < room['gatewaysOut'].length; i++) {
+          var gateway = room['gatewaysOut'][i];
+          doors[gateway['direction']] = gateway['roomTo'];
+        }
+        _viewAdpt.loadRoom({background: room.name, doors: doors});
+      });
+    });
   }
 
   function start() {
@@ -80,16 +94,6 @@ define([
     console.log('constructing a game model');
 
     _viewAdpt = viewAdpt;
-
-    fetchRoom(1, function (room) {
-      _currentRoom = room;
-      var doors = {};
-      for (var i = 0; i < room['gatewaysOut'].length; i++) {
-        var gateway = room['gatewaysOut'][i];
-        doors[gateway['direction']] = gateway['roomTo'];
-      }
-      _viewAdpt.loadRoom({background: room.name, doors: doors});
-    });
 
     this.getGateways = getGateways;
     this.getDimensions = getDimensions;

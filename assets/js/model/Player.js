@@ -43,7 +43,7 @@ define([
     _playerViewAdpt = playerViewAdpt;
   }
 
-  return function Player(id, name, playerViewAdpt) {
+  return function Player(id, name) {
     _id = id;
     _name = name;
     _speed = 5;
@@ -52,8 +52,6 @@ define([
     _might = 2;
     _x = 64;
     _y = 64;
-
-    _playerViewAdpt = playerViewAdpt;
 
     this.installViewAdpt = installViewAdpt;
     this.getSpeed = getSpeed;
