@@ -31,7 +31,7 @@ define([
   }
 
   function joinGame(name) {
-    io.socket.post('/player', {name: name}, function (room){ cb(room); });
+    io.socket.post('/player', {name: name}, function (res){ console.log(res); });
   }
 
   function start() {

@@ -1,5 +1,5 @@
 /**
-* Room.js
+* Player.js
 *
 * @description :: TODO: You might write a short summary of how this model works and what it represents here.
 * @docs        :: http://sailsjs.org/#!documentation/models
@@ -10,12 +10,12 @@ module.exports = {
   attributes: {
     name: {type: 'string',
            required: true},
-    gatewaysOut: {collection: 'gateway',
-                  via: 'roomFrom'},
-    gatewaysIn: {collection: 'gateway',
-                 via: 'roomTo'},
-    players: {collection: 'player',
-              via: 'room'}
+    room: {model: 'room',
+           required: true},
+    locX: {type: 'integer',
+           required: true},
+    locY: {type: 'integer',
+           required: true}
   }
 };
 
