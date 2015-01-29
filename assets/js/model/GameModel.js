@@ -30,9 +30,13 @@ define([
             west: 4}
   }
 
+  function joinGame(name) {
+    io.socket.post('/player', {name: name}, function (room){ cb(room); });
+  }
+
   function start() {
-    _player = new Player();
-    _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
+    // _player = new Player();
+    // _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
   }
 
   function onDoorVisit(doorID) {
@@ -65,7 +69,7 @@ define([
       var roomConfig = {background: room.name, doors: doors};
       _viewAdpt.loadRoom(roomConfig);
     });
-    
+
   }
 
   function fetchRoom(roomID, cb) {
@@ -89,6 +93,7 @@ define([
 
     this.getGateways = getGateways;
     this.getDimensions = getDimensions;
+    this.joinGame = joinGame;
     this.onDoorVisit = onDoorVisit;
     this.start = start;
   }

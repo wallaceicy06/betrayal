@@ -5,6 +5,8 @@ define([
 
   var _playerViewAdpt;
 
+  var _id;
+  var _name;
   var _speed;
   var _health;
   var _maxHealth;
@@ -41,7 +43,9 @@ define([
     _playerViewAdpt = playerViewAdpt;
   }
 
-  return function Player(playerViewAdpt) {
+  return function Player(id, name, playerViewAdpt) {
+    _id = id;
+    _name = name;
     _speed = 5;
     _health = 5;
     _maxHealth = 5;

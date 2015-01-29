@@ -26,7 +26,7 @@ define([
   }
 
   var _player;
-  var _modelAdpt;
+  var _gameModelAdpt;
   var _playerModelAdpt;
 
   function initCrafty() {
@@ -73,7 +73,7 @@ define([
 
       useDoor: function(doorParts) {
         console.log(doorParts[0].obj.doorID);
-        _modelAdpt.onDoorVisit(doorParts[0].obj.doorID);
+        _gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID);
       }
 
     });
@@ -90,8 +90,8 @@ define([
       }
     });
 
-    Crafty.init(_modelAdpt.getDimensions().width,
-                _modelAdpt.getDimensions().height,
+    Crafty.init(_gameModelAdpt.getDimensions().width,
+                _gameModelAdpt.getDimensions().height,
                 document.getElementById('game-stage'));
 
     Crafty.load(ASSETS, function() {
@@ -118,8 +118,8 @@ define([
   }
 
   function setupBarriers(gateways) {
-    var widthInTiles = _modelAdpt.getDimensions().width/TILE_WIDTH;
-    var heightInTiles = _modelAdpt.getDimensions().height/TILE_WIDTH;
+    var widthInTiles = _gameModelAdpt.getDimensions().width/TILE_WIDTH;
+    var heightInTiles = _gameModelAdpt.getDimensions().height/TILE_WIDTH;
 
     for (var j = 0; j < widthInTiles; j++) {
       if(!('north' in gateways && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
@@ -153,14 +153,18 @@ define([
 
   }
 
-  return function GameView(modelAdpt) {
-    _modelAdpt = modelAdpt;
+  return function GameView(gameModelAdpt) {
+    _gameModelAdpt = gameModelAdpt;
 
-    document.getElementById('speed-inc').addEventListener('click', function() {
+    document.getElementById('btn-join').addEventListener('click', function() {
+      _gameModelAdpt.onJoinClick();
+    });
+
+    document.getElementById('btn-speed-inc').addEventListener('click', function() {
       _playerModelAdpt.onSpeedIncClick();
     });
 
-    document.getElementById('speed-dec').addEventListener('click', function() {
+    document.getElementById('btn-speed-dec').addEventListener('click', function() {
       _playerModelAdpt.onSpeedDecClick();
     });
 

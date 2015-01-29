@@ -62,7 +62,7 @@ define([
 
       loadRoom: function(roomConfig) {
         _view.loadRoom(roomConfig);
-      }
+      },
     });
 
     _view = new GameView({
@@ -76,6 +76,10 @@ define([
 
       onDoorVisit: function(doorID) {
         return _model.onDoorVisit(doorID);
+      },
+
+      onJoinClick: function() {
+        return _model.joinGame('sean')
       }
     });
 
