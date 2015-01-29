@@ -157,7 +157,7 @@ define([
     _gameModelAdpt = gameModelAdpt;
 
     document.getElementById('btn-join').addEventListener('click', function() {
-      _gameModelAdpt.onJoinClick();
+      _gameModelAdpt.onJoinClick(document.getElementById('ipt-name').value);
     });
 
     document.getElementById('btn-speed-inc').addEventListener('click', function() {

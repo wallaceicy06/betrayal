@@ -78,8 +78,8 @@ define([
         return _model.onDoorVisit(doorID);
       },
 
-      onJoinClick: function() {
-        return _model.joinGame('sean')
+      onJoinClick: function(name) {
+        return _model.joinGame(name)
       }
     });
 
