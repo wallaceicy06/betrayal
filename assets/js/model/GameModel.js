@@ -33,7 +33,6 @@ define([
   function start() {
     _player = new Player();
     _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
-    _viewAdpt.loadRoom(ROOMS[_currentRoom]);
   }
 
   function onDoorVisit(doorID) {
@@ -47,8 +46,31 @@ define([
       _player.setX(DIMENSIONS.width - 65);
     }
 
-    _currentRoom = ROOMS[_currentRoom]['doors'][doorID];
-    _viewAdpt.loadRoom(ROOMS[_currentRoom]);
+    var gateways = _currentRoom['gatewaysOut']; // This apparently needs to exist or else error?
+    for (var i = 0; i < gateways.length; i++) {
+      if (_currentRoom['gatewaysOut'][i]['direction'] === doorID) {
+        // get ID of room player is going to
+        var id = _currentRoom['gatewaysOut'][i]['roomTo'];
+        console.log("Entering room " + id);
+        break;
+      }
+    }
+
+    fetchRoom(id, function (room){
+      var doors = {};
+      for (var i = 0; i < room['gatewaysOut'].length; i++) {
+        var gateway = room['gatewaysOut'][i];
+        doors[gateway['direction']] = gateway['roomTo'];
+      }
+      _currentRoom = room;
+      var roomConfig = {background: room.name, doors: doors};
+      _viewAdpt.loadRoom(roomConfig);
+    });
+    
+  }
+
+  function fetchRoom(roomID, cb) {
+    io.socket.get('/room/' + roomID, function (room){ cb(room); });
   }
 
   return function GameModel(viewAdpt) {
@@ -56,7 +78,15 @@ define([
 
     _viewAdpt = viewAdpt;
 
-    _currentRoom = 1;
+    fetchRoom(1, function (room) {
+      _currentRoom = room;
+      var doors = {};
+      for (var i = 0; i < room['gatewaysOut'].length; i++) {
+        var gateway = room['gatewaysOut'][i];
+        doors[gateway['direction']] = gateway['roomTo'];
+      }
+      _viewAdpt.loadRoom({background: room.name, doors: doors});
+    });
 
     this.getGateways = getGateways;
     this.getDimensions = getDimensions;

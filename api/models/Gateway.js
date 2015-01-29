@@ -11,7 +11,9 @@ module.exports = {
     roomFrom: {model: 'room',
                required: true},
     roomTo: {model: 'room',
-             required: true}
+             required: true},
+    direction: {type: 'string',
+			   required: true}
   }
 };
 
