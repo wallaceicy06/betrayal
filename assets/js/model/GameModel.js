@@ -46,11 +46,10 @@ define([
       _player.setX(DIMENSIONS.width - 65);
     }
 
-    var gateways = _currentRoom['gatewaysOut']; // This apparently needs to exist or else error?
-    for (var i = 0; i < gateways.length; i++) {
-      if (_currentRoom['gatewaysOut'][i]['direction'] === doorID) {
+    for (var i = 0; i < _currentRoom.gatewaysOut.length; i++) {
+      if (_currentRoom.gatewaysOut[i].direction === doorID) {
         // get ID of room player is going to
-        var id = _currentRoom['gatewaysOut'][i]['roomTo'];
+        var id = _currentRoom.gatewaysOut[i].roomTo;
         console.log("Entering room " + id);
         break;
       }
