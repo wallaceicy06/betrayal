@@ -82,12 +82,15 @@ define([
       _currentRoom = room;
       var roomConfig = {background: room.name, doors: doors};
       _viewAdpt.loadRoom(roomConfig);
+
+      io.socket.put('/player/' + _player.getID(), {room: _currentRoom}, function (player) {});
+
     });
 
   }
 
   function fetchRoom(roomID, cb) {
-    io.socket.get('/room/' + roomID, function (room){ cb(room); });
+    io.socket.get('/room/' + roomID, function (room) {cb(room);});
   }
 
   return function GameModel(viewAdpt) {

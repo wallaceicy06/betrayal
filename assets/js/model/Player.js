@@ -23,6 +23,10 @@ define([
     _playerViewAdpt.onSpeedChange(_speed);
   }
 
+  function getID() {
+    return _id;
+  }
+
   function getX() {
     return _x;
   }
@@ -54,6 +58,7 @@ define([
     _y = 64;
 
     this.installViewAdpt = installViewAdpt;
+    this.getID = getID;
     this.getSpeed = getSpeed;
     this.getX = getX;
     this.getY = getY;
