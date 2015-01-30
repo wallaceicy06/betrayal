@@ -54,16 +54,6 @@ define([
   }
 
   function onDoorVisit(doorID) {
-    if (doorID === 'north') {
-      _player.setY(DIMENSIONS.height - 65);
-    } else if (doorID === 'east') {
-      _player.setX(32);
-    } else if (doorID === 'south') {
-      _player.setY(32);
-    } else if (doorID === 'west') {
-      _player.setX(DIMENSIONS.width - 65);
-    }
-
     for (var i = 0; i < _currentRoom.gatewaysOut.length; i++) {
       if (_currentRoom.gatewaysOut[i].direction === doorID) {
         // get ID of room player is going to
@@ -81,6 +71,17 @@ define([
       }
       _currentRoom = room;
       var roomConfig = {background: room.name, doors: doors};
+
+      if (doorID === 'north') {
+        _player.setY(DIMENSIONS.height - 65);
+      } else if (doorID === 'east') {
+        _player.setX(32);
+      } else if (doorID === 'south') {
+        _player.setY(32);
+      } else if (doorID === 'west') {
+        _player.setX(DIMENSIONS.width - 65);
+      }
+
       _viewAdpt.loadRoom(roomConfig);
 
       io.socket.put('/player/' + _player.getID(), {room: _currentRoom}, function (player) {});
