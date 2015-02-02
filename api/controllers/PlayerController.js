@@ -7,7 +7,11 @@
 
 module.exports = {
 	create: function(req, res) {
-    Player.create({name: req.body.name, room: 1, locX: 64, locY: 64}, function(err, player) {
+    Player.create({name: req.body.name,
+                   room: '54cff4e50b21bc3d095e7649',
+                   locX: 64,
+                   locY: 64},
+                  function(err, player) {
       if (err) {
         console.log(err);
         res.json(err);
@@ -21,25 +25,26 @@ module.exports = {
   update: function(req, res) {
     console.log(req.body);
 
-    // Player.update(req.param('id'), {room: req.body.room}, function (err, players) {
-    Player.findOne(req.param('id'), function (err, player) {
+    Player.update(req.param('id'), {locX: req.body.locX,
+                                    locY: req.body.locY},
+                  function (err, players) {
+      var updatedPlayer = players[0];
+
       if (err) {
         console.log(err);
         res.json(err);
         return;
       }
 
-      player.locX = req.body.locX;
-      player.locY = req.body.locY;
+      /*
+       * TODO for the following, do we want to have people subscribe to
+       * players in addition to rooms? Otherwise, we would have to find some
+       * janky way to incorporate player data into rooms. We should discuss
+       * this in person.
+       */
+      // Room.publishUpdate(updatedPlayer.room, {locX : updatedPlayer.locX, locY : updatedPlayer.locY});
 
-      player.save(function(err, updatedPlayer) {
-        Room.publishUpdate(updatedPlayer.id, {locX : player.locX, locY : player.locY});
-
-        //console.log("Updated Player: " + updatedPlayer.id);
-
-        res.json(updatedPlayer.toJSON());
-      });
-
+      res.json(updatedPlayer.toJSON());
     });
   },
 
@@ -51,19 +56,18 @@ module.exports = {
         return;
       }
 
-      console.log(req.body);
-
       var oldRoom = player.room;
 
       player.room = req.body.room;
-      
+
       player.save(function(err, updatedPlayer) {
         Room.unsubscribe(req.socket, oldRoom);
-        Room.subscribe(req.socket, updatedPlayer.room, ['add:players', 'remove:players']);
+        Room.subscribe(req.socket, updatedPlayer.room,
+                       ['add:players', 'remove:players']);
 
         Room.publishAdd(updatedPlayer.room.id, 'players', updatedPlayer.id);
         Room.publishRemove(oldRoom, 'players', updatedPlayer.id);
-        
+
         console.log("Old Room: " + oldRoom);
         console.log("Updated Room: " + updatedPlayer.room.id);
 
