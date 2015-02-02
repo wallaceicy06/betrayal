@@ -84,7 +84,7 @@ define([
 
       _viewAdpt.loadRoom(roomConfig);
 
-      io.socket.put('/player/' + _player.getID(), {room: _currentRoom.id}, function (player) {});
+      io.socket.put('/player/' + _player.getID() + '/changeRoom', {room: _currentRoom.id}, function (player) {});
     });
 
   }
