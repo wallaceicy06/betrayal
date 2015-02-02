@@ -34,9 +34,13 @@ module.exports = {
       player.room = req.body.room;
       player.save(function(err, updatedPlayer) {
         Room.unsubscribe(req.socket, oldRoom);
-        Room.subscribe(req.socket, updatedPlayer.room, ['add:players']);
+        Room.subscribe(req.socket, updatedPlayer.room, ['add:players', 'remove:players']);
 
         Room.publishAdd(updatedPlayer.room.id, 'players', updatedPlayer.id);
+        Room.publishRemove(oldRoom, 'players', updatedPlayer.id);
+        
+        console.log("Old Room: " + oldRoom);
+        console.log("Updated Room: " + updatedPlayer.room.id);
 
         res.json(updatedPlayer.toJSON());
       });
