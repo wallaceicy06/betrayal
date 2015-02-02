@@ -31,16 +31,14 @@ define([
     return _x;
   }
 
-  function setX(x) {
-    _x = x;
-  }
-
   function getY() {
     return _y;
   }
 
-  function setY(y) {
+  function setPosition(x, y) {
+    _x = x;
     _y = y;
+    io.socket.put('/player/' + _id, {locX: _x, locY: _y}, function (player) {});
   }
 
   function installViewAdpt(playerViewAdpt) {
@@ -63,8 +61,7 @@ define([
     this.getX = getX;
     this.getY = getY;
     this.setSpeed = setSpeed;
-    this.setX = setX;
-    this.setY = setY;
+    this.setPosition = setPosition;
   }
 
 });

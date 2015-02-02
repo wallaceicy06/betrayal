@@ -31,16 +31,12 @@ define([
             return playerModel.getX();
           },
 
-          setX: function(x) {
-            return playerModel.setX(x);
-          },
-
           getY: function() {
             return playerModel.getY();
           },
 
-          setY: function(y) {
-            return playerModel.setY(y);
+          setPosition: function(x, y) {
+            playerModel.setPosition(x, y);
           },
 
           onSpeedIncClick: function() {

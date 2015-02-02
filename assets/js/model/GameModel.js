@@ -73,18 +73,18 @@ define([
       var roomConfig = {background: room.name, doors: doors};
 
       if (doorID === 'north') {
-        _player.setY(DIMENSIONS.height - 65);
+        _player.setPosition(_player.getX(), DIMENSIONS.height - 65);
       } else if (doorID === 'east') {
-        _player.setX(32);
+        _player.setPosition(33, _player.getY());
       } else if (doorID === 'south') {
-        _player.setY(32);
+        _player.setPosition(_player.getX(), 33);
       } else if (doorID === 'west') {
-        _player.setX(DIMENSIONS.width - 65);
+        _player.setPosition(DIMENSIONS.width - 65, _player.getY());
       }
 
       _viewAdpt.loadRoom(roomConfig);
 
-      io.socket.put('/player/' + _player.getID() + '/changeRoom', {room: _currentRoom.id}, function (player) {});
+      io.socket.put('/player/changeRoom/' + _player.getID(), {room: _currentRoom.id}, function (player) {});
     });
 
   }

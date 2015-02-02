@@ -29,9 +29,34 @@ module.exports = {
         return;
       }
 
+      player.locX = req.body.locX;
+      player.locY = req.body.locY;
+
+      player.save(function(err, updatedPlayer) {
+        Room.publishUpdate(updatedPlayer.id, {locX : player.locX, locY : player.locY});
+
+        //console.log("Updated Player: " + updatedPlayer.id);
+
+        res.json(updatedPlayer.toJSON());
+      });
+
+    });
+  },
+
+  changeRoom: function(req, res) {
+    Player.findOne(req.param('id'), function (err, player) {
+      if (err) {
+        console.log(err);
+        res.json(err);
+        return;
+      }
+
+      console.log(req.body);
+
       var oldRoom = player.room;
 
       player.room = req.body.room;
+      
       player.save(function(err, updatedPlayer) {
         Room.unsubscribe(req.socket, oldRoom);
         Room.subscribe(req.socket, updatedPlayer.room, ['add:players', 'remove:players']);

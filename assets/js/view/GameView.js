@@ -59,8 +59,7 @@ define([
         });
 
         this.bind('Moved', function(oldPosition) {
-          _playerModelAdpt.setX(this.x);
-          _playerModelAdpt.setY(this.y);
+          _playerModelAdpt.setPosition(this.x, this.y);
         });
       },
 
@@ -85,6 +84,9 @@ define([
 
         /* Lock the door to prevent double usages. */
         this.attr({'doorLock': true});
+
+        /* Player cannot move as they go through a door */
+        this.disableControl();
       }
 
     });
@@ -122,6 +124,9 @@ define([
     _player.attr({x: _playerModelAdpt.getX(),
                   y: _playerModelAdpt.getY(),
                   doorLock: false});
+
+    /* Enable player control once through door */
+    _player.enableControl();
   }
 
   function makePlayerView(playerModelAdpt) {
