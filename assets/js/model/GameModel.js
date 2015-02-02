@@ -84,8 +84,7 @@ define([
 
       _viewAdpt.loadRoom(roomConfig);
 
-      io.socket.put('/player/' + _player.getID(), {room: _currentRoom}, function (player) {});
-
+      io.socket.put('/player/' + _player.getID(), {room: _currentRoom.id}, function (player) {});
     });
 
   }
@@ -96,6 +95,8 @@ define([
 
   return function GameModel(viewAdpt) {
     console.log('constructing a game model');
+
+    io.socket.on('room', function(o) {console.log(o);});
 
     _viewAdpt = viewAdpt;
 

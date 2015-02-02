@@ -13,7 +13,43 @@ module.exports = {
         res.json(err);
         return;
       }
+
       res.json(player.toJSON());
+    });
+  },
+
+  update: function(req, res) {
+    console.log(req.body);
+
+    // Player.update(req.param('id'), {room: req.body.room}, function (err, players) {
+    Player.findOne(req.param('id'), function (err, player) {
+      if (err) {
+        console.log(err);
+        res.json(err);
+        return;
+      }
+
+      var oldRoom = player.room;
+
+      player.room = req.body.room;
+      player.save(function(err, updatedPlayer) {
+        Room.unsubscribe(req.socket, oldRoom);
+        Room.subscribe(req.socket, updatedPlayer.room, ['add:players']);
+
+        Room.publishAdd(updatedPlayer.room.id, 'players', updatedPlayer.id);
+
+        res.json(updatedPlayer.toJSON());
+      });
+    });
+  },
+
+  destroyAll: function(req, res) {
+    Player.find({}, function(err, found) {
+      found.forEach(function(v, i, a) {
+        v.destroy();
+      });
+
+      res.json([]);
     });
   }
 };
