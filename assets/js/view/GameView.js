@@ -72,8 +72,19 @@ define([
       },
 
       useDoor: function(doorParts) {
-        console.log(doorParts[0].obj.doorID);
+        /*
+         * If the door lock has been enabled, this will prevent a door from
+         * being used twice for the same room.
+         */
+        if (this.attr('doorLock')) {
+          console.log('the lock prevented a double move');
+          return;
+        }
+
         _gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID);
+
+        /* Lock the door to prevent double usages. */
+        this.attr({'doorLock': true});
       }
 
     });
@@ -106,7 +117,11 @@ define([
     Crafty('RoomItem').each(function() { this.destroy(); });
     Crafty.background(roomConfig.background);
     setupBarriers(roomConfig.doors);
-    _player.attr({x: _playerModelAdpt.getX(), y: _playerModelAdpt.getY()});
+
+    /* Sets the player location and re-allows door usage. */
+    _player.attr({x: _playerModelAdpt.getX(),
+                  y: _playerModelAdpt.getY(),
+                  doorLock: false});
   }
 
   function makePlayerView(playerModelAdpt) {
