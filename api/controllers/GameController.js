@@ -5,8 +5,6 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var Q = require('q');
-
 var ROOMS = [
     {roomNum: 1, name: 'blue'},
     {roomNum: 2, name: 'black'},
@@ -44,7 +42,7 @@ module.exports = {
       var promisesArray = [];
 
       for (var i = 0; i < ROOMS.length; i++) {
-        var deferred = Q.defer();
+        var deferred = sails.q.defer();
         ROOMS[i]['game'] = game.id;
         Room.create(ROOMS[i], function(err, room) {
           roomNumsToIDs[room.roomNum] = room.id;
@@ -54,7 +52,7 @@ module.exports = {
         promisesArray.push(deferred.promise);
       }
 
-      Q.all(promisesArray).then(function() {
+      sails.q.all(promisesArray).then(function() {
         //game.startingRoom = roomNumsToIDs[0];
         Game.update(game.id, {startingRoom: roomNumsToIDs[1]}, function(err, game) {});
 
@@ -73,7 +71,7 @@ module.exports = {
           Gateway.create(gateway, function(err, gateway) {});
         }
       });
-      
+
 
       res.json(game.toJSON());
     });
