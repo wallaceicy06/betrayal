@@ -18,6 +18,7 @@ define([
   var _viewAdpt;
   var _player;
   var _currentRoom;
+  var _otherPlayers = []; // other players in current room
 
   function getDimensions() {
     return DIMENSIONS;
@@ -84,13 +85,29 @@ define([
 
       _viewAdpt.loadRoom(roomConfig);
 
+      
+
       io.socket.put('/player/changeRoom/' + _player.getID(), {room: _currentRoom.id}, function (player) {});
     });
 
   }
 
   function fetchRoom(roomID, cb) {
-    io.socket.get('/room/' + roomID, function (room) {cb(room);});
+    io.socket.get('/room/' + roomID, function (room) {
+      var playersInRoom = room.players; // get other players
+
+      console.log("other players:");
+      for (var i = 0; i < playersInRoom.length; i++) {
+        if (playersInRoom[i].id != _player.getID()) {
+          io.socket.get('/player/' + playersInRoom[i].id, function (resData) {
+            console.log(resData);
+            _otherPlayers.push(resData); // add player model to other players array
+          });
+        }
+      }
+
+      cb(room);
+    });
   }
 
   return function GameModel(viewAdpt) {
