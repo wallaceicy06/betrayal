@@ -23,7 +23,7 @@ module.exports = {
   },
 
   update: function(req, res) {
-    console.log(req.body);
+    //console.log(req.body);
 
     Player.update(req.param('id'), {locX: req.body.locX,
                                     locY: req.body.locY},
