@@ -102,6 +102,7 @@ define([
           io.socket.get('/player/' + playersInRoom[i].id, function (resData) {
             console.log(resData);
             _otherPlayers.push(resData); // add player model to other players array
+            _viewAdpt.makePlayerHusk(resData.locX, resData.locY); // draw other player
           });
         }
       }

@@ -59,6 +59,10 @@ define([
       loadRoom: function(roomConfig) {
         _view.loadRoom(roomConfig);
       },
+
+      makePlayerHusk: function(x, y) {
+        _view.makePlayerHusk(x, y);
+      }
     });
 
     _view = new GameView({

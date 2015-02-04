@@ -32,6 +32,8 @@ define([
   function initCrafty() {
     Crafty.c('PlayerHusk', {
       init: function() {
+        this.requires('2D, Canvas, SpritePlayer, SpriteAnimation');
+
         this.reel('PlayerMovingRight',600, 0, 0, 1);
         this.reel('PlayerMovingUp',   600, 1, 0, 1);
         this.reel('PlayerMovingLeft', 600, 2, 0, 1);
@@ -41,14 +43,9 @@ define([
 
     Crafty.c('Player', {
       init: function() {
-        this.requires('2D, Canvas, Fourway, Collision, SpritePlayer, SpriteAnimation, PlayerHusk');
+        this.requires('PlayerHusk, Fourway, Collision');
 
         this.fourway(_playerModelAdpt.getSpeed());
-
-        /*this.reel('PlayerMovingRight',600, 0, 0, 1);
-        this.reel('PlayerMovingUp',   600, 1, 0, 1);
-        this.reel('PlayerMovingLeft', 600, 2, 0, 1);
-        this.reel('PlayerMovingDown', 600, 3, 0, 1);*/
 
         this.onHit('Solid', this.stopMovement);
         this.onHit('Door', this.useDoor);
@@ -146,6 +143,10 @@ define([
     return _player;
   }
 
+  function makePlayerHusk(x, y) {
+    Crafty.e('PlayerHusk').attr({x: x, y: y});
+  }
+
   function setupBarriers(gateways) {
     var widthInTiles = _gameModelAdpt.getDimensions().width/TILE_WIDTH;
     var heightInTiles = _gameModelAdpt.getDimensions().height/TILE_WIDTH;
@@ -202,5 +203,6 @@ define([
     this.loadRoom = loadRoom;
     this.start = start;
     this.makePlayerView = makePlayerView;
+    this.makePlayerHusk = makePlayerHusk;
   }
 });
