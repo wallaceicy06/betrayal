@@ -15,7 +15,11 @@ module.exports = {
     gatewaysIn: {collection: 'gateway',
                  via: 'roomTo'},
     players: {collection: 'player',
-              via: 'room'}
+              via: 'room'},
+    game: {model: 'game',
+           required: true},
+    roomNum: {type: 'integer',
+              required: true}
   }
 };
 

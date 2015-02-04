@@ -8,7 +8,7 @@
 module.exports = {
 	create: function(req, res) {
     Player.create({name: req.body.name,
-                   room: '1',
+                   room: req.body.room,
                    locX: 64,
                    locY: 64},
                   function(err, player) {

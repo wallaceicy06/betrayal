@@ -119,6 +119,7 @@ define([
   }
 
   function start() {
+    _gameModelAdpt.fetchGames();
   }
 
   function loadRoom(roomConfig) {
@@ -145,6 +146,17 @@ define([
 
   function makePlayerHusk(x, y) {
     Crafty.e('PlayerHusk').attr({x: x, y: y});
+  }
+
+  function setGameOptions(games) {
+    var gameOptions = document.getElementById('select-game');
+
+    /* Clear the game options combo box. */
+    gameOptions.length = 0;
+
+    games.forEach(function(v, i, a) {
+      gameOptions.options.add(new Option(v.name, v.id));
+    });
   }
 
   function setupBarriers(gateways) {
@@ -187,7 +199,14 @@ define([
     _gameModelAdpt = gameModelAdpt;
 
     document.getElementById('btn-join').addEventListener('click', function() {
-      _gameModelAdpt.onJoinClick(document.getElementById('ipt-name').value);
+      var select = document.getElementById('select-game');
+      var name = document.getElementById('ipt-name');
+
+      _gameModelAdpt.onJoinClick(name.value, select[select.selectedIndex].value);
+    });
+
+    document.getElementById('btn-create-game').addEventListener('click', function() {
+      _gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
     });
 
     document.getElementById('btn-speed-inc').addEventListener('click', function() {
@@ -201,6 +220,7 @@ define([
     initCrafty();
 
     this.loadRoom = loadRoom;
+    this.setGameOptions = setGameOptions;
     this.start = start;
     this.makePlayerView = makePlayerView;
     this.makePlayerHusk = makePlayerHusk;

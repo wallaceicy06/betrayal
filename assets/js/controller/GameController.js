@@ -45,7 +45,7 @@ define([
 
           onSpeedDecClick: function() {
             playerModel.setSpeed(playerModel.getSpeed() - 1);
-          }
+          },
         });
 
         return {
@@ -62,10 +62,18 @@ define([
 
       makePlayerHusk: function(x, y) {
         _view.makePlayerHusk(x, y);
+      },
+
+      setGames: function(games) {
+        _view.setGameOptions(games);
       }
     });
 
     _view = new GameView({
+      fetchGames: function() {
+        return _model.fetchGames();
+      },
+
       getGateways: function() {
         return _model.getGateways();
       },
@@ -78,9 +86,13 @@ define([
         return _model.onDoorVisit(doorID);
       },
 
-      onJoinClick: function(name) {
-        return _model.joinGame(name)
-      }
+      onJoinClick: function(name, gameID) {
+        return _model.joinGame(name, gameID)
+      },
+
+      onCreateGameClick: function(name) {
+        return _model.createGame(name);
+      },
     });
 
     this.start = start;
