@@ -113,6 +113,7 @@ define([
   }
 
   function start() {
+    _gameModelAdpt.fetchGames();
   }
 
   function loadRoom(roomConfig) {
@@ -135,6 +136,17 @@ define([
     _player = Crafty.e('Player');
 
     return _player;
+  }
+
+  function setGameOptions(games) {
+    var gameOptions = document.getElementById('select-game');
+
+    /* Clear the game options combo box. */
+    gameOptions.length = 0;
+
+    games.forEach(function(v, i, a) {
+      gameOptions.options.add(new Option(v.name, v.id));
+    });
   }
 
   function setupBarriers(gateways) {
@@ -203,6 +215,7 @@ define([
     initCrafty();
 
     this.loadRoom = loadRoom;
+    this.setGameOptions = setGameOptions;
     this.start = start;
     this.makePlayerView = makePlayerView;
   }

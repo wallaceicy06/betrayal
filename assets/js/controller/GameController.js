@@ -59,9 +59,17 @@ define([
       loadRoom: function(roomConfig) {
         _view.loadRoom(roomConfig);
       },
+
+      setGames: function(games) {
+        _view.setGameOptions(games);
+      }
     });
 
     _view = new GameView({
+      fetchGames: function() {
+        return _model.fetchGames();
+      },
+
       getGateways: function() {
         return _model.getGateways();
       },

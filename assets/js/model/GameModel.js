@@ -48,8 +48,15 @@ define([
     });
   }
 
+  function fetchGames() {
+    io.socket.get('/game', function(games, jwres) {
+      _viewAdpt.setGames(games);
+    });
+  };
+
   function createGame(name) {
     io.socket.post('/game', {name: name}, function(game) {
+      fetchGames();
     });
   }
 
@@ -118,6 +125,7 @@ define([
     this.getGateways = getGateways;
     this.getDimensions = getDimensions;
     this.joinGame = joinGame;
+    this.fetchGames = fetchGames;
     this.createGame = createGame;
     this.getGameList = getGameList;
     this.onDoorVisit = onDoorVisit;
