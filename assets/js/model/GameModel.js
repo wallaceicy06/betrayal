@@ -53,6 +53,16 @@ define([
     });
   }
 
+  function getGameList() {
+    var gameList = [];
+    io.socket.get('/game', function (games) {
+      for(var game in games) {
+        gameList.push(game.name);
+      }
+    });
+    return gameList;
+  }
+
   function start() {
     // _player = new Player();
     // _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
@@ -109,6 +119,7 @@ define([
     this.getDimensions = getDimensions;
     this.joinGame = joinGame;
     this.createGame = createGame;
+    this.getGameList = getGameList;
     this.onDoorVisit = onDoorVisit;
     this.start = start;
   }

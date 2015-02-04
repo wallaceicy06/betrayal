@@ -12,8 +12,8 @@ module.exports = {
   		     required: true},
   	rooms: {collection: 'room',
   			    via: 'game'},
-    startingRoomID: {type: 'string',
-                     required: false}
+    startingRoom: {model: 'room',
+                   required: false}
   }
 };
 

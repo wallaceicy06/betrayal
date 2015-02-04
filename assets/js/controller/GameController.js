@@ -80,6 +80,10 @@ define([
 
       onCreateGameClick: function(name) {
         return _model.createGame(name);
+      },
+
+      getGameList: function() {
+        return _model.getGameList();
       }
     });
 

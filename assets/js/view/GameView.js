@@ -177,6 +177,14 @@ define([
     _gameModelAdpt = gameModelAdpt;
 
     document.getElementById('btn-join').addEventListener('click', function() {
+      var games = _gameModelAdpt.getGameList();
+      var select = document.getElementById("select-game");
+      for(var i = 0; i < games.length; i ++) {
+        var option = document.createElement("option");
+        option.text = games[i];
+        option.value = games[i];
+        select.appendChild(option);
+      }
       _gameModelAdpt.onJoinClick(document.getElementById('ipt-name').value);
     });
 

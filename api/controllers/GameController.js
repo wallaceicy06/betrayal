@@ -48,7 +48,7 @@ module.exports = {
       }
 
       Q.all(promisesArray).then(function() {
-        game.startingRoomID = roomNumsToIDs[0];
+        game.startingRoom = roomNumsToIDs[0];
 
         for (var i = 0; i < GATEWAYS.length; i ++) {
           GATEWAYS[i]['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
