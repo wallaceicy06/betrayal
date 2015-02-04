@@ -180,6 +180,10 @@ define([
       _gameModelAdpt.onJoinClick(document.getElementById('ipt-name').value);
     });
 
+    document.getElementById('btn-create-game').addEventListener('click', function() {
+      _gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
+    });
+
     document.getElementById('btn-speed-inc').addEventListener('click', function() {
       _playerModelAdpt.onSpeedIncClick();
     });

@@ -45,7 +45,7 @@ define([
 
           onSpeedDecClick: function() {
             playerModel.setSpeed(playerModel.getSpeed() - 1);
-          }
+          },
         });
 
         return {
@@ -76,6 +76,10 @@ define([
 
       onJoinClick: function(name) {
         return _model.joinGame(name)
+      },
+
+      onCreateGameClick: function(name) {
+        return _model.createGame(name);
       }
     });
 

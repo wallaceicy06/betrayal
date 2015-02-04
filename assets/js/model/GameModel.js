@@ -48,6 +48,11 @@ define([
     });
   }
 
+  function createGame(name) {
+    io.socket.post('/game', {name: name}, function(game) {
+    });
+  }
+
   function start() {
     // _player = new Player();
     // _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
@@ -103,6 +108,7 @@ define([
     this.getGateways = getGateways;
     this.getDimensions = getDimensions;
     this.joinGame = joinGame;
+    this.createGame = createGame;
     this.onDoorVisit = onDoorVisit;
     this.start = start;
   }
