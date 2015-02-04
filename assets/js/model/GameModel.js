@@ -30,26 +30,28 @@ define([
             west: 4}
   }
 
-  function joinGame(name) {
-    io.socket.post('/player', {name: name}, function (player) {
-      _player = new Player(player.id, player.name);
-      _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
-      _currentRoom = player.room;
+  function joinGame(playerName, gameID) {
+    io.socket.get('/game/' + gameID, function (game) {
+      io.socket.post('/player', {name: playerName, room: game.startingRoom.id}, function (player) {
+        _player = new Player(player.id, player.name);
+        _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
+        _currentRoom = player.room;
 
-      fetchRoom(_currentRoom, function (room) {
-        _currentRoom = room;
-        var doors = {};
-        for (var i = 0; i < room.gatewaysOut.length; i++) {
-          var gateway = room.gatewaysOut[i];
-          doors[gateway.direction] = gateway.roomTo;
-        }
-        _viewAdpt.loadRoom({background: room.name, doors: doors});
+        fetchRoom(_currentRoom, function (room) {
+          _currentRoom = room;
+          var doors = {};
+          for (var i = 0; i < room.gatewaysOut.length; i++) {
+            var gateway = room.gatewaysOut[i];
+            doors[gateway.direction] = gateway.roomTo;
+          }
+          _viewAdpt.loadRoom({background: room.name, doors: doors});
+        });
       });
     });
   }
 
   function fetchGames() {
-    io.socket.get('/game', function(games, jwres) {
+    io.socket.get('/game', function(games) {
       _viewAdpt.setGames(games);
     });
   };

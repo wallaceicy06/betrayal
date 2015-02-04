@@ -55,7 +55,8 @@ module.exports = {
       }
 
       Q.all(promisesArray).then(function() {
-        game.startingRoom = roomNumsToIDs[0];
+        //game.startingRoom = roomNumsToIDs[0];
+        Game.update(game.id, {startingRoom: roomNumsToIDs[1]}, function(err, game) {});
 
         for (var i = 0; i < GATEWAYS.length; i ++) {
           /* Create gateway from GATEWAYS list */

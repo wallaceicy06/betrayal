@@ -192,7 +192,7 @@ define([
       var select = document.getElementById('select-game');
       var name = document.getElementById('ipt-name');
 
-      _gameModelAdpt.onJoinClick(name, select[select.selectedIndex].value);
+      _gameModelAdpt.onJoinClick(name.value, select[select.selectedIndex].value);
     });
 
     document.getElementById('btn-create-game').addEventListener('click', function() {
