@@ -82,8 +82,8 @@ define([
         return _model.onDoorVisit(doorID);
       },
 
-      onJoinClick: function(name) {
-        return _model.joinGame(name)
+      onJoinClick: function(name, gameID) {
+        return _model.joinGame(name, gameID)
       },
 
       onCreateGameClick: function(name) {
