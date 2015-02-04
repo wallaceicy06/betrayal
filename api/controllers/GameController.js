@@ -21,6 +21,13 @@ var GATEWAYS = [
     {roomFrom: 4, roomTo: 3, direction: 'east'}
   ];
 
+  var OPPOSITE_DIRECTIONS = {
+    'east': 'west',
+    'west': 'east',
+    'north': 'south',
+    'south': 'north'
+  }
+
 var roomNumsToIDs = {};
 
 module.exports = {
@@ -51,9 +58,18 @@ module.exports = {
         game.startingRoom = roomNumsToIDs[0];
 
         for (var i = 0; i < GATEWAYS.length; i ++) {
-          GATEWAYS[i]['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
-          GATEWAYS[i]['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
-          Gateway.create(GATEWAYS[i], function(err, gateway) {});
+          /* Create gateway from GATEWAYS list */
+          var gateway = {}
+          gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
+          gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
+          gateway['direction'] = GATEWAYS[i]['direction'];
+          Gateway.create(gateway, function(err, gateway) {});
+
+          /* Create corresponding gateway in other direction */
+          gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
+          gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
+          gateway['direction'] = OPPOSITE_DIRECTIONS[GATEWAYS[i]['direction']];
+          Gateway.create(gateway, function(err, gateway) {});
         }
       });
       
