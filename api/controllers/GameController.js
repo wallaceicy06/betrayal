@@ -6,10 +6,10 @@
  */
 
 var ROOMS = [
-    {roomNum: 1, name: 'blue'},
-    {roomNum: 2, name: 'black'},
-    {roomNum: 3, name: 'yellow'},
-    {roomNum: 4, name: 'green'}
+    {roomNum: 1, name: 'blue', background: '#6699FF'},
+    {roomNum: 2, name: 'black', background: '#FFFFFF'},
+    {roomNum: 3, name: 'yellow', background: '#FFFF99'},
+    {roomNum: 4, name: 'green', background: '#00FFCC'}
   ];
 
 var GATEWAYS = [

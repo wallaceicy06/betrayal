@@ -19,7 +19,9 @@ module.exports = {
     game: {model: 'game',
            required: true},
     roomNum: {type: 'integer',
-              required: true}
+              required: true},
+    background: {type: 'string',
+                 required: true}
   }
 };
 
