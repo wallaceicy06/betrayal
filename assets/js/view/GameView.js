@@ -202,6 +202,11 @@ define([
       var select = document.getElementById('select-game');
       var name = document.getElementById('ipt-name');
 
+      if (name.value.length === 0) {
+        alert('Please enter a non-empty name.');
+        return
+      }
+
       _gameModelAdpt.onJoinClick(name.value, select[select.selectedIndex].value);
     });
 

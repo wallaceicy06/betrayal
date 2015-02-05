@@ -15,7 +15,9 @@ module.exports = {
     locX: {type: 'integer',
            required: true},
     locY: {type: 'integer',
-           required: true}
+           required: true},
+    socket: {type: 'string',
+             required: true}
   }
 };
 

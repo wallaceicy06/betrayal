@@ -10,7 +10,8 @@ module.exports = {
     Player.create({name: req.body.name,
                    room: req.body.room,
                    locX: 64,
-                   locY: 64},
+                   locY: 64,
+                   socket: req.socket.id},
                   function(err, player) {
       if (err) {
         console.log(err);

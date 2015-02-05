@@ -8,12 +8,6 @@ define([
     width: 768,
     height: 640
   };
-  var ROOMS = {
-    1: {background: 'blue', doors: {east: 2, south: 3}},
-    2: {background: 'black', doors: {west: 1, south: 4}},
-    3: {background: 'yellow', doors: {east: 4, north: 1}},
-    4: {background: 'green', doors: {west: 3, north: 2}}
-  };
 
   var _viewAdpt;
   var _player;
@@ -45,7 +39,7 @@ define([
             var gateway = room.gatewaysOut[i];
             doors[gateway.direction] = gateway.roomTo;
           }
-          _viewAdpt.loadRoom({background: room.name, doors: doors});
+          _viewAdpt.loadRoom({background: room.background, doors: doors});
         });
       });
     });
@@ -85,7 +79,7 @@ define([
         doors[gateway['direction']] = gateway['roomTo'];
       }
       _currentRoom = room;
-      var roomConfig = {background: room.name, doors: doors};
+      var roomConfig = {background: room.background, doors: doors};
 
       if (doorID === 'north') {
         _player.setPosition(_player.getX(), DIMENSIONS.height - 65);
@@ -99,7 +93,7 @@ define([
 
       _viewAdpt.loadRoom(roomConfig);
 
-      
+
 
       io.socket.put('/player/changeRoom/' + _player.getID(), {room: _currentRoom.id}, function (player) {});
     });

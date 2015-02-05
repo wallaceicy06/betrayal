@@ -35,8 +35,9 @@ module.exports.sockets = {
   *                                                                          *
   ***************************************************************************/
   onDisconnect: function(session, socket) {
-
-    // By default: do nothing.
+    Player.destroy({socket: socket.id}, function(err, deletedPlayers) {
+      if (err) console.log(err);
+    });
   },
 
 
