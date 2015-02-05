@@ -28,6 +28,7 @@ define([
   var _player;
   var _gameModelAdpt;
   var _playerModelAdpt;
+  var _husks = [];
 
   function initCrafty() {
     Crafty.c('PlayerHusk', {
@@ -145,7 +146,14 @@ define([
   }
 
   function makePlayerHusk(x, y) {
-    Crafty.e('PlayerHusk').attr({x: x, y: y});
+    _husks.push(Crafty.e('PlayerHusk').attr({x: x, y: y}));
+  }
+
+  function removeAllHusks() {
+    for (var i = 0; i < _husks.length; i++) {
+      _husks[i].destroy();
+    }
+    _husks = [];
   }
 
   function setGameOptions(games) {
@@ -229,5 +237,6 @@ define([
     this.start = start;
     this.makePlayerView = makePlayerView;
     this.makePlayerHusk = makePlayerHusk;
+    this.removeAllHusks = removeAllHusks;
   }
 });
