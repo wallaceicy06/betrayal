@@ -20,6 +20,19 @@ module.exports = {
         return;
       }
 
+      /* Subscribe this player to all other players in game */
+      Player.find({game: player.game}, function(err, players) {
+        if (err) {
+          console.log(err);
+        }
+
+        /* Remove this player from players to prevent it from subscribing to itself? */
+        Player.subscribe(req.socket, players);
+        players.forEach(function(v, i, a) {
+          Player.subscribe(v.socket, player);
+        });
+      });
+
       res.json(player.toJSON());
     });
   },
