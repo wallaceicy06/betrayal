@@ -105,6 +105,8 @@ define([
     io.socket.get('/room/' + roomID, function (room) {
       var playersInRoom = room.players; // get other players
 
+      _viewAdpt.removeAllHusks();
+
       console.log("other players:");
       for (var i = 0; i < playersInRoom.length; i++) {
         if (playersInRoom[i].id != _player.getID()) {

@@ -64,6 +64,10 @@ define([
         _view.makePlayerHusk(x, y);
       },
 
+      removeAllHusks: function() {
+        _view.removeAllHusks();
+      },
+
       setGames: function(games) {
         _view.setGameOptions(games);
       }
