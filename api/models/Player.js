@@ -10,6 +10,8 @@ module.exports = {
   attributes: {
     name: {type: 'string',
            required: true},
+    game: {model: 'game',
+           required: true},
     room: {model: 'room',
            required: true},
     locX: {type: 'integer',

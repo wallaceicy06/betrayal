@@ -27,7 +27,8 @@ define([
 
   function joinGame(playerName, gameID) {
     io.socket.get('/game/' + gameID, function (game) {
-      io.socket.post('/player', {name: playerName, room: game.startingRoom.id}, function (player) {
+      console.log("Game ID: " + game.id);
+      io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom.id}, function (player) {
         _player = new Player(player.id, player.name);
         _player.installViewAdpt(_viewAdpt.makePlayerViewAdpt(_player));
         _currentRoom = player.room;

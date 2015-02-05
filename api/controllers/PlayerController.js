@@ -8,6 +8,7 @@
 module.exports = {
 	create: function(req, res) {
     Player.create({name: req.body.name,
+                   game: req.body.game,
                    room: req.body.room,
                    locX: 64,
                    locY: 64,

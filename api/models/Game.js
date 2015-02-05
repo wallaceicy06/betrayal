@@ -13,7 +13,9 @@ module.exports = {
   	rooms: {collection: 'room',
   			    via: 'game'},
     startingRoom: {model: 'room',
-                   required: false}
+                   required: false},
+    players: {collection: 'player',
+              via: 'game'}
   }
 };
 
