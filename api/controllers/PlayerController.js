@@ -33,7 +33,7 @@ module.exports = {
         });
 
         /* Publish player creation */
-        Player.publishCreate({locX: player.locX, locY: player.locY, room: player.room, id: player.id});
+        Player.publishCreate(player);
       });
 
       res.json(player.toJSON());

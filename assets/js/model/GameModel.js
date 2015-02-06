@@ -47,6 +47,9 @@ define([
           jwr.body.forEach(function (v, i, a) {
             if (v.id !== _player.getID()) {
               _otherPlayers[v.id] = {id: v.id, room: v.room.id, locX: v.locX, locY: v.locY};
+
+              _viewAdpt.addPlayer(v.name);
+
               if (v.room.id === _currentRoom.id) {
                 _viewAdpt.makePlayerHusk(v.id, v.locX, v.locY); // draw other player
               }
@@ -131,7 +134,13 @@ define([
     io.socket.on('player', function(o) {
       if (o.verb === 'created' && o.id !== _player.getID()) {
         console.log('created player event');
-        _otherPlayers[o.id] = o.data;
+        _otherPlayers[o.id] = {id: o.id,
+                               name: o.data.name,
+                               locX: o.data.locX,
+                               locY: o.data.locY,
+                               room: o.data.room};
+
+        _viewAdpt.addPlayer(o.data.name);
       } else if (o.verb === 'updated' && o.id !== _player.getID()) {
         /*if (o.data.locX !== undefined && o.data.locY !== undefined) {
           _otherPlayers[o.id].locX = o.data.locX;
