@@ -125,6 +125,7 @@ define([
     console.log('constructing a game model');
 
     io.socket.on('room', function(o) {console.log(o);});
+    io.socket.on('player', function(o) {console.log(o);});
 
     _viewAdpt = viewAdpt;
 

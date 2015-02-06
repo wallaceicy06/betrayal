@@ -57,7 +57,7 @@ module.exports = {
        * janky way to incorporate player data into rooms. We should discuss
        * this in person.
        */
-      // Room.publishUpdate(updatedPlayer.room, {locX : updatedPlayer.locX, locY : updatedPlayer.locY});
+      Player.publishUpdate(updatedPlayer.id, {locX: updatedPlayer.locX, locY : updatedPlayer.locY});
 
       res.json(updatedPlayer.toJSON());
     });
