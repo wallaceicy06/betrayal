@@ -44,7 +44,6 @@ define([
 
         /* Populate other players object when join game */
         io.socket.get('/player', function (err, jwr) {
-          console.log(jwr);
           jwr.body.forEach(function (v, i, a) {
             if (v.id !== _player.getID()) {
               _otherPlayers[v.id] = {id: v.id, room: v.room.id, locX: v.locX, locY: v.locY};
@@ -53,8 +52,6 @@ define([
               }
             }
           });
-          console.log("Other Players:");
-          console.log(_otherPlayers);
         });
 
       });
@@ -83,7 +80,6 @@ define([
       if (_currentRoom.gatewaysOut[i].direction === doorID) {
         // get ID of room player is going to
         var id = _currentRoom.gatewaysOut[i].roomTo;
-        console.log("Entering room " + id);
         break;
       }
     }
@@ -97,35 +93,30 @@ define([
       _currentRoom = room;
       var roomConfig = {background: room.background, doors: doors};
 
-      if (doorID === 'north') {
-        _player.setPosition(_player.getX(), DIMENSIONS.height - 65);
-      } else if (doorID === 'east') {
-        _player.setPosition(33, _player.getY());
-      } else if (doorID === 'south') {
-        _player.setPosition(_player.getX(), 33);
-      } else if (doorID === 'west') {
-        _player.setPosition(DIMENSIONS.width - 65, _player.getY());
-      }
+      io.socket.put('/player/changeRoom/' + _player.getID(), {room: _currentRoom.id}, function (player) {
+        if (doorID === 'north') {
+          _player.setPosition(_player.getX(), DIMENSIONS.height - 65);
+        } else if (doorID === 'east') {
+          _player.setPosition(33, _player.getY());
+        } else if (doorID === 'south') {
+          _player.setPosition(_player.getX(), 33);
+        } else if (doorID === 'west') {
+          _player.setPosition(DIMENSIONS.width - 65, _player.getY());
+        }
 
-      _viewAdpt.loadRoom(roomConfig);
-
-
-
-      io.socket.put('/player/changeRoom/' + _player.getID(), {room: _currentRoom.id}, function (player) {});
+        _viewAdpt.loadRoom(roomConfig);
+      });
     });
 
   }
 
   function fetchRoom(roomID, cb) {
     io.socket.get('/room/' + roomID, function (room) {
-      //var playersInRoom = room.players; // get other players
 
       _viewAdpt.removeAllHusks();
 
-      //console.log(_otherPlayers);
       for (var p in _otherPlayers) {
         if (_otherPlayers[p].room === room.id) {
-          //console.log('Drawing player');
           _viewAdpt.makePlayerHusk(_otherPlayers[p].id, _otherPlayers[p].locX, _otherPlayers[p].locY); // draw other player
         }
       }
@@ -138,12 +129,10 @@ define([
     console.log('constructing a game model');
 
     io.socket.on('player', function(o) {
-      //console.log(o);
       if (o.verb === 'created' && o.id !== _player.getID()) {
         console.log('created player event');
         _otherPlayers[o.id] = o.data;
       } else if (o.verb === 'updated' && o.id !== _player.getID()) {
-        console.log("Update");
         if (o.data.locX !== undefined && o.data.locY !== undefined) {
           _otherPlayers[o.id].locX = o.data.locX;
           _otherPlayers[o.id].locY = o.data.locY;
@@ -158,7 +147,6 @@ define([
     });
 
     io.socket.on('room', function(o) {
-      console.log(o);
       if (o.verb === 'addedTo' && o.addedId !== _player.getID() && o.id === _currentRoom.id) {
         io.socket.get('/player/' + o.addedId, function (resData) {
           //_otherPlayers[resData.id] = resData;
