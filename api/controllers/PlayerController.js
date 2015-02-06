@@ -53,7 +53,8 @@ module.exports = {
         return;
       }
 
-      Player.publishUpdate(updatedPlayer.id, {locX: updatedPlayer.locX, locY : updatedPlayer.locY});
+      //Player.publishUpdate(updatedPlayer.id, {locX: updatedPlayer.locX, locY : updatedPlayer.locY});
+      Room.message(updatedPlayer.room, {id: updatedPlayer.id, verb: 'playerUpdated', data: {locX: updatedPlayer.locX, locY: updatedPlayer.locY}});
 
       res.json(updatedPlayer.toJSON());
     });

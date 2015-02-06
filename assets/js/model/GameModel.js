@@ -133,10 +133,10 @@ define([
         console.log('created player event');
         _otherPlayers[o.id] = o.data;
       } else if (o.verb === 'updated' && o.id !== _player.getID()) {
-        if (o.data.locX !== undefined && o.data.locY !== undefined) {
+        /*if (o.data.locX !== undefined && o.data.locY !== undefined) {
           _otherPlayers[o.id].locX = o.data.locX;
           _otherPlayers[o.id].locY = o.data.locY;
-        }
+        }*/
         if (o.data.room !== undefined) {
           _otherPlayers[o.id].room = o.data.room;
         }
@@ -157,9 +157,11 @@ define([
           //delete _otherPlayers[resData.id];
           _viewAdpt.removeHusk(resData.id); // remove other player image
         });
-      }/* else if (o.verb === 'updated' && o.id === _currentRoom.id && o.data.id !== _player.getID()) {
-        _viewAdpt.moveHusk(o.data.id, o.data.locX, o.data.locY);
-      }*/
+      } else if (o.verb === 'messaged' && o.data.verb === 'playerUpdated' && o.id === _currentRoom.id && o.data.id !== _player.getID()) {
+        _otherPlayers[o.data.id].locX = o.data.data.locX;
+        _otherPlayers[o.data.id].locY = o.data.data.locY;
+        _viewAdpt.moveHusk(o.data.id, _otherPlayers[o.data.id].locX, _otherPlayers[o.data.id].locY);
+      }
     });
 
     _viewAdpt = viewAdpt;
