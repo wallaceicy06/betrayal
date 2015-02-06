@@ -1,6 +1,7 @@
 define([
+    'jquery',
     'crafty'
-], function(Crafty) {
+], function($, Crafty) {
 
   'use strict';
 
@@ -145,6 +146,14 @@ define([
     return _player;
   }
 
+  function addPlayerToList(name) {
+    var playerList = document.getElementById('player-list');
+
+    var li = document.createElement('li');
+    li.appendChild(document.createTextNode(name));
+    playerList.appendChild(li);
+  }
+
   function makePlayerHusk(id, x, y) {
     _husks[id] = Crafty.e('PlayerHusk').attr({x: x, y: y});
   }
@@ -241,6 +250,7 @@ define([
 
     initCrafty();
 
+    this.addPlayerToList = addPlayerToList;
     this.loadRoom = loadRoom;
     this.makePlayerView = makePlayerView;
     this.makePlayerHusk = makePlayerHusk;

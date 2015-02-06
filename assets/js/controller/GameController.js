@@ -56,6 +56,10 @@ define([
         }
       },
 
+      addPlayer: function(name) {
+        _view.addPlayerToList(name);
+      },
+
       loadRoom: function(roomConfig) {
         _view.loadRoom(roomConfig);
       },
