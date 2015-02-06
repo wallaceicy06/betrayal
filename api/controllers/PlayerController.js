@@ -33,7 +33,9 @@ module.exports = {
         });
 
         /* Publish player creation */
-        Player.publishCreate(player);
+        console.log(player.room);
+        console.log(player.room.id);
+        Player.publishCreate({locX: player.locX, locY: player.locY, room: player.room, id: player.id});
       });
 
       res.json(player.toJSON());
@@ -79,6 +81,8 @@ module.exports = {
 
         Room.publishAdd(updatedPlayer.room.id, 'players', updatedPlayer.id);
         Room.publishRemove(oldRoom, 'players', updatedPlayer.id);
+
+        Player.publishUpdate(updatedPlayer.id, {room: updatedPlayer.room.id});
 
         console.log("Old Room: " + oldRoom);
         console.log("Updated Room: " + updatedPlayer.room.id);

@@ -47,12 +47,14 @@ define([
           console.log(jwr);
           jwr.body.forEach(function (v, i, a) {
             if (v.id !== _player.getID()) {
-              _otherPlayers[v.id] = v;
+              _otherPlayers[v.id] = {id: v.id, room: v.room.id, locX: v.locX, locY: v.locY};
               if (v.room.id === _currentRoom.id) {
                 _viewAdpt.makePlayerHusk(v.id, v.locX, v.locY); // draw other player
               }
             }
           });
+          console.log("Other Players:");
+          console.log(_otherPlayers);
         });
 
       });
@@ -120,15 +122,15 @@ define([
 
       _viewAdpt.removeAllHusks();
 
-      cb(room);
-
       //console.log(_otherPlayers);
       for (var p in _otherPlayers) {
-        if (_otherPlayers[p].room.id === _currentRoom.id) {
+        if (_otherPlayers[p].room === room.id) {
           //console.log('Drawing player');
           _viewAdpt.makePlayerHusk(_otherPlayers[p].id, _otherPlayers[p].locX, _otherPlayers[p].locY); // draw other player
         }
       }
+
+      cb(room);
     });
   }
 
@@ -137,13 +139,21 @@ define([
 
     io.socket.on('player', function(o) {
       //console.log(o);
-      if (o.verb === 'created') {
+      if (o.verb === 'created' && o.id !== _player.getID()) {
         console.log('created player event');
         _otherPlayers[o.id] = o.data;
       } else if (o.verb === 'updated' && o.id !== _player.getID()) {
-        _otherPlayers[o.id].locX = o.data.locX;
-        _otherPlayers[o.id].locY = o.data.locY;
-        _viewAdpt.moveHusk(o.id, o.data.locX, o.data.locY);
+        console.log("Update");
+        if (o.data.locX !== undefined && o.data.locY !== undefined) {
+          _otherPlayers[o.id].locX = o.data.locX;
+          _otherPlayers[o.id].locY = o.data.locY;
+        }
+        if (o.data.room !== undefined) {
+          _otherPlayers[o.id].room = o.data.room;
+        }
+        if (_otherPlayers[o.id].room === _currentRoom.id) {
+          _viewAdpt.moveHusk(o.id, o.data.locX, o.data.locY);
+        }
       }
     });
 
@@ -151,12 +161,12 @@ define([
       console.log(o);
       if (o.verb === 'addedTo' && o.addedId !== _player.getID() && o.id === _currentRoom.id) {
         io.socket.get('/player/' + o.addedId, function (resData) {
-          _otherPlayers[resData.id] = resData;
+          //_otherPlayers[resData.id] = resData;
           _viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY); // draw other player
         });
       } else if (o.verb === 'removedFrom' && o.id === _currentRoom.id) {
         io.socket.get('/player/' + o.removedId, function (resData) {
-          delete _otherPlayers[resData.id];
+          //delete _otherPlayers[resData.id];
           _viewAdpt.removeHusk(resData.id); // remove other player image
         });
       }/* else if (o.verb === 'updated' && o.id === _currentRoom.id && o.data.id !== _player.getID()) {
