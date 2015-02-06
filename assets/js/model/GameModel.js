@@ -12,7 +12,7 @@ define([
   var _viewAdpt;
   var _player;
   var _currentRoom;
-  var _otherPlayers = []; // other players in current room
+  var _otherPlayers = {}; // other players in current room
 
   function getDimensions() {
     return DIMENSIONS;
@@ -41,6 +41,20 @@ define([
           }
           _viewAdpt.loadRoom({background: room.background, doors: doors});
         });
+
+        /* Populate other players object when join game */
+        io.socket.get('/player', function (err, jwr) {
+          console.log(jwr);
+          jwr.body.forEach(function (v, i, a) {
+            if (v.id !== _player.getID()) {
+              _otherPlayers[v.id] = v;
+              if (v.room.id === _currentRoom.id) {
+                _viewAdpt.makePlayerHusk(v.id, v.locX, v.locY); // draw other player
+              }
+            }
+          });
+        });
+
       });
     });
   }
@@ -102,30 +116,53 @@ define([
 
   function fetchRoom(roomID, cb) {
     io.socket.get('/room/' + roomID, function (room) {
-      var playersInRoom = room.players; // get other players
+      //var playersInRoom = room.players; // get other players
 
       _viewAdpt.removeAllHusks();
 
-      console.log("other players:");
-      for (var i = 0; i < playersInRoom.length; i++) {
-        if (playersInRoom[i].id != _player.getID()) {
-          io.socket.get('/player/' + playersInRoom[i].id, function (resData) {
-            console.log(resData);
-            _otherPlayers.push(resData); // add player model to other players array
-            _viewAdpt.makePlayerHusk(resData.locX, resData.locY); // draw other player
-          });
+      cb(room);
+
+      //console.log(_otherPlayers);
+      for (var p in _otherPlayers) {
+        if (_otherPlayers[p].room.id === _currentRoom.id) {
+          //console.log('Drawing player');
+          _viewAdpt.makePlayerHusk(_otherPlayers[p].id, _otherPlayers[p].locX, _otherPlayers[p].locY); // draw other player
         }
       }
-
-      cb(room);
     });
   }
 
   return function GameModel(viewAdpt) {
     console.log('constructing a game model');
 
-    io.socket.on('room', function(o) {console.log(o);});
-    io.socket.on('player', function(o) {console.log(o);});
+    io.socket.on('player', function(o) {
+      //console.log(o);
+      if (o.verb === 'created') {
+        console.log('created player event');
+        _otherPlayers[o.id] = o.data;
+      } else if (o.verb === 'updated' && o.id !== _player.getID()) {
+        _otherPlayers[o.id].locX = o.data.locX;
+        _otherPlayers[o.id].locY = o.data.locY;
+        _viewAdpt.moveHusk(o.id, o.data.locX, o.data.locY);
+      }
+    });
+
+    io.socket.on('room', function(o) {
+      console.log(o);
+      if (o.verb === 'addedTo' && o.addedId !== _player.getID() && o.id === _currentRoom.id) {
+        io.socket.get('/player/' + o.addedId, function (resData) {
+          _otherPlayers[resData.id] = resData;
+          _viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY); // draw other player
+        });
+      } else if (o.verb === 'removedFrom' && o.id === _currentRoom.id) {
+        io.socket.get('/player/' + o.removedId, function (resData) {
+          delete _otherPlayers[resData.id];
+          _viewAdpt.removeHusk(resData.id); // remove other player image
+        });
+      }/* else if (o.verb === 'updated' && o.id === _currentRoom.id && o.data.id !== _player.getID()) {
+        _viewAdpt.moveHusk(o.data.id, o.data.locX, o.data.locY);
+      }*/
+    });
 
     _viewAdpt = viewAdpt;
 

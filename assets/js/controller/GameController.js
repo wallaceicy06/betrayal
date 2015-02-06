@@ -60,12 +60,20 @@ define([
         _view.loadRoom(roomConfig);
       },
 
-      makePlayerHusk: function(x, y) {
-        _view.makePlayerHusk(x, y);
+      makePlayerHusk: function(id, x, y) {
+        _view.makePlayerHusk(id, x, y);
       },
 
       removeAllHusks: function() {
         _view.removeAllHusks();
+      },
+
+      removeHusk: function(id) {
+        _view.removeHusk(id);
+      },
+
+      moveHusk: function(id, x, y) {
+        _view.moveHusk(id, x, y);
       },
 
       setGames: function(games) {

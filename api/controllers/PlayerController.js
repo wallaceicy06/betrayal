@@ -31,6 +31,9 @@ module.exports = {
         players.forEach(function(v, i, a) {
           Player.subscribe(v.socket, player);
         });
+
+        /* Publish player creation */
+        Player.publishCreate(player);
       });
 
       res.json(player.toJSON());
@@ -51,12 +54,6 @@ module.exports = {
         return;
       }
 
-      /*
-       * TODO for the following, do we want to have people subscribe to
-       * players in addition to rooms? Otherwise, we would have to find some
-       * janky way to incorporate player data into rooms. We should discuss
-       * this in person.
-       */
       Player.publishUpdate(updatedPlayer.id, {locX: updatedPlayer.locX, locY : updatedPlayer.locY});
 
       res.json(updatedPlayer.toJSON());

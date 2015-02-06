@@ -28,7 +28,7 @@ define([
   var _player;
   var _gameModelAdpt;
   var _playerModelAdpt;
-  var _husks = [];
+  var _husks = {};
 
   function initCrafty() {
     Crafty.c('PlayerHusk', {
@@ -145,15 +145,24 @@ define([
     return _player;
   }
 
-  function makePlayerHusk(x, y) {
-    _husks.push(Crafty.e('PlayerHusk').attr({x: x, y: y}));
+  function makePlayerHusk(id, x, y) {
+    _husks[id] = Crafty.e('PlayerHusk').attr({x: x, y: y});
   }
 
   function removeAllHusks() {
-    for (var i = 0; i < _husks.length; i++) {
-      _husks[i].destroy();
+    for (var key in _husks) {
+      _husks[key].destroy(); // destroy Crafty entity
     }
-    _husks = [];
+    _husks = {};
+  }
+
+  function removeHusk(id) {
+    _husks[id].destroy();
+    delete _husks[id];
+  }
+
+  function moveHusk(id, x, y) {
+    _husks[id].attr({x: x, y: y});
   }
 
   function setGameOptions(games) {
@@ -233,10 +242,12 @@ define([
     initCrafty();
 
     this.loadRoom = loadRoom;
-    this.setGameOptions = setGameOptions;
-    this.start = start;
     this.makePlayerView = makePlayerView;
     this.makePlayerHusk = makePlayerHusk;
+    this.moveHusk = moveHusk;
     this.removeAllHusks = removeAllHusks;
+    this.removeHusk = removeHusk;
+    this.setGameOptions = setGameOptions;
+    this.start = start;
   }
 });
