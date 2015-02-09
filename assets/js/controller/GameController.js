@@ -38,8 +38,8 @@ define([
             playerModel.setPosition(x, y);
           },
 
-          onSpeedIncClick: function() {
-            playerModel.speed = playerModel.speed + 1;
+          onSpeedIncClick: function(increaseBy) {
+            playerModel.speed = playerModel.speed + increaseBy;
           },
 
           onSpeedDecClick: function() {

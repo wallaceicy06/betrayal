@@ -103,27 +103,31 @@ define([
       pickUpItem: function(item) {
         switch(item[0].obj.type) {
           case "speedInc":
-            console.log(that._playerModelAdpt);
-            that._playerModelAdpt.onSpeedIncClick();
+            var increaseBy = 3;
+
+            that._playerModelAdpt.onSpeedIncClick(increaseBy);
 
             /* Increase absolute value of movement in both x and y by 1
                because releasing a key decreases movement by speed, and
                we are increasing speed. Prevents weird gravity. */
             if(this._movement.x > 0) {
-              this._movement.x = this._movement.x + 1;
+              this._movement.x = this._movement.x + increaseBy;
             }
             if(this._movement.x < 0) {
-              this._movement.x = this._movement.x - 1;
+              this._movement.x = this._movement.x - increaseBy;
             }
             if(this._movement.y > 0) {
-              this._movement.y = this._movement.y + 1;
+              this._movement.y = this._movement.y + increaseBy;
             }
             if(this._movement.y < 0) {
-              this._movement.y = this._movement.y - 1;
+              this._movement.y = this._movement.y - increaseBy;
             }
             break;
         }
+        /* Remove item from view */
         that._items[item[0].obj.itemID].destroy();
+        /* Remove item from database */
+        io.socket.delete('/item/' + item[0].obj.itemID);
         delete that._items[item[0].obj.itemID];
       }
 
@@ -292,7 +296,7 @@ define([
     });
 
     document.getElementById('btn-speed-inc').addEventListener('click', function() {
-      that._playerModelAdpt.onSpeedIncClick();
+      that._playerModelAdpt.onSpeedIncClick(1);
     });
 
     document.getElementById('btn-speed-dec').addEventListener('click', function() {
