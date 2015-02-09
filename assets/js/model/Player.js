@@ -3,65 +3,43 @@ define([
 
   'use strict';
 
-  var _playerViewAdpt;
-
-  var _id;
-  var _name;
-  var _speed;
-  var _health;
-  var _maxHealth;
-  var _might;
-  var _x;
-  var _y;
-
-  function getSpeed() {
-    return _speed;
-  }
-
-  function setSpeed(speed) {
-    _speed = speed;
-    _playerViewAdpt.onSpeedChange(_speed);
-  }
-
-  function getID() {
-    return _id;
-  }
-
-  function getX() {
-    return _x;
-  }
-
-  function getY() {
-    return _y;
-  }
-
   function setPosition(x, y) {
-    _x = x;
-    _y = y;
-    io.socket.put('/player/' + _id, {locX: _x, locY: _y}, function (player) {});
+    this.x = x;
+    this.y = y;
+    io.socket.put('/player/' + this.id, {locX: this.x, locY: this.y}, function (player) {});
   }
 
   function installViewAdpt(playerViewAdpt) {
-    _playerViewAdpt = playerViewAdpt;
+    this._playerViewAdpt = playerViewAdpt;
   }
 
   return function Player(id, name) {
-    _id = id;
-    _name = name;
-    _speed = 5;
-    _health = 5;
-    _maxHealth = 5;
-    _might = 2;
-    _x = 64;
-    _y = 64;
+    Object.defineProperty(this, 'id', {
+      value: id,
+      writable: false
+    });
+
+    Object.defineProperty(this, 'name', {
+      value: name,
+      writable: false
+    });
+
+    Object.defineProperty(this, 'speed', {
+      value: 5,
+      writable: true
+    });
+
+    Object.defineProperty(this, 'x', {
+      value: 64,
+      writable: true
+    });
+
+    Object.defineProperty(this, 'y', {
+      value: 64,
+      writable: true
+    });
 
     this.installViewAdpt = installViewAdpt;
-    this.getID = getID;
-    this.getSpeed = getSpeed;
-    this.getX = getX;
-    this.getY = getY;
-    this.setSpeed = setSpeed;
     this.setPosition = setPosition;
   }
-
 });
