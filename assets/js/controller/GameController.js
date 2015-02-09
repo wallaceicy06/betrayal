@@ -4,35 +4,34 @@ define([
 ], function(GameModel, GameView) {
   'use strict';
 
-  var _model;
-  var _view;
-
   function start() {
-    _model.start();
-    _view.start();
+    this._model.start();
+    this._view.start();
   }
 
   /*
    * Constructor for the GameController.
    */
   return function GameController() {
-    _model = new GameModel({
+    var that = this;
+
+    this._model = new GameModel({
       makePlayerViewAdpt: function(playerModel) {
-        var playerView = _view.makePlayerView({
+        var playerView = that._view.makePlayerView({
           getSpeed: function() {
-            return playerModel.getSpeed();
+            return playerModel.speed;
           },
 
           setSpeed: function(speed) {
-            return playerModel.setSpeed(speed);
+            playerModel.speed = speed;
           },
 
           getX: function() {
-            return playerModel.getX();
+            return playerModel.x;
           },
 
           getY: function() {
-            return playerModel.getY();
+            return playerModel.y;
           },
 
           setPosition: function(x, y) {
@@ -40,11 +39,11 @@ define([
           },
 
           onSpeedIncClick: function() {
-            playerModel.setSpeed(playerModel.getSpeed() + 1);
+            playerModel.speed = playerModel.speed + 1;
           },
 
           onSpeedDecClick: function() {
-            playerModel.setSpeed(playerModel.getSpeed() - 1);
+            playerModel.speed = playerModel.speed - 1;
           },
         });
 
@@ -57,57 +56,53 @@ define([
       },
 
       addPlayer: function(name) {
-        _view.addPlayerToList(name);
+        that._view.addPlayerToList(name);
       },
 
       loadRoom: function(roomConfig) {
-        _view.loadRoom(roomConfig);
+        that._view.loadRoom(roomConfig);
       },
 
       makePlayerHusk: function(id, x, y) {
-        _view.makePlayerHusk(id, x, y);
+        that._view.makePlayerHusk(id, x, y);
       },
 
       removeAllHusks: function() {
-        _view.removeAllHusks();
+        that._view.removeAllHusks();
       },
 
       removeHusk: function(id) {
-        _view.removeHusk(id);
+        that._view.removeHusk(id);
       },
 
       moveHusk: function(id, x, y) {
-        _view.moveHusk(id, x, y);
+        that._view.moveHusk(id, x, y);
       },
 
       setGames: function(games) {
-        _view.setGameOptions(games);
+        that._view.setGameOptions(games);
       }
     });
 
-    _view = new GameView({
+    this._view = new GameView({
       fetchGames: function() {
-        return _model.fetchGames();
-      },
-
-      getGateways: function() {
-        return _model.getGateways();
+        return that._model.fetchGames();
       },
 
       getDimensions: function() {
-        return _model.getDimensions();
+        return that._model.dimensions;
       },
 
       onDoorVisit: function(doorID) {
-        return _model.onDoorVisit(doorID);
+        return that._model.onDoorVisit(doorID);
       },
 
       onJoinClick: function(name, gameID) {
-        return _model.joinGame(name, gameID)
+        return that._model.joinGame(name, gameID)
       },
 
       onCreateGameClick: function(name) {
-        return _model.createGame(name);
+        return that._model.createGame(name);
       },
     });
 
