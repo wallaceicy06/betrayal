@@ -36,7 +36,7 @@ define([
 
               that._viewAdpt.addPlayer(v.name);
 
-              if (v.room.id === _currentRoom.id) {
+              if (v.room.id === that._currentRoom.id) {
                 that._viewAdpt.makePlayerHusk(v.id, v.locX, v.locY); // draw other player
               }
             }
