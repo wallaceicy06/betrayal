@@ -32,12 +32,12 @@ define([
         io.socket.get('/player', function (err, jwr) {
           jwr.body.forEach(function (v, i, a) {
             if (v.id !== that._player.id) {
-              _otherPlayers[v.id] = {id: v.id, room: v.room.id, locX: v.locX, locY: v.locY};
+              that._otherPlayers[v.id] = {id: v.id, room: v.room.id, locX: v.locX, locY: v.locY};
 
-              _viewAdpt.addPlayer(v.name);
+              that._viewAdpt.addPlayer(v.name);
 
               if (v.room.id === _currentRoom.id) {
-                _viewAdpt.makePlayerHusk(v.id, v.locX, v.locY); // draw other player
+                that._viewAdpt.makePlayerHusk(v.id, v.locX, v.locY); // draw other player
               }
             }
           });
@@ -126,23 +126,23 @@ define([
     io.socket.on('player', function(o) {
       if (o.verb === 'created' && o.id !== that._player.id) {
         console.log('created player event');
-        _otherPlayers[o.id] = {id: o.id,
-                               name: o.data.name,
-                               locX: o.data.locX,
-                               locY: o.data.locY,
-                               room: o.data.room};
+        that._otherPlayers[o.id] = {id: o.id,
+                                    name: o.data.name,
+                                    locX: o.data.locX,
+                                    locY: o.data.locY,
+                                    room: o.data.room};
 
-        _viewAdpt.addPlayer(o.data.name);
+        that._viewAdpt.addPlayer(o.data.name);
       } else if (o.verb === 'updated' && o.id !== that._player.id) {
         /*if (o.data.locX !== undefined && o.data.locY !== undefined) {
           _otherPlayers[o.id].locX = o.data.locX;
           _otherPlayers[o.id].locY = o.data.locY;
         }*/
         if (o.data.room !== undefined) {
-          _otherPlayers[o.id].room = o.data.room;
+          that._otherPlayers[o.id].room = o.data.room;
         }
-        if (_otherPlayers[o.id].room === that._currentRoom.id) {
-          _viewAdpt.moveHusk(o.id, o.data.locX, o.data.locY);
+        if (that._otherPlayers[o.id].room === that._currentRoom.id) {
+          that._viewAdpt.moveHusk(o.id, o.data.locX, o.data.locY);
         }
       }
     });
@@ -151,17 +151,17 @@ define([
       if (o.verb === 'addedTo' && o.addedId !== that._player.id && o.id === that._currentRoom.id) {
         io.socket.get('/player/' + o.addedId, function (resData) {
           //_otherPlayers[resData.id] = resData;
-          _viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY); // draw other player
+          that._viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY); // draw other player
         });
       } else if (o.verb === 'removedFrom' && o.id === that._currentRoom.id) {
         io.socket.get('/player/' + o.removedId, function (resData) {
           //delete _otherPlayers[resData.id];
-          _viewAdpt.removeHusk(resData.id); // remove other player image
+          that._viewAdpt.removeHusk(resData.id); // remove other player image
         });
       } else if (o.verb === 'messaged' && o.data.verb === 'playerUpdated' && o.id === that._currentRoom.id && o.data.id !== that._player.id) {
-        _otherPlayers[o.data.id].locX = o.data.data.locX;
-        _otherPlayers[o.data.id].locY = o.data.data.locY;
-        _viewAdpt.moveHusk(o.data.id, _otherPlayers[o.data.id].locX, _otherPlayers[o.data.id].locY);
+        that._otherPlayers[o.data.id].locX = o.data.data.locX;
+        that._otherPlayers[o.data.id].locY = o.data.data.locY;
+        that._viewAdpt.moveHusk(o.data.id, that._otherPlayers[o.data.id].locX, that._otherPlayers[o.data.id].locY);
       }
     });
   }
