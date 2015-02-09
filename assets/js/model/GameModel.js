@@ -4,6 +4,11 @@ define([
 
   'use strict';
 
+  var DIMENSIONS = {
+    width: 768,
+    height: 640
+  }
+
   function joinGame(playerName, gameID) {
     var that = this;
 
@@ -83,13 +88,13 @@ define([
 
       io.socket.put('/player/changeRoom/' + that._player.id, {room: that._currentRoom.id}, function (player) {
         if (doorID === 'north') {
-          that._player.setPosition(that._player.x, that.dimensions.height - 65);
+          that._player.setPosition(that._player.x, DIMENSIONS.height - 65);
         } else if (doorID === 'east') {
           that._player.setPosition(33, that._player.y);
         } else if (doorID === 'south') {
           that._player.setPosition(that._player.x, 33);
         } else if (doorID === 'west') {
-          that._player.setPosition(that.dimensions.width - 65, that._player.y);
+          that._player.setPosition(DIMENSIONS.width - 65, that._player.y);
         }
 
         that._viewAdpt.loadRoom(roomConfig);
@@ -172,10 +177,10 @@ define([
     initSockets.call(this);
 
     Object.defineProperty(this, 'dimensions', {
-      value: {width: 768, height: 640},
-      writable: false
+      get: function() {
+        return DIMENSIONS;
+      }
     });
-
 
     this.joinGame = joinGame.bind(this);
     this.fetchGames = fetchGames.bind(this);
