@@ -26,12 +26,9 @@ define([
     }
   }
 
-  var _player;
-  var _gameModelAdpt;
-  var _playerModelAdpt;
-  var _husks = {};
-
   function initCrafty() {
+    var that = this;
+
     Crafty.c('PlayerHusk', {
       init: function() {
         this.requires('2D, Canvas, SpritePlayer, SpriteAnimation');
@@ -47,7 +44,7 @@ define([
       init: function() {
         this.requires('PlayerHusk, Fourway, Collision');
 
-        this.fourway(_playerModelAdpt.getSpeed());
+        this.fourway(that._playerModelAdpt.getSpeed());
 
         this.onHit('Solid', this.stopMovement);
         this.onHit('Door', this.useDoor);
@@ -67,7 +64,7 @@ define([
         });
 
         this.bind('Moved', function(oldPosition) {
-          _playerModelAdpt.setPosition(this.x, this.y);
+          that._playerModelAdpt.setPosition(this.x, this.y);
         });
       },
 
@@ -88,7 +85,7 @@ define([
           return;
         }
 
-        _gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID);
+        that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID);
 
         /* Lock the door to prevent double usages. */
         this.attr({'doorLock': true});
@@ -111,8 +108,8 @@ define([
       }
     });
 
-    Crafty.init(_gameModelAdpt.getDimensions().width,
-                _gameModelAdpt.getDimensions().height,
+    Crafty.init(that._gameModelAdpt.getDimensions().width,
+                that._gameModelAdpt.getDimensions().height,
                 document.getElementById('game-stage'));
 
     Crafty.load(ASSETS, function() {
@@ -121,29 +118,29 @@ define([
   }
 
   function start() {
-    _gameModelAdpt.fetchGames();
+    this._gameModelAdpt.fetchGames();
   }
 
   function loadRoom(roomConfig) {
     Crafty('RoomItem').each(function() { this.destroy(); });
     Crafty.background(roomConfig.background);
-    setupBarriers(roomConfig.doors);
+    setupBarriers.call(this, roomConfig.doors);
 
     /* Sets the player location and re-allows door usage. */
-    _player.attr({x: _playerModelAdpt.getX(),
-                  y: _playerModelAdpt.getY(),
-                  doorLock: false});
+    this._player.attr({x: this._playerModelAdpt.getX(),
+                       y: this._playerModelAdpt.getY(),
+                       doorLock: false});
 
     /* Enable player control once through door */
-    _player.enableControl();
+    this._player.enableControl();
   }
 
   function makePlayerView(playerModelAdpt) {
-    _playerModelAdpt = playerModelAdpt;
+    this._playerModelAdpt = playerModelAdpt;
 
-    _player = Crafty.e('Player');
+    this._player = Crafty.e('Player');
 
-    return _player;
+    return this._player;
   }
 
   function addPlayerToList(name) {
@@ -155,23 +152,23 @@ define([
   }
 
   function makePlayerHusk(id, x, y) {
-    _husks[id] = Crafty.e('PlayerHusk').attr({x: x, y: y});
+    this._husks[id] = Crafty.e('PlayerHusk').attr({x: x, y: y});
   }
 
   function removeAllHusks() {
-    for (var key in _husks) {
-      _husks[key].destroy(); // destroy Crafty entity
+    for (var key in this._husks) {
+      this._husks[key].destroy(); // destroy Crafty entity
     }
-    _husks = {};
+    this._husks = {};
   }
 
   function removeHusk(id) {
-    _husks[id].destroy();
-    delete _husks[id];
+    this._husks[id].destroy();
+    delete this._husks[id];
   }
 
   function moveHusk(id, x, y) {
-    _husks[id].attr({x: x, y: y});
+    this._husks[id].attr({x: x, y: y});
   }
 
   function setGameOptions(games) {
@@ -186,8 +183,8 @@ define([
   }
 
   function setupBarriers(gateways) {
-    var widthInTiles = _gameModelAdpt.getDimensions().width/TILE_WIDTH;
-    var heightInTiles = _gameModelAdpt.getDimensions().height/TILE_WIDTH;
+    var widthInTiles = this._gameModelAdpt.getDimensions().width/TILE_WIDTH;
+    var heightInTiles = this._gameModelAdpt.getDimensions().height/TILE_WIDTH;
 
     for (var j = 0; j < widthInTiles; j++) {
       if(!('north' in gateways && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
@@ -221,8 +218,8 @@ define([
 
   }
 
-  return function GameView(gameModelAdpt) {
-    _gameModelAdpt = gameModelAdpt;
+  function initGUI() {
+    var that = this;
 
     document.getElementById('btn-join').addEventListener('click', function() {
       var select = document.getElementById('select-game');
@@ -233,31 +230,36 @@ define([
         return
       }
 
-      _gameModelAdpt.onJoinClick(name.value, select[select.selectedIndex].value);
+      that._gameModelAdpt.onJoinClick(name.value, select[select.selectedIndex].value);
     });
 
     document.getElementById('btn-create-game').addEventListener('click', function() {
-      _gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
+      that._gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
     });
 
     document.getElementById('btn-speed-inc').addEventListener('click', function() {
-      _playerModelAdpt.onSpeedIncClick();
+      that._playerModelAdpt.onSpeedIncClick();
     });
 
     document.getElementById('btn-speed-dec').addEventListener('click', function() {
-      _playerModelAdpt.onSpeedDecClick();
+      that._playerModelAdpt.onSpeedDecClick();
     });
+  }
 
-    initCrafty();
+  return function GameView(gameModelAdpt) {
+    this._gameModelAdpt = gameModelAdpt;
 
-    this.addPlayerToList = addPlayerToList;
-    this.loadRoom = loadRoom;
-    this.makePlayerView = makePlayerView;
-    this.makePlayerHusk = makePlayerHusk;
-    this.moveHusk = moveHusk;
-    this.removeAllHusks = removeAllHusks;
-    this.removeHusk = removeHusk;
-    this.setGameOptions = setGameOptions;
-    this.start = start;
+    initGUI.call(this);
+    initCrafty.call(this);
+
+    this.addPlayerToList = addPlayerToList.bind(this);
+    this.loadRoom = loadRoom.bind(this);
+    this.makePlayerView = makePlayerView.bind(this);
+    this.makePlayerHusk = makePlayerHusk.bind(this);
+    this.moveHusk = moveHusk.bind(this);
+    this.removeAllHusks = removeAllHusks.bind(this);
+    this.removeHusk = removeHusk.bind(this);
+    this.setGameOptions = setGameOptions.bind(this);
+    this.start = start.bind(this);
   }
 });
