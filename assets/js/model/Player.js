@@ -25,8 +25,13 @@ define([
     });
 
     Object.defineProperty(this, 'speed', {
-      value: 5,
-      writable: true
+      get: function() {
+        return this._speed;
+      },
+      set: function(newSpeed) {
+        this._speed = newSpeed;
+        this._playerViewAdpt.onSpeedChange(this._speed);
+      }
     });
 
     Object.defineProperty(this, 'x', {
@@ -41,5 +46,7 @@ define([
 
     this.installViewAdpt = installViewAdpt;
     this.setPosition = setPosition;
+
+    this._speed = 5;
   }
 });

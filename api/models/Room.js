@@ -23,7 +23,9 @@ module.exports = {
     roomNum: {type: 'integer',
               required: true},
     background: {type: 'string',
-                 required: true}
+                 required: true},
+    items: {collection: 'item',
+            via: 'room'}
   }
 };
 

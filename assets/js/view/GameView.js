@@ -22,6 +22,11 @@ define([
       'tile': TILE_WIDTH,
       'tileh': TILE_WIDTH,
       'map': {'SpriteDoor': [0,0]}
+      },
+      'images/game/lightning_bolt.png': {
+        'tile': TILE_WIDTH,
+        'tileh': TILE_WIDTH,
+        'map': {'SpriteSpeedInc': [0,0]}
       }
     }
   }
@@ -48,6 +53,7 @@ define([
 
         this.onHit('Solid', this.stopMovement);
         this.onHit('Door', this.useDoor);
+        this.onHit('Item', this.pickUpItem);
 
         this.bind('NewDirection', function(data) {
           if (data.x > 0) {
@@ -92,9 +98,52 @@ define([
 
         /* Player cannot move as they go through a door */
         this.disableControl();
+      },
+
+      pickUpItem: function(item) {
+        switch(item[0].obj.type) {
+          case "speedInc":
+            var increaseBy = 3;
+
+            that._playerModelAdpt.onSpeedIncClick(increaseBy);
+
+            /* Increase absolute value of movement in both x and y by 1
+               because releasing a key decreases movement by speed, and
+               we are increasing speed. Prevents weird gravity. */
+            if(this._movement.x > 0) {
+              this._movement.x = this._movement.x + increaseBy;
+            }
+            if(this._movement.x < 0) {
+              this._movement.x = this._movement.x - increaseBy;
+            }
+            if(this._movement.y > 0) {
+              this._movement.y = this._movement.y + increaseBy;
+            }
+            if(this._movement.y < 0) {
+              this._movement.y = this._movement.y - increaseBy;
+            }
+            break;
+        }
+        /* Remove item from view */
+        that._items[item[0].obj.itemID].destroy();
+        /* Remove item from database */
+        io.socket.delete('/item/' + item[0].obj.itemID);
+        delete that._items[item[0].obj.itemID];
       }
 
     });
+
+    Crafty.c('Item', {
+      init: function() {
+        this.requires('2D, Canvas, RoomItem');
+      }
+    });
+
+    Crafty.c('SpeedInc', {
+      init: function() {
+        this.requires('Item, SpriteSpeedInc');
+      }
+    })
 
     Crafty.c('Wall', {
       init: function() {
@@ -124,7 +173,9 @@ define([
   function loadRoom(roomConfig) {
     Crafty('RoomItem').each(function() { this.destroy(); });
     Crafty.background(roomConfig.background);
+
     setupBarriers.call(this, roomConfig.doors);
+    placeItems.call(this, roomConfig.items);
 
     /* Sets the player location and re-allows door usage. */
     this._player.attr({x: this._playerModelAdpt.getX(),
@@ -133,6 +184,13 @@ define([
 
     /* Enable player control once through door */
     this._player.enableControl();
+  }
+
+  function placeItems(items) {
+    for (var i = 0; i < items.length; i++) {
+      var item = Crafty.e('SpeedInc').attr({x: items[i].x, y: items[y].y, type: items[i].type, itemID: items[i].id});
+      this._items[items[i].id] = item;
+    }
   }
 
   function makePlayerView(playerModelAdpt) {
@@ -238,7 +296,7 @@ define([
     });
 
     document.getElementById('btn-speed-inc').addEventListener('click', function() {
-      that._playerModelAdpt.onSpeedIncClick();
+      that._playerModelAdpt.onSpeedIncClick(1);
     });
 
     document.getElementById('btn-speed-dec').addEventListener('click', function() {
@@ -248,6 +306,10 @@ define([
 
   return function GameView(gameModelAdpt) {
     this._gameModelAdpt = gameModelAdpt;
+    this._player = null;
+    this._playerModelAdpt = null;
+    this._husks = {};
+    this._items = {};
 
     initGUI.call(this);
     initCrafty.call(this);

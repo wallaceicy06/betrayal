@@ -25,7 +25,7 @@ define([
             var gateway = room.gatewaysOut[i];
             doors[gateway.direction] = gateway.roomTo;
           }
-          that._viewAdpt.loadRoom({background: room.background, doors: doors});
+          that._viewAdpt.loadRoom({background: room.background, doors: doors, items: room.items});
         });
 
         /* Populate other players object when join game */
@@ -83,8 +83,9 @@ define([
         var gateway = room['gatewaysOut'][i];
         doors[gateway['direction']] = gateway['roomTo'];
       }
+
       that._currentRoom = room;
-      var roomConfig = {background: room.background, doors: doors};
+      var roomConfig = {background: room.background, doors: doors, items: room.items};
 
       io.socket.put('/player/changeRoom/' + that._player.id, {room: that._currentRoom.id}, function (player) {
         if (doorID === 'north') {
