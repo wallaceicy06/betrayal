@@ -7,6 +7,8 @@
 
 module.exports = {
 
+  autoWatch: false,
+
   attributes: {
     roomFrom: {model: 'room',
                required: true},

@@ -13,7 +13,7 @@ define([
     var that = this;
 
     io.socket.get('/game/' + gameID, function (game) {
-      io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom.id}, function (player) {
+      io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom}, function (player) {
         that._player = new Player(player.id, player.name);
         that._player.installViewAdpt(that._viewAdpt.makePlayerViewAdpt(that._player));
         that._currentRoom = player.room;
@@ -158,7 +158,10 @@ define([
           //delete _otherPlayers[resData.id];
           that._viewAdpt.removeHusk(resData.id); // remove other player image
         });
-      } else if (o.verb === 'messaged' && o.data.verb === 'playerUpdated' && o.id === that._currentRoom.id && o.data.id !== that._player.id) {
+      } else if (o.verb === 'messaged' && o.data.verb === 'playerUpdated'
+                 && o.data.id in that._otherPlayers
+                 && o.id === that._currentRoom.id
+                 && o.data.id !== that._player.id) {
         that._otherPlayers[o.data.id].locX = o.data.data.locX;
         that._otherPlayers[o.data.id].locY = o.data.data.locY;
         that._viewAdpt.moveHusk(o.data.id, that._otherPlayers[o.data.id].locX, that._otherPlayers[o.data.id].locY);
