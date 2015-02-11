@@ -163,6 +163,8 @@ define([
         that._otherPlayers[o.data.id].locX = o.data.data.locX;
         that._otherPlayers[o.data.id].locY = o.data.data.locY;
         that._viewAdpt.moveHusk(o.data.id, that._otherPlayers[o.data.id].locX, that._otherPlayers[o.data.id].locY);
+      } else if (o.verb === 'messaged' && o.data.verb === 'itemRemoved' && o.id === that._currentRoom.id) {
+        that._viewAdpt.removeItem(o.data.id);
       }
     });
   }

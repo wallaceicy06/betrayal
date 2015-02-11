@@ -102,8 +102,8 @@ define([
 
       pickUpItem: function(item) {
         switch(item[0].obj.type) {
-          case "speedInc":
-            var increaseBy = 3;
+          case "SpeedInc":
+            var increaseBy = item[0].obj.amount;
 
             that._playerModelAdpt.onSpeedIncClick(increaseBy);
 
@@ -123,12 +123,14 @@ define([
               this._movement.y = this._movement.y - increaseBy;
             }
             break;
+          default:
+            that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
         }
         /* Remove item from view */
-        that._items[item[0].obj.itemID].destroy();
+        //that._items[item[0].obj.itemID].destroy();
         /* Remove item from database */
         io.socket.delete('/item/' + item[0].obj.itemID);
-        delete that._items[item[0].obj.itemID];
+        //delete that._items[item[0].obj.itemID];
       }
 
     });
@@ -188,7 +190,7 @@ define([
 
   function placeItems(items) {
     for (var i = 0; i < items.length; i++) {
-      var item = Crafty.e('SpeedInc').attr({x: items[i].x, y: items[y].y, type: items[i].type, itemID: items[i].id});
+      var item = Crafty.e(items[i].type).attr({x: items[i].x, y: items[i].y, type: items[i].type, stat: items[i].stat, amount: items[i].amount, itemID: items[i].id});
       this._items[items[i].id] = item;
     }
   }
@@ -227,6 +229,13 @@ define([
 
   function moveHusk(id, x, y) {
     this._husks[id].attr({x: x, y: y});
+  }
+
+  function removeItem(id) {
+    if(id in this._items) {
+      this._items[id].destroy();
+      delete this._items[id];
+    }
   }
 
   function setGameOptions(games) {
@@ -321,6 +330,7 @@ define([
     this.moveHusk = moveHusk.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeHusk = removeHusk.bind(this);
+    this.removeItem = removeItem.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
     this.start = start.bind(this);
   }
