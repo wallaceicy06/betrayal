@@ -20,31 +20,31 @@ define([
         that._player.installGameModelAdpt({
           onSpeedChange: function(newSpeed) {
             playerViewAdpt.onSpeedChange(newSpeed);
-            io.socket.put('/player/adjustStat/' + this.id,
+            io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'speed', newValue: newSpeed},
                           function (player) {});
           },
 
           onMaxHealthChange: function(newMaxHealth) {
-            io.socket.put('/player/adjustStat/' + this.id,
+            io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'maxHealth', newValue: newMaxHealth},
                           function (player) {});
           },
 
           onCurHealthChange: function(newCurHealth) {
-            io.socket.put('/player/adjustStat/' + this.id,
+            io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'curHealth', newValue: newCurHealth},
                           function (player) {});
           },
 
           onWeaponChange: function(newWeapon) {
-            io.socket.put('/player/adjustStat/' + this.id,
+            io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'weapon', nnewValewValue: newWeapon},
                           function (player) {});
           },
 
           onRelicsChange: function(newRelics) {
-            io.socket.put('/player/adjustStat/' + this.id,
+            io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'relics', newValue: newRelics},
                           function (player) {});
           },
