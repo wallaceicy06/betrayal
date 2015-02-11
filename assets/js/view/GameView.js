@@ -234,7 +234,7 @@ define([
 
     return {
       setLocation: function(newX, newY) {
-        this._husks[playerModelAdpt.getID()].attr({x: newX, y: newY});
+        that._husks[playerModelAdpt.getID()].attr({x: newX, y: newY});
       },
 
       setVisibility: function(visible) {
@@ -260,8 +260,10 @@ define([
   }
 
   function removeHusk(id) {
-    this._husks[id].destroy();
-    delete this._husks[id];
+    if (this._husks[id] !== undefined) {
+      this._husks[id].destroy();
+      delete this._husks[id];
+    }
   }
 
   function setGameOptions(games) {

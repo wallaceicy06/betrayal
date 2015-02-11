@@ -27,7 +27,7 @@ define([
           },
 
           onPositionChange: function(newX, newY) {
-            /* Do nothing */
+            io.socket.put('/player/' + player.id, {locX: newX, locY: newY}, function (player) {});
           }
         });
 
@@ -149,7 +149,6 @@ define([
 
     io.socket.on('player', function(o) {
       if (o.verb === 'created' && o.id !== that._player.id) {
-        console.log('created player event');
         var player =  new Player(o.id,
                                  o.data.name,
                                  o.data.room,
@@ -172,48 +171,35 @@ define([
           }
         });
 
+        that._otherPlayers[o.id] = player;
+
         playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
       } else if (o.verb === 'updated' && o.id !== that._player.id) {
-        /*if (o.data.locX !== undefined && o.data.locY !== undefined) {
-          _otherPlayers[o.id].locX = o.data.locX;
-          _otherPlayers[o.id].locY = o.data.locY;
-        }*/
+        if (o.data.locX !== undefined && o.data.locY !== undefined) {
+          that._otherPlayers[o.id].x = o.data.locX;
+          that._otherPlayers[o.id].y = o.data.locY;
+        }
         if (o.data.room !== undefined) {
           that._otherPlayers[o.id].room = o.data.room;
         }
-        // if (that._otherPlayers[o.id].room === that._currentRoom.id) {
-          // that._viewAdpt.moveHusk(o.id, o.data.locX, o.data.locY);
-        // }
-        that._otherPlayers[o.id].x = o.data.locX;
-        that._otherPlayers[o.id].y = o.data.locY;
       }
     });
 
     io.socket.on('room', function(o) {
       if (o.verb === 'addedTo' && o.addedId !== that._player.id && o.id === that._currentRoom.id) {
-        // io.socket.get('/player/' + o.addedId, function (resData) {
-          // //_otherPlayers[resData.id] = resData;
-          // that._viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY); // draw other player
-        // });
+        /* TODO Not sure if we need this anymore. */
       } else if (o.verb === 'removedFrom' && o.id === that._currentRoom.id) {
-        // io.socket.get('/player/' + o.removedId, function (resData) {
-          // //delete _otherPlayers[resData.id];
-          // that._viewAdpt.removeHusk(resData.id); // remove other player image
-        // });
+        /* TODO Not sure if we need this anymore. */
       } else if (o.verb === 'messaged' && o.data.verb === 'playerUpdated'
                  && o.data.id in that._otherPlayers
                  && o.id === that._currentRoom.id
                  && o.data.id !== that._player.id) {
-        that._otherPlayers[o.data.id].x = o.data.data.locX;
-        that._otherPlayers[o.data.id].y = o.data.data.locY;
-        // that._viewAdpt.moveHusk(o.data.id, that._otherPlayers[o.data.id].x, that._otherPlayers[o.data.id].y);
+        that._otherPlayers[o.data.id].setPosition(o.data.data.locX, o.data.data.locY);
       }
     });
   }
 
   return function GameModel(viewAdpt) {
-    console.log('constructing a game model');
-
     this._player = null;
     this._viewAdpt = viewAdpt;
     this._currentRoom = null;
