@@ -54,7 +54,7 @@ define([
               that._viewAdpt.addPlayer(v.name);
 
               if (v.room.id === that._currentRoom.id) {
-                that._viewAdpt.makePlayerHusk(v.id, v.locX, v.locY); // draw other player
+                that._viewAdpt.makePlayerHusk(v.id, v.locX, v.locY, v.color); // draw other player
               }
             }
           });
@@ -130,7 +130,7 @@ define([
 
       for (var p in that._otherPlayers) {
         if (that._otherPlayers[p].room === room.id) {
-          that._viewAdpt.makePlayerHusk(that._otherPlayers[p].id, that._otherPlayers[p].locX, that._otherPlayers[p].locY); // draw other player
+          that._viewAdpt.makePlayerHusk(that._otherPlayers[p].id, that._otherPlayers[p].locX, that._otherPlayers[p].locY, that._otherPlayers[p].color);
         }
       }
 
@@ -169,7 +169,7 @@ define([
       if (o.verb === 'addedTo' && o.addedId !== that._player.id && o.id === that._currentRoom.id) {
         io.socket.get('/player/' + o.addedId, function (resData) {
           //_otherPlayers[resData.id] = resData;
-          that._viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY); // draw other player
+          that._viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY, resData.color); // draw other player
         });
       } else if (o.verb === 'removedFrom' && o.id === that._currentRoom.id) {
         io.socket.get('/player/' + o.removedId, function (resData) {

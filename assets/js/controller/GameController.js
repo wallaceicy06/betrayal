@@ -63,8 +63,8 @@ define([
         that._view.loadRoom(roomConfig);
       },
 
-      makePlayerHusk: function(id, x, y) {
-        that._view.makePlayerHusk(id, x, y);
+      makePlayerHusk: function(id, x, y, color) {
+        that._view.makePlayerHusk(id, x, y, color);
       },
 
       removeAllHusks: function() {

@@ -227,8 +227,10 @@ define([
     playerList.appendChild(li);
   }
 
-  function makePlayerHusk(id, x, y) {
-    this._husks[id] = Crafty.e('PlayerHusk').attr({x: x, y: y});
+  function makePlayerHusk(id, x, y, color) {
+     var husk = Crafty.e('PlayerHusk').attr({x: x, y: y});
+     husk.setColor(color);
+     this._husks[id] = husk;
   }
 
   function removeAllHusks() {
