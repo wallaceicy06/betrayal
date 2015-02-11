@@ -53,6 +53,26 @@ define([
           onSpeedDecClick: function() {
             playerModel.speed = playerModel.speed - 1;
           },
+
+          useItem: function(stat, amount) {
+            switch(stat) {
+              case "maxHealth":
+                playerModel.maxHealth = playerModel.maxHealth + amount;
+                break;
+              case "curHealth":
+                playerModel.curHealth = playerModel.curHealth + amount;
+                break;
+              case "weapon":
+                playerModel.weapon = playerModel.weapon + amount;
+                break;
+              case "relics":
+                playerModel.relics = playerModel.relics + amount;
+                break;
+              default:
+                console.log("Unknown stat: " + stat);
+                break;
+            }
+          }
         });
 
         return {
@@ -96,8 +116,8 @@ define([
         that._view.removeAllHusks();
       },
 
-      removeHusk: function(id) {
-        that._view.removeHusk(id);
+      removeItem: function(id) {
+        that._view.removeItem(id);
       },
 
       setGames: function(games) {
@@ -119,15 +139,14 @@ define([
       },
 
       onJoinClick: function(name, gameID) {
-        return that._model.joinGame(name, gameID)
+        return that._model.joinGame(name, gameID);
       },
 
       onCreateGameClick: function(name) {
         return that._model.createGame(name);
-      },
+      }
     });
 
     this.start = start;
   }
 });
-

@@ -13,7 +13,12 @@ module.exports = {
                    room: req.body.room,
                    locX: 64,
                    locY: 64,
-                   socket: req.socket.id},
+                   socket: req.socket.id,
+                   maxHealth: 3,
+                   curHealth: 3,
+                   speed: 5,
+                   weapon: 1,
+                   relics: 0},
                   function(err, player) {
       if (err) {
         console.log(err);
@@ -86,6 +91,18 @@ module.exports = {
 
         res.json(updatedPlayer.toJSON());
       });
+    });
+  },
+
+  adjustStat: function(req, res) {
+    updateObj = {}
+    updateObj[req.body.stat] = req.body.newValue;
+    Player.update(req.param('id'), updateObj, function (err, players) {
+      if (err) {
+        console.log(err);
+        res.json(err);
+        return;
+      }
     });
   },
 

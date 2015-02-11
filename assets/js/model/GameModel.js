@@ -20,6 +20,33 @@ define([
         that._player.installGameModelAdpt({
           onSpeedChange: function(newSpeed) {
             playerViewAdpt.onSpeedChange(newSpeed);
+            io.socket.put('/player/adjustStat/' + this.id,
+                          {stat: 'speed', newValue: newSpeed},
+                          function (player) {});
+          },
+
+          onMaxHealthChange: function(newMaxHealth) {
+            io.socket.put('/player/adjustStat/' + this.id,
+                          {stat: 'maxHealth', newValue: newMaxHealth},
+                          function (player) {});
+          },
+
+          onCurHealthChange: function(newCurHealth) {
+            io.socket.put('/player/adjustStat/' + this.id,
+                          {stat: 'curHealth', newValue: newCurHealth},
+                          function (player) {});
+          },
+
+          onWeaponChange: function(newWeapon) {
+            io.socket.put('/player/adjustStat/' + this.id,
+                          {stat: 'weapon', nnewValewValue: newWeapon},
+                          function (player) {});
+          },
+
+          onRelicsChange: function(newRelics) {
+            io.socket.put('/player/adjustStat/' + this.id,
+                          {stat: 'relics', newValue: newRelics},
+                          function (player) {});
           },
 
           onRoomChange: function(newRoom) {
@@ -57,6 +84,18 @@ define([
 
                 onRoomChange: function(newRoom) {
                   playerViewAdpt.setVisibility(newRoom === that._currentRoom.id);
+                },
+
+                onMaxHealthChange: function(newMaxHealth) {
+                },
+
+                onCurHealthChange: function(newCurHealth) {
+                },
+
+                onWeaponChange: function(newWeapon) {
+                },
+
+                onRelicsChange: function(newRelics) {
                 },
 
                 onPositionChange: function(newX, newY) {
@@ -164,6 +203,18 @@ define([
             playerViewAdpt.setVisibility(newRoom === that._currentRoom.id);
           },
 
+          onMaxHealthChange: function(newMaxHealth) {
+          },
+
+          onCurHealthChange: function(newCurHealth) {
+          },
+
+          onWeaponChange: function(newWeapon) {
+          },
+
+          onRelicsChange: function(newRelics) {
+          },
+
           onPositionChange: function(newX, newY) {
             if (player.room === that._currentRoom.id) {
               playerViewAdpt.setLocation(newX, newY);
@@ -195,6 +246,8 @@ define([
                  && o.id === that._currentRoom.id
                  && o.data.id !== that._player.id) {
         that._otherPlayers[o.data.id].setPosition(o.data.data.locX, o.data.data.locY);
+      } else if (o.verb === 'messaged' && o.data.verb === 'itemRemoved' && o.id === that._currentRoom.id) {
+        that._viewAdpt.removeItem(o.data.id);
       }
     });
   }

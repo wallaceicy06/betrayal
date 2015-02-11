@@ -7,7 +7,6 @@ define([
     this.x = x;
     this.y = y;
     this._gameModelAdpt.onPositionChange(x, y);
-    // io.socket.put('/player/' + this.id, {locX: this.x, locY: this.y}, function (player) {});
   }
 
   function installGameModelAdpt(gameModelAdpt) {
@@ -32,6 +31,46 @@ define([
       set: function(newSpeed) {
         this._speed = newSpeed;
         this._gameModelAdpt.onSpeedChange(this._speed);
+      }
+    });
+
+    Object.defineProperty(this, 'maxHealth', {
+      get: function() {
+        return this._maxHealth;
+      },
+      set: function(newVal) {
+        this._maxHealth = newVal;
+        this._gameModelAdpt.onMaxHealthChange(newVal);
+      }
+    });
+
+    Object.defineProperty(this, 'curHealth', {
+      get: function() {
+        return this._curHealth;
+      },
+      set: function(newVal) {
+        this._maxHealth = newVal;
+        this._gameModelAdpt.onCurHealthChange(newVal);
+      }
+    });
+
+    Object.defineProperty(this, 'weapon', {
+      get: function() {
+        return this._weapon;
+      },
+      set: function(newVal) {
+        this._weapon = newVal;
+        this._gameModelAdpt.onWeaponChange(newVal);
+      }
+    });
+
+    Object.defineProperty(this, 'relics', {
+      get: function() {
+        return this._relics;
+      },
+      set: function(newVal) {
+        this._maxHealth = newVal;
+        this._gameModelAdpt.onRelicsChange(newVal);
       }
     });
 
@@ -62,5 +101,9 @@ define([
     this.setPosition = setPosition.bind(this);
 
     this._speed = 5;
+    this._maxHealth = 3;
+    this._curHealth = 3;
+    this._weapon = 1;
+    this._relics = 0;
   }
 });
