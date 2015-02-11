@@ -15,10 +15,24 @@ define([
     var blueColor = 'blue';
 
     io.socket.get('/game/' + gameID, function (game) {
-      io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom, color: blueColor}, function (player) {
+      var color;
+      switch (game.players.length) {
+        case 0:
+          color = 'blue';
+          break;
+        case 1:
+          color = 'red';
+          break;
+        case 2:
+          color = 'green';
+          break;
+        default:
+          color = 'green';
+      }
+
+      io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom, color: color}, function (player) {
         that._player = new Player(player.id, player.name, player.color);
         that._player.installViewAdpt(that._viewAdpt.makePlayerViewAdpt(that._player));
-        console.log("Model: new player color is " + player.color);
         that._viewAdpt.changeColor(player.color);
         that._currentRoom = player.room;
         fetchRoom.call(that, that._currentRoom, function (room) {
