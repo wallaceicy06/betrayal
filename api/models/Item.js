@@ -10,6 +10,10 @@ module.exports = {
   attributes: {
     type: {type: 'string',
            required: true},
+    stat: {type: 'string',
+           required: true},
+    amount: {type: 'integer',
+             required: true},
     x: {type: 'integer',
         required: true},
     y: {type: 'integer',

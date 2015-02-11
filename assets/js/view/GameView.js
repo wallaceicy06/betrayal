@@ -119,9 +119,14 @@ define([
       },
 
       pickUpItem: function(item) {
+        if (this.attr('itemLock')) {
+          return;
+        }
+        this.attr({'itemLock' : true});
+        var thisPlayer = this;
         switch(item[0].obj.type) {
-          case "speedInc":
-            var increaseBy = 3;
+          case "SpeedInc":
+            var increaseBy = item[0].obj.amount;
 
             that._playerModelAdpt.onSpeedIncClick(increaseBy);
 
@@ -141,12 +146,12 @@ define([
               this._movement.y = this._movement.y - increaseBy;
             }
             break;
+          default:
+            that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
         }
-        /* Remove item from view */
-        that._items[item[0].obj.itemID].destroy();
-        /* Remove item from database */
-        io.socket.delete('/item/' + item[0].obj.itemID);
-        delete that._items[item[0].obj.itemID];
+        io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
+          thisPlayer.attr({'itemLock': false});
+        });
       }
 
     });
@@ -189,7 +194,10 @@ define([
   }
 
   function loadRoom(roomConfig) {
+    removeAllHusks.call(this);
+
     Crafty('RoomItem').each(function() { this.destroy(); });
+
     Crafty.background(roomConfig.background);
 
     setupBarriers.call(this, roomConfig.doors);
@@ -200,13 +208,22 @@ define([
                        y: this._playerModelAdpt.getY(),
                        doorLock: false});
 
+    for (var id in this._otherPlayerModelAdpts) {
+      var otherPlayer = this._otherPlayerModelAdpts[id];
+      if (otherPlayer.getRoom() == this._playerModelAdpt.getRoom()) {
+        makePlayerHusk.call(this, otherPlayer.getID(),
+                            otherPlayer.getX(), otherPlayer.getY(), otherPlayer.getColor());
+
+      }
+    }
+
     /* Enable player control once through door */
     this._player.enableControl();
   }
 
   function placeItems(items) {
     for (var i = 0; i < items.length; i++) {
-      var item = Crafty.e('SpeedInc').attr({x: items[i].x, y: items[y].y, type: items[i].type, itemID: items[i].id});
+      var item = Crafty.e(items[i].type).attr({x: items[i].x, y: items[i].y, type: items[i].type, stat: items[i].stat, amount: items[i].amount, itemID: items[i].id});
       this._items[items[i].id] = item;
     }
   }
@@ -215,6 +232,7 @@ define([
     this._playerModelAdpt = playerModelAdpt;
 
     this._player = Crafty.e('Player');
+    this._player.setColor(this._playerModelAdpt.getColor());
 
     return this._player;
   }
@@ -231,6 +249,33 @@ define([
      var husk = Crafty.e('PlayerHusk').attr({x: x, y: y});
      husk.setColor(color);
      this._husks[id] = husk;
+   }
+
+  function addOtherPlayer(playerModelAdpt) {
+    var that = this;
+
+    this._otherPlayerModelAdpts[playerModelAdpt.getID()] = playerModelAdpt;
+
+    var playerList = document.getElementById('player-list');
+
+    var li = document.createElement('li');
+    li.appendChild(document.createTextNode(playerModelAdpt.getName()));
+    playerList.appendChild(li);
+
+    return {
+      setLocation: function(newX, newY) {
+        that._husks[playerModelAdpt.getID()].attr({x: newX, y: newY});
+      },
+
+      setVisibility: function(visible) {
+        if (visible === true) {
+          makePlayerHusk.call(that, playerModelAdpt.getID(),
+                              playerModelAdpt.getX(), playerModelAdpt.getY(), playerModelAdpt.getColor());
+        } else {
+          removeHusk.call(that, playerModelAdpt.getID());
+        }
+      }
+    }
   }
 
   function removeAllHusks() {
@@ -241,12 +286,17 @@ define([
   }
 
   function removeHusk(id) {
-    this._husks[id].destroy();
-    delete this._husks[id];
+    if (this._husks[id] !== undefined) {
+      this._husks[id].destroy();
+      delete this._husks[id];
+    }
   }
 
-  function moveHusk(id, x, y) {
-    this._husks[id].attr({x: x, y: y});
+  function removeItem(id) {
+    if(id in this._items) {
+      this._items[id].destroy();
+      delete this._items[id];
+    }
   }
 
   function setGameOptions(games) {
@@ -258,10 +308,6 @@ define([
     games.forEach(function(v, i, a) {
       gameOptions.options.add(new Option(v.name, v.id));
     });
-  }
-
-  function changeColor(color) {
-    this._player.setColor(color);
   }
 
   function setupBarriers(gateways) {
@@ -332,20 +378,18 @@ define([
     this._gameModelAdpt = gameModelAdpt;
     this._player = null;
     this._playerModelAdpt = null;
+    this._otherPlayerModelAdpts = {};
     this._husks = {};
     this._items = {};
 
     initGUI.call(this);
     initCrafty.call(this);
 
-    this.addPlayerToList = addPlayerToList.bind(this);
-    this.changeColor = changeColor.bind(this);
+    this.addOtherPlayer = addOtherPlayer.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
-    this.makePlayerHusk = makePlayerHusk.bind(this);
-    this.moveHusk = moveHusk.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
-    this.removeHusk = removeHusk.bind(this);
+    this.removeItem = removeItem.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
     this.start = start.bind(this);
   }

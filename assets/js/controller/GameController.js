@@ -18,6 +18,10 @@ define([
     this._model = new GameModel({
       makePlayerViewAdpt: function(playerModel) {
         var playerView = that._view.makePlayerView({
+          getID: function() {
+            return playerModel.id;
+          },
+
           getSpeed: function() {
             return playerModel.speed;
           },
@@ -34,6 +38,14 @@ define([
             return playerModel.y;
           },
 
+          getRoom: function() {
+            return playerModel.room;
+          },
+
+          getColor: function() {
+            return playerModel.color;
+          },
+
           setPosition: function(x, y) {
             playerModel.setPosition(x, y);
           },
@@ -45,6 +57,26 @@ define([
           onSpeedDecClick: function() {
             playerModel.speed = playerModel.speed - 1;
           },
+
+          useItem: function(stat, amount) {
+            switch(stat) {
+              case "maxHealth":
+                playerModel.maxHealth = playerModel.maxHealth + amount;
+                break;
+              case "curHealth":
+                playerModel.curHealth = playerModel.curHealth + amount;
+                break;
+              case "weapon":
+                playerModel.weapon = playerModel.weapon + amount;
+                break;
+              case "relics":
+                playerModel.relics = playerModel.relics + amount;
+                break;
+              default:
+                console.log("Unknown stat: " + stat);
+                break;
+            }
+          }
         });
 
         return {
@@ -55,28 +87,45 @@ define([
         }
       },
 
-      addPlayer: function(name) {
-        that._view.addPlayerToList(name);
+      addOtherPlayer: function(playerModel) {
+        return that._view.addOtherPlayer({
+          getID: function() {
+            return playerModel.id;
+          },
+
+          getName: function() {
+            return playerModel.name;
+          },
+
+          getX: function() {
+            return playerModel.x;
+          },
+
+          getY: function() {
+            return playerModel.y;
+          },
+
+          getRoom: function() {
+            return playerModel.room;
+          },
+
+          getColor: function() {
+            return playerModel.color;
+          }
+        });
       },
+
 
       loadRoom: function(roomConfig) {
         that._view.loadRoom(roomConfig);
-      },
-
-      makePlayerHusk: function(id, x, y, color) {
-        that._view.makePlayerHusk(id, x, y, color);
       },
 
       removeAllHusks: function() {
         that._view.removeAllHusks();
       },
 
-      removeHusk: function(id) {
-        that._view.removeHusk(id);
-      },
-
-      moveHusk: function(id, x, y) {
-        that._view.moveHusk(id, x, y);
+      removeItem: function(id) {
+        that._view.removeItem(id);
       },
 
       setGames: function(games) {
@@ -102,15 +151,14 @@ define([
       },
 
       onJoinClick: function(name, gameID) {
-        return that._model.joinGame(name, gameID)
+        return that._model.joinGame(name, gameID);
       },
 
       onCreateGameClick: function(name) {
         return that._model.createGame(name);
-      },
+      }
     });
 
     this.start = start;
   }
 });
-

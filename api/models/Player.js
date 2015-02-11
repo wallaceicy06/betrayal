@@ -24,6 +24,16 @@ module.exports = {
              required: true},
     color: {type: 'string',
              required: true},
+    maxHealth: {type: 'integer',
+                required: true},
+    curHealth: {type: 'integer',
+                required: true},
+    weapon: {type: 'integer',
+             required: true},
+    relics: {type: 'integer',
+             required: true},
+    speed: {type: 'integer',
+            required: true}
   }
 };
 
