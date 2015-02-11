@@ -19,9 +19,10 @@ module.exports = {
         Item.destroy({id: req.param('id')}, function(err, items) {
           if (err) {
             console.log(err);
-          res.json(err);
-          return;
+            res.json(err);
+            return;
           }
+          res.json(items);
         });
       }
     });

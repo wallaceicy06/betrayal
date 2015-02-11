@@ -101,6 +101,11 @@ define([
       },
 
       pickUpItem: function(item) {
+        if (this.attr('itemLock')) {
+          return;
+        }
+        this.attr({'itemLock' : true});
+        var thisPlayer = this;
         switch(item[0].obj.type) {
           case "SpeedInc":
             var increaseBy = item[0].obj.amount;
@@ -126,11 +131,9 @@ define([
           default:
             that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
         }
-        /* Remove item from view */
-        //that._items[item[0].obj.itemID].destroy();
-        /* Remove item from database */
-        io.socket.delete('/item/' + item[0].obj.itemID);
-        //delete that._items[item[0].obj.itemID];
+        io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
+          thisPlayer.attr({'itemLock': false});
+        });
       }
 
     });
