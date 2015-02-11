@@ -49,7 +49,7 @@ define([
         io.socket.get('/player', function (err, jwr) {
           jwr.body.forEach(function (v, i, a) {
             if (v.id !== that._player.id) {
-              that._otherPlayers[v.id] = {id: v.id, room: v.room.id, locX: v.locX, locY: v.locY};
+              that._otherPlayers[v.id] = {id: v.id, room: v.room.id, locX: v.locX, locY: v.locY, color: v.color};
 
               that._viewAdpt.addPlayer(v.name);
 
@@ -148,7 +148,8 @@ define([
                                     name: o.data.name,
                                     locX: o.data.locX,
                                     locY: o.data.locY,
-                                    room: o.data.room};
+                                    room: o.data.room,
+                                    color: o.data.color};
 
         that._viewAdpt.addPlayer(o.data.name);
       } else if (o.verb === 'updated' && o.id !== that._player.id) {
