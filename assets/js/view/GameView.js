@@ -54,6 +54,7 @@ define([
       setColor: function(colorString) {
         console.log("Changing player color to " + colorString);
         var row = COLOR_TO_ROW[colorString];
+        this.sprite(0, row, 1, 1);
         this.reel('PlayerMovingRight',600, 0, row, 1);
         this.reel('PlayerMovingUp',   600, 1, row, 1);
         this.reel('PlayerMovingLeft', 600, 2, row, 1);
