@@ -13,7 +13,8 @@ module.exports = {
                    room: req.body.room,
                    locX: 64,
                    locY: 64,
-                   socket: req.socket.id},
+                   socket: req.socket.id,
+                   color: req.body.color,},
                   function(err, player) {
       if (err) {
         console.log(err);

@@ -51,7 +51,7 @@ define([
           /* Player View Adapter */
           onSpeedChange: function(newSpeed) {
             playerView.speed({x : newSpeed, y : newSpeed});
-          }
+          },
         }
       },
 
@@ -81,6 +81,10 @@ define([
 
       setGames: function(games) {
         that._view.setGameOptions(games);
+      },
+
+      changeColor: function(color) {
+        that._view.changeColor(color);
       }
     });
 

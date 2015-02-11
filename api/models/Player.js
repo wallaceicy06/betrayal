@@ -21,7 +21,9 @@ module.exports = {
     locY: {type: 'integer',
            required: true},
     socket: {type: 'string',
-             required: true}
+             required: true},
+    color: {type: 'string',
+             required: true},
   }
 };
 

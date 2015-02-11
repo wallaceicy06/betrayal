@@ -8,10 +8,12 @@ define([
   var TILE_WIDTH = 32;
   var ASSETS = {
     'sprites': {
-      'images/game/player.png': {
+      'images/game/players.png': {
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
-        'map': {'SpritePlayer': [0, 0]},
+        'map': {'SpritePlayerRed': [0, 0],
+                'SpritePlayerBlue': [0, 1],
+                'SpritePlayerGreen': [0, 2]},
       },
       'images/game/wall.png': {
         'tile': TILE_WIDTH,
@@ -30,19 +32,34 @@ define([
       }
     }
   }
+  var COLOR_TO_ROW = {
+    'red' : 0,
+    'blue' : 1,
+    'green' : 2
+  };
 
   function initCrafty() {
     var that = this;
 
     Crafty.c('PlayerHusk', {
       init: function() {
-        this.requires('2D, Canvas, SpritePlayer, SpriteAnimation');
+        this.requires('2D, Canvas, SpritePlayerRed, SpriteAnimation');
 
         this.reel('PlayerMovingRight',600, 0, 0, 1);
         this.reel('PlayerMovingUp',   600, 1, 0, 1);
         this.reel('PlayerMovingLeft', 600, 2, 0, 1);
         this.reel('PlayerMovingDown', 600, 3, 0, 1);
+      },
+
+      setColor: function(colorString) {
+        console.log("Changing player color to " + colorString);
+        var row = COLOR_TO_ROW[colorString];
+        this.reel('PlayerMovingRight',600, 0, row, 1);
+        this.reel('PlayerMovingUp',   600, 1, row, 1);
+        this.reel('PlayerMovingLeft', 600, 2, row, 1);
+        this.reel('PlayerMovingDown', 600, 3, row, 1);
       }
+
     });
 
     Crafty.c('Player', {
@@ -240,6 +257,10 @@ define([
     });
   }
 
+  function changeColor(color) {
+    this._player.setColor(color);
+  }
+
   function setupBarriers(gateways) {
     var widthInTiles = this._gameModelAdpt.getDimensions().width/TILE_WIDTH;
     var heightInTiles = this._gameModelAdpt.getDimensions().height/TILE_WIDTH;
@@ -315,6 +336,7 @@ define([
     initCrafty.call(this);
 
     this.addPlayerToList = addPlayerToList.bind(this);
+    this.changeColor = changeColor.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
     this.makePlayerHusk = makePlayerHusk.bind(this);

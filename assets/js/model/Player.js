@@ -13,7 +13,7 @@ define([
     this._playerViewAdpt = playerViewAdpt;
   }
 
-  return function Player(id, name) {
+  return function Player(id, name, color) {
     Object.defineProperty(this, 'id', {
       value: id,
       writable: false
@@ -21,6 +21,11 @@ define([
 
     Object.defineProperty(this, 'name', {
       value: name,
+      writable: false
+    });
+
+    Object.defineProperty(this, 'color', {
+      value: color,
       writable: false
     });
 

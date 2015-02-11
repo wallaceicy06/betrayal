@@ -12,12 +12,15 @@ define([
   function joinGame(playerName, gameID) {
     var that = this;
 
-    io.socket.get('/game/' + gameID, function (game) {
-      io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom}, function (player) {
-        that._player = new Player(player.id, player.name);
-        that._player.installViewAdpt(that._viewAdpt.makePlayerViewAdpt(that._player));
-        that._currentRoom = player.room;
+    var blueColor = 'blue';
 
+    io.socket.get('/game/' + gameID, function (game) {
+      io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom, color: blueColor}, function (player) {
+        that._player = new Player(player.id, player.name, player.color);
+        that._player.installViewAdpt(that._viewAdpt.makePlayerViewAdpt(that._player));
+        console.log("Model: new player color is " + player.color);
+        that._viewAdpt.changeColor(player.color);
+        that._currentRoom = player.room;
         fetchRoom.call(that, that._currentRoom, function (room) {
           that._currentRoom = room;
           var doors = {};
