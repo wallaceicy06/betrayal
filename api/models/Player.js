@@ -7,6 +7,8 @@
 
 module.exports = {
 
+  autoWatch: false,
+
   attributes: {
     name: {type: 'string',
            required: true},

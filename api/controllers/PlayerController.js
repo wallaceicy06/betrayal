@@ -6,6 +6,7 @@
  */
 
 module.exports = {
+
 	create: function(req, res) {
     Player.create({name: req.body.name,
                    game: req.body.game,
@@ -27,18 +28,20 @@ module.exports = {
 
       /* Subscribe this player to all other players in game */
       Player.find({game: player.game}, function(err, players) {
-        if (err) {
-          console.log(err);
-        }
+        Player.find().where({game: player.game}).exec(function (err, players) {
+          if (err) {
+            console.log(err);
+          }
 
-        /* Remove this player from players to prevent it from subscribing to itself? */
-        Player.subscribe(req.socket, players);
-        players.forEach(function(v, i, a) {
-          Player.subscribe(v.socket, player);
+          /* Remove this player from players to prevent it from subscribing to itself? */
+          Player.subscribe(req.socket, players);
+          players.forEach(function(v, i, a) {
+            Player.subscribe(v.socket, player);
+          });
+
+          /* Publish player creation */
+          Player.publishCreate(player);
         });
-
-        /* Publish player creation */
-        Player.publishCreate(player);
       });
 
       res.json(player.toJSON());
@@ -58,7 +61,6 @@ module.exports = {
         return;
       }
 
-      //Player.publishUpdate(updatedPlayer.id, {locX: updatedPlayer.locX, locY : updatedPlayer.locY});
       Room.message(updatedPlayer.room, {id: updatedPlayer.id, verb: 'playerUpdated', data: {locX: updatedPlayer.locX, locY: updatedPlayer.locY}});
 
       res.json(updatedPlayer.toJSON());

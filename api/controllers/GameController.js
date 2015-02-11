@@ -29,6 +29,13 @@ var GATEWAYS = [
 var roomNumsToIDs = {};
 
 module.exports = {
+
+  findOne: function(req, res) {
+    Game.findOne(req.params.id).populate('rooms').populate('players').populate('startingRoom').exec(function(err, game) {
+      res.json(game);
+    });
+  },
+
 	create: function(req, res) {
     Game.create({name: req.body.name},
                  function(err, game) {
@@ -53,18 +60,17 @@ module.exports = {
       }
 
       sails.q.all(promisesArray).then(function() {
-        //game.startingRoom = roomNumsToIDs[0];
         Game.update(game.id, {startingRoom: roomNumsToIDs[1]}, function(err, game) {});
 
         for (var i = 0; i < GATEWAYS.length; i ++) {
-          /* Create gateway from GATEWAYS list */
+          /* Create gateway from GATEWAYS list. */
           var gateway = {}
           gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
           gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
           gateway['direction'] = GATEWAYS[i]['direction'];
           Gateway.create(gateway, function(err, gateway) {});
 
-          /* Create corresponding gateway in other direction */
+          /* Create corresponding gateway in other direction. */
           gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
           gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
           gateway['direction'] = OPPOSITE_DIRECTIONS[GATEWAYS[i]['direction']];
