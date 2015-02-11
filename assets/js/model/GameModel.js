@@ -14,8 +14,23 @@ define([
 
     io.socket.get('/game/' + gameID, function (game) {
       io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom}, function (player) {
-        that._player = new Player(player.id, player.name);
-        that._player.installViewAdpt(that._viewAdpt.makePlayerViewAdpt(that._player));
+        that._player = new Player(player.id, player.name, player.room.id, {x: 64, y: 64});
+
+        var playerViewAdpt = that._viewAdpt.makePlayerViewAdpt(that._player);
+        that._player.installGameModelAdpt({
+          onSpeedChange: function(newSpeed) {
+            playerViewAdpt.onSpeedChange(newSpeed);
+          },
+
+          onRoomChange: function(newRoom) {
+            /* Do nothing. */
+          },
+
+          onPositionChange: function(newX, newY) {
+            /* Do nothing */
+          }
+        });
+
         that._currentRoom = player.room;
 
         fetchRoom.call(that, that._currentRoom, function (room) {
@@ -32,13 +47,28 @@ define([
         io.socket.get('/player', function (err, jwr) {
           jwr.body.forEach(function (v, i, a) {
             if (v.id !== that._player.id) {
-              that._otherPlayers[v.id] = {id: v.id, room: v.room.id, locX: v.locX, locY: v.locY};
+              var player = new Player(v.id, v.name, v.room.id, {x: v.locX, y: v.locY})
 
-              that._viewAdpt.addPlayer(v.name);
+              var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
+              player.installGameModelAdpt({
+                onSpeedChange: function(newSpeed) {
+                  /* Do nothing. */
+                },
 
-              if (v.room.id === that._currentRoom.id) {
-                that._viewAdpt.makePlayerHusk(v.id, v.locX, v.locY); // draw other player
-              }
+                onRoomChange: function(newRoom) {
+                  playerViewAdpt.setVisibility(newRoom === that._currentRoom.id);
+                },
+
+                onPositionChange: function(newX, newY) {
+                  if (player.room === that._currentRoom.id) {
+                    playerViewAdpt.setLocation(newX, newY);
+                  }
+                }
+              });
+
+              that._otherPlayers[v.id] = player;
+
+              playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
             }
           });
         });
@@ -85,6 +115,7 @@ define([
       }
 
       that._currentRoom = room;
+      that._player.room = room.id;
       var roomConfig = {background: room.background, doors: doors, items: room.items};
 
       io.socket.put('/player/changeRoom/' + that._player.id, {room: that._currentRoom.id}, function (player) {
@@ -109,14 +140,6 @@ define([
 
     io.socket.get('/room/' + roomID, function (room) {
 
-      that._viewAdpt.removeAllHusks();
-
-      for (var p in that._otherPlayers) {
-        if (that._otherPlayers[p].room === room.id) {
-          that._viewAdpt.makePlayerHusk(that._otherPlayers[p].id, that._otherPlayers[p].locX, that._otherPlayers[p].locY); // draw other player
-        }
-      }
-
       cb(room);
     });
   }
@@ -127,13 +150,29 @@ define([
     io.socket.on('player', function(o) {
       if (o.verb === 'created' && o.id !== that._player.id) {
         console.log('created player event');
-        that._otherPlayers[o.id] = {id: o.id,
-                                    name: o.data.name,
-                                    locX: o.data.locX,
-                                    locY: o.data.locY,
-                                    room: o.data.room};
+        var player =  new Player(o.id,
+                                 o.data.name,
+                                 o.data.room,
+                                 {x: o.data.locX, y: o.data.locY});
 
-        that._viewAdpt.addPlayer(o.data.name);
+        var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
+        player.installGameModelAdpt({
+          onSpeedChange: function(newSpeed) {
+            /* Do nothing. */
+          },
+
+          onRoomChange: function(newRoom) {
+            playerViewAdpt.setVisibility(newRoom === that._currentRoom.id);
+          },
+
+          onPositionChange: function(newX, newY) {
+            if (player.room === that._currentRoom.id) {
+              playerViewAdpt.setLocation(newX, newY);
+            }
+          }
+        });
+
+        playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
       } else if (o.verb === 'updated' && o.id !== that._player.id) {
         /*if (o.data.locX !== undefined && o.data.locY !== undefined) {
           _otherPlayers[o.id].locX = o.data.locX;
@@ -142,30 +181,32 @@ define([
         if (o.data.room !== undefined) {
           that._otherPlayers[o.id].room = o.data.room;
         }
-        if (that._otherPlayers[o.id].room === that._currentRoom.id) {
-          that._viewAdpt.moveHusk(o.id, o.data.locX, o.data.locY);
-        }
+        // if (that._otherPlayers[o.id].room === that._currentRoom.id) {
+          // that._viewAdpt.moveHusk(o.id, o.data.locX, o.data.locY);
+        // }
+        that._otherPlayers[o.id].x = o.data.locX;
+        that._otherPlayers[o.id].y = o.data.locY;
       }
     });
 
     io.socket.on('room', function(o) {
       if (o.verb === 'addedTo' && o.addedId !== that._player.id && o.id === that._currentRoom.id) {
-        io.socket.get('/player/' + o.addedId, function (resData) {
-          //_otherPlayers[resData.id] = resData;
-          that._viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY); // draw other player
-        });
+        // io.socket.get('/player/' + o.addedId, function (resData) {
+          // //_otherPlayers[resData.id] = resData;
+          // that._viewAdpt.makePlayerHusk(resData.id, resData.locX, resData.locY); // draw other player
+        // });
       } else if (o.verb === 'removedFrom' && o.id === that._currentRoom.id) {
-        io.socket.get('/player/' + o.removedId, function (resData) {
-          //delete _otherPlayers[resData.id];
-          that._viewAdpt.removeHusk(resData.id); // remove other player image
-        });
+        // io.socket.get('/player/' + o.removedId, function (resData) {
+          // //delete _otherPlayers[resData.id];
+          // that._viewAdpt.removeHusk(resData.id); // remove other player image
+        // });
       } else if (o.verb === 'messaged' && o.data.verb === 'playerUpdated'
                  && o.data.id in that._otherPlayers
                  && o.id === that._currentRoom.id
                  && o.data.id !== that._player.id) {
-        that._otherPlayers[o.data.id].locX = o.data.data.locX;
-        that._otherPlayers[o.data.id].locY = o.data.data.locY;
-        that._viewAdpt.moveHusk(o.data.id, that._otherPlayers[o.data.id].locX, that._otherPlayers[o.data.id].locY);
+        that._otherPlayers[o.data.id].x = o.data.data.locX;
+        that._otherPlayers[o.data.id].y = o.data.data.locY;
+        // that._viewAdpt.moveHusk(o.data.id, that._otherPlayers[o.data.id].x, that._otherPlayers[o.data.id].y);
       }
     });
   }

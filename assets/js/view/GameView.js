@@ -171,7 +171,10 @@ define([
   }
 
   function loadRoom(roomConfig) {
+    removeAllHusks.call(this);
+
     Crafty('RoomItem').each(function() { this.destroy(); });
+
     Crafty.background(roomConfig.background);
 
     setupBarriers.call(this, roomConfig.doors);
@@ -181,6 +184,15 @@ define([
     this._player.attr({x: this._playerModelAdpt.getX(),
                        y: this._playerModelAdpt.getY(),
                        doorLock: false});
+
+    for (var id in this._otherPlayerModelAdpts) {
+      var otherPlayer = this._otherPlayerModelAdpts[id];
+      if (otherPlayer.getRoom() == this._playerModelAdpt.getRoom()) {
+        makePlayerHusk.call(this, otherPlayer.getID(),
+                            otherPlayer.getX(), otherPlayer.getY());
+
+      }
+    }
 
     /* Enable player control once through door */
     this._player.enableControl();
@@ -209,6 +221,33 @@ define([
     playerList.appendChild(li);
   }
 
+  function addOtherPlayer(playerModelAdpt) {
+    var that = this;
+
+    this._otherPlayerModelAdpts[playerModelAdpt.getID()] = playerModelAdpt;
+
+    var playerList = document.getElementById('player-list');
+
+    var li = document.createElement('li');
+    li.appendChild(document.createTextNode(playerModelAdpt.getName()));
+    playerList.appendChild(li);
+
+    return {
+      setLocation: function(newX, newY) {
+        this._husks[playerModelAdpt.getID()].attr({x: newX, y: newY});
+      },
+
+      setVisibility: function(visible) {
+        if (visible === true) {
+          makePlayerHusk.call(that, playerModelAdpt.getID(),
+                              playerModelAdpt.getX(), playerModelAdpt.getY());
+        } else {
+          removeHusk.call(that, playerModelAdpt.getID());
+        }
+      }
+    }
+  }
+
   function makePlayerHusk(id, x, y) {
     this._husks[id] = Crafty.e('PlayerHusk').attr({x: x, y: y});
   }
@@ -223,10 +262,6 @@ define([
   function removeHusk(id) {
     this._husks[id].destroy();
     delete this._husks[id];
-  }
-
-  function moveHusk(id, x, y) {
-    this._husks[id].attr({x: x, y: y});
   }
 
   function setGameOptions(games) {
@@ -308,19 +343,16 @@ define([
     this._gameModelAdpt = gameModelAdpt;
     this._player = null;
     this._playerModelAdpt = null;
+    this._otherPlayerModelAdpts = {};
     this._husks = {};
     this._items = {};
 
     initGUI.call(this);
     initCrafty.call(this);
 
-    this.addPlayerToList = addPlayerToList.bind(this);
+    this.addOtherPlayer = addOtherPlayer.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
-    this.makePlayerHusk = makePlayerHusk.bind(this);
-    this.moveHusk = moveHusk.bind(this);
-    this.removeAllHusks = removeAllHusks.bind(this);
-    this.removeHusk = removeHusk.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
     this.start = start.bind(this);
   }

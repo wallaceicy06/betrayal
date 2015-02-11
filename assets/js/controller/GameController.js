@@ -18,6 +18,10 @@ define([
     this._model = new GameModel({
       makePlayerViewAdpt: function(playerModel) {
         var playerView = that._view.makePlayerView({
+          getID: function() {
+            return playerModel.id;
+          },
+
           getSpeed: function() {
             return playerModel.speed;
           },
@@ -32,6 +36,10 @@ define([
 
           getY: function() {
             return playerModel.y;
+          },
+
+          getRoom: function() {
+            return playerModel.room;
           },
 
           setPosition: function(x, y) {
@@ -55,16 +63,33 @@ define([
         }
       },
 
-      addPlayer: function(name) {
-        that._view.addPlayerToList(name);
+      addOtherPlayer: function(playerModel) {
+        return that._view.addOtherPlayer({
+          getID: function() {
+            return playerModel.id;
+          },
+
+          getName: function() {
+            return playerModel.name;
+          },
+
+          getX: function() {
+            return playerModel.x;
+          },
+
+          getY: function() {
+            return playerModel.y;
+          },
+
+          getRoom: function() {
+            return playerModel.room;
+          }
+        });
       },
+
 
       loadRoom: function(roomConfig) {
         that._view.loadRoom(roomConfig);
-      },
-
-      makePlayerHusk: function(id, x, y) {
-        that._view.makePlayerHusk(id, x, y);
       },
 
       removeAllHusks: function() {
@@ -73,10 +98,6 @@ define([
 
       removeHusk: function(id) {
         that._view.removeHusk(id);
-      },
-
-      moveHusk: function(id, x, y) {
-        that._view.moveHusk(id, x, y);
       },
 
       setGames: function(games) {
