@@ -101,6 +101,22 @@ define([
             return playerModel.speed;
           },
 
+          getMaxHealth: function() {
+            return playerModel.maxHealth;
+          },
+
+          getCurHealth: function() {
+            return playerModel.curHealth;
+          },
+
+          getWeapon: function() {
+            return playerModel.weapon;
+          },
+
+          getRelics: function() {
+            return playerModel.relics;
+          },
+
           getX: function() {
             return playerModel.x;
           },

@@ -104,15 +104,19 @@ define([
                 },
 
                 onMaxHealthChange: function(newMaxHealth) {
+                  playerViewAdpt.onMaxHealthChange(newMaxHealth);
                 },
 
                 onCurHealthChange: function(newCurHealth) {
+                  playerViewAdpt.onCurHealthChange(newCurHealth);
                 },
 
                 onWeaponChange: function(newWeapon) {
+                  playerViewAdpt.onWeaponChange(newWeapon);
                 },
 
                 onRelicsChange: function(newRelics) {
+                  playerViewAdpt.onRelicsChange(newRelics);
                 },
 
                 onPositionChange: function(newX, newY) {
@@ -219,15 +223,19 @@ define([
           },
 
           onMaxHealthChange: function(newMaxHealth) {
+            playerViewAdpt.onMaxHealthChange(newMaxHealth);
           },
 
           onCurHealthChange: function(newCurHealth) {
+            playerViewAdpt.onCurHealthChange(newCurHealth);
           },
 
           onWeaponChange: function(newWeapon) {
+            playerViewAdpt.onWeaponChange(newWeapon);
           },
 
           onRelicsChange: function(newRelics) {
+            playerViewAdpt.onRelicsChange(newRelics);
           },
 
           onPositionChange: function(newX, newY) {

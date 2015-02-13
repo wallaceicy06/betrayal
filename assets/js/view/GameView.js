@@ -277,8 +277,28 @@ define([
      * player
      */
     return {
+      onRelicsChange: function(newRelics) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-relics')[0].innerHTML = ('relics: ' + newRelics);
+      },
+
+
+      onWeaponChange: function(newWeapon) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-weapon')[0].innerHTML = ('weapon: ' + newWeapon);
+      },
+
+      onCurHealthChange: function(newCurHealth) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-cur-health')[0].innerHTML = ('cur health: ' + newCurHealth);
+      },
+
+      onMaxHealthChange: function(newMaxHealth) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-max-health')[0].innerHTML = ('max health: ' + newMaxHealth);
+      },
+
       onSpeedChange: function(newSpeed) {
-        console.log('updating ' + playerModelAdpt.getName() + ' speed to ' + newSpeed);
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('li.player-speed')[0].innerHTML = ('speed: ' + newSpeed);
       },
