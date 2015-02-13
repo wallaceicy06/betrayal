@@ -257,26 +257,26 @@ define([
     var playerMaxHealth = document.createElement('li');
     playerMaxHealth.className = 'player-max-health';
     playerMaxHealth.appendChild(
-        document.createTextNode('Max Health: ' + playerModelAdpt.getMaxHealth()));
+        document.createTextNode('max health: ' + playerModelAdpt.getMaxHealth()));
     playerStats.appendChild(playerMaxHealth);
 
     var playerCurHealth = document.createElement('li');
     playerCurHealth.className = 'player-cur-health';
     playerCurHealth.appendChild(
-        document.createTextNode('Cur Health: ' + playerModelAdpt.getCurHealth()));
+        document.createTextNode('cur health: ' + playerModelAdpt.getCurHealth()));
     playerStats.appendChild(playerCurHealth);
 
     var playerWeapon = document.createElement('li');
     playerWeapon.className = 'player-weapon';
     playerWeapon.appendChild(
-        document.createTextNode('Weapon: ' + playerModelAdpt.getWeapon()));
+        document.createTextNode('weapon: ' + playerModelAdpt.getWeapon()));
     playerStats.appendChild(playerWeapon);
 
     var playerRelics = document.createElement('li');
     playerRelics.className = 'player-relics';
     playerRelics.appendChild(
-        document.createTextNode('Relics: ' + playerModelAdpt.getRelics()));
-    playerStats.appendChild(playerRelics);    
+        document.createTextNode('relics: ' + playerModelAdpt.getRelics()));
+    playerStats.appendChild(playerRelics);
 
     player.appendChild(playerStats);
 
