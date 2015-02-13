@@ -248,6 +248,13 @@ define([
         if (o.data.room !== undefined) {
           that._otherPlayers[o.id].room = o.data.room;
         }
+        else {  //stat update
+          for (var key in o.data) {
+            if (key !== "updatedAt") {
+              that._otherPlayers[o.id][key] = o.data[key];
+            }
+          }
+        }
       }
     });
 
