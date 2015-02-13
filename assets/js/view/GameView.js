@@ -254,6 +254,30 @@ define([
         document.createTextNode('speed: ' + playerModelAdpt.getSpeed()));
     playerStats.appendChild(playerSpeed);
 
+    var playerMaxHealth = document.createElement('li');
+    playerMaxHealth.className = 'player-max-health';
+    playerMaxHealth.appendChild(
+        document.createTextNode('Max Health: ' + playerModelAdpt.getMaxHealth()));
+    playerStats.appendChild(playerMaxHealth);
+
+    var playerCurHealth = document.createElement('li');
+    playerCurHealth.className = 'player-cur-health';
+    playerCurHealth.appendChild(
+        document.createTextNode('Cur Health: ' + playerModelAdpt.getCurHealth()));
+    playerStats.appendChild(playerCurHealth);
+
+    var playerWeapon = document.createElement('li');
+    playerWeapon.className = 'player-weapon';
+    playerWeapon.appendChild(
+        document.createTextNode('Weapon: ' + playerModelAdpt.getWeapon()));
+    playerStats.appendChild(playerWeapon);
+
+    var playerRelics = document.createElement('li');
+    playerRelics.className = 'player-relics';
+    playerRelics.appendChild(
+        document.createTextNode('Relics: ' + playerModelAdpt.getRelics()));
+    playerStats.appendChild(playerRelics);    
+
     player.appendChild(playerStats);
 
     playerList.appendChild(player);
