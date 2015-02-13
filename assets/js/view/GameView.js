@@ -237,12 +237,23 @@ define([
     return this._player;
   }
 
-  function addPlayerToList(name) {
+  function addPlayerToList(playerModelAdpt) {
     var playerList = document.getElementById('player-list');
 
-    var li = document.createElement('li');
-    li.appendChild(document.createTextNode(name));
-    playerList.appendChild(li);
+    var player = document.createElement('li');
+    player.style.cssText = 'color: ' + playerModelAdpt.getColor() + ';';
+    player.appendChild(document.createTextNode(playerModelAdpt.getName()));
+
+    var playerStats = document.createElement('ul');
+
+    var playerSpeed = document.createElement('li');
+    playerSpeed.appendChild(
+        document.createTextNode('speed: ' + playerModelAdpt.getSpeed()));
+    playerStats.appendChild(playerSpeed);
+
+    player.appendChild(playerStats);
+
+    playerList.appendChild(player);
   }
 
   function makePlayerHusk(id, x, y, color) {
@@ -256,11 +267,7 @@ define([
 
     this._otherPlayerModelAdpts[playerModelAdpt.getID()] = playerModelAdpt;
 
-    var playerList = document.getElementById('player-list');
-
-    var li = document.createElement('li');
-    li.appendChild(document.createTextNode(playerModelAdpt.getName()));
-    playerList.appendChild(li);
+    addPlayerToList.call(this, playerModelAdpt);
 
     return {
       setLocation: function(newX, newY) {
