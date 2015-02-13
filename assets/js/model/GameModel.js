@@ -96,7 +96,7 @@ define([
               var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
               player.installGameModelAdpt({
                 onSpeedChange: function(newSpeed) {
-                  /* Do nothing. */
+                  playerViewAdpt.onSpeedChange(newSpeed);
                 },
 
                 onRoomChange: function(newRoom) {
@@ -211,7 +211,7 @@ define([
         var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
         player.installGameModelAdpt({
           onSpeedChange: function(newSpeed) {
-            /* Do nothing. */
+            playerViewAdpt.onSpeedChange(newSpeed);
           },
 
           onRoomChange: function(newRoom) {

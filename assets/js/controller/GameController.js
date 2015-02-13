@@ -119,7 +119,6 @@ define([
         });
       },
 
-
       loadRoom: function(roomConfig) {
         that._view.loadRoom(roomConfig);
       },

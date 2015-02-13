@@ -242,11 +242,14 @@ define([
 
     var player = document.createElement('li');
     player.style.cssText = 'color: ' + playerModelAdpt.getColor() + ';';
+    player.id = playerModelAdpt.getID();
+    player.className = 'player-list-item';
     player.appendChild(document.createTextNode(playerModelAdpt.getName()));
 
     var playerStats = document.createElement('ul');
 
     var playerSpeed = document.createElement('li');
+    playerSpeed.className = 'player-speed';
     playerSpeed.appendChild(
         document.createTextNode('speed: ' + playerModelAdpt.getSpeed()));
     playerStats.appendChild(playerSpeed);
@@ -267,9 +270,19 @@ define([
 
     this._otherPlayerModelAdpts[playerModelAdpt.getID()] = playerModelAdpt;
 
-    addPlayerToList.call(this, playerModelAdpt);
+    var playerListItem = addPlayerToList.call(this, playerModelAdpt);
 
+    /*
+     * TODO move some of this back to the controller to match the local
+     * player
+     */
     return {
+      onSpeedChange: function(newSpeed) {
+        console.log('updating ' + playerModelAdpt.getName() + ' speed to ' + newSpeed);
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-speed')[0].innerHTML = ('speed: ' + newSpeed);
+      },
+
       setLocation: function(newX, newY) {
         that._husks[playerModelAdpt.getID()].attr({x: newX, y: newY});
       },
