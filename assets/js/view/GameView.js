@@ -8,7 +8,7 @@ define([
   var TILE_WIDTH = 32;
   var ASSETS = {
     'sprites': {
-      'images/game/players.png': {
+      'images/game/player_sprites.png': {
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpritePlayerRed': [0, 0],
