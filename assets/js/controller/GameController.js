@@ -97,6 +97,10 @@ define([
             return playerModel.name;
           },
 
+          getSpeed: function() {
+            return playerModel.speed;
+          },
+
           getX: function() {
             return playerModel.x;
           },
