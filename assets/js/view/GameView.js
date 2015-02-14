@@ -229,12 +229,42 @@ define([
   }
 
   function makePlayerView(playerModelAdpt) {
+    var that = this;
+
     this._playerModelAdpt = playerModelAdpt;
 
     this._player = Crafty.e('Player');
     this._player.setColor(this._playerModelAdpt.getColor());
 
-    return this._player;
+    addPlayerToList.call(this, playerModelAdpt);
+
+    return {
+      setRelics: function(newRelics) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-relics')[0].innerHTML = ('relics: ' + newRelics);
+      },
+
+      setWeapon: function(newWeapon) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-weapon')[0].innerHTML = ('weapon: ' + newWeapon);
+      },
+
+      setCurHealth: function(newCurHealth) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-cur-health')[0].innerHTML = ('cur health: ' + newCurHealth);
+      },
+
+      setMaxHealth: function(newMaxHealth) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-max-health')[0].innerHTML = ('max health: ' + newMaxHealth);
+      },
+
+      setSpeed: function(newSpeed) {
+        that._player.speed({x: newSpeed, y: newSpeed});
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('li.player-speed')[0].innerHTML = ('speed: ' + newSpeed);
+      }
+    }
   }
 
   function addPlayerToList(playerModelAdpt) {

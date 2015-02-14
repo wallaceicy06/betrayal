@@ -1,7 +1,8 @@
 define([
+    'jquery',
     'model/GameModel',
     'view/GameView'
-], function(GameModel, GameView) {
+], function($, GameModel, GameView) {
   'use strict';
 
   function start() {
@@ -18,12 +19,32 @@ define([
     this._model = new GameModel({
       makePlayerViewAdpt: function(playerModel) {
         var playerView = that._view.makePlayerView({
+          getName: function() {
+            return playerModel.name;
+          },
+
           getID: function() {
             return playerModel.id;
           },
 
           getSpeed: function() {
             return playerModel.speed;
+          },
+
+          getMaxHealth: function() {
+            return playerModel.maxHealth;
+          },
+
+          getCurHealth: function() {
+            return playerModel.curHealth;
+          },
+
+          getWeapon: function() {
+            return playerModel.weapon;
+          },
+
+          getRelics: function() {
+            return playerModel.relics;
           },
 
           setSpeed: function(speed) {
@@ -82,8 +103,24 @@ define([
         return {
           /* Player View Adapter */
           onSpeedChange: function(newSpeed) {
-            playerView.speed({x : newSpeed, y : newSpeed});
+            playerView.setSpeed(newSpeed);
           },
+
+          onRelicsChange: function(newRelics) {
+            playerView.setRelics(newRelics);
+          },
+
+          onWeaponChange: function(newWeapon) {
+            playerView.setWeapon(newWeapon);
+          },
+
+          onCurHealthChange: function(newCurHealth) {
+            playerView.setCurHealth(newCurHealth);
+          },
+
+          onMaxHealthChange: function(newMaxHealth) {
+            playerView.setMaxHealth(newMaxHealth);
+          }
         }
       },
 
