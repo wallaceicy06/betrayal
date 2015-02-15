@@ -76,6 +76,19 @@ module.exports = {
           gateway['direction'] = OPPOSITE_DIRECTIONS[GATEWAYS[i]['direction']];
           Gateway.create(gateway, function(err, gateway) {});
         }
+
+        /* Randomly place items */
+        for (var i = 0; i < 6; i++) {
+          /* Select a random room */
+          var roomNum = Math.floor((Math.random() * Object.keys(roomNumsToIDs).length) + 1);
+          /* Select random x and y coordinates */
+          var x = Math.floor((Math.random() * 512) + 128); //Allow items from x = 128 to x = 640
+          var y = Math.floor((Math.random() * 384) + 128); //Allow items from y = 128 to y = 512
+          /* TODO: Select a random item type */
+
+          /* Create item */
+          Item.create({type: 'SpeedInc', stat: 'speed', amount: 1, room: roomNumsToIDs[roomNum], x: x, y: y}, function(err, item) {});
+        }
       });
 
 
