@@ -328,7 +328,29 @@ define([
       },
 
       setLocation: function(newX, newY) {
-        that._husks[playerModelAdpt.getID()].attr({x: newX, y: newY});
+        var husk = that._husks[playerModelAdpt.getID()];
+
+        var oldX = husk.x;
+        var oldY = husk.y;
+
+        var deltaX = newX - oldX;
+        var deltaY = newY - oldY;
+
+        if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+          if (deltaX > 0) {
+            husk.animate('PlayerMovingRight', -1);
+          } else if (deltaX < 0) {
+            husk.animate('PlayerMovingLeft', -1);
+          }
+        } else {
+          if (deltaY > 0) {
+            husk.animate('PlayerMovingDown', -1);
+          } else if (deltaY < 0) {
+            husk.animate('PlayerMovingUp', -1);
+          }
+        }
+
+        husk.attr({x: newX, y: newY});
       },
 
       setVisibility: function(visible) {
