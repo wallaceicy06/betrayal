@@ -291,6 +291,10 @@ define([
         that._viewAdpt.removeItem(o.data.id);
       }
     });
+
+    io.socket.on('game', function(o) {
+      console.log(o);
+    });
   }
 
   return function GameModel(viewAdpt) {
