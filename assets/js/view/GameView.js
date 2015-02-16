@@ -166,7 +166,31 @@ define([
       init: function() {
         this.requires('Item, SpriteSpeedInc');
       }
-    })
+    });
+
+    Crafty.c('MaxHealth', {
+      init: function() {
+        this.requires('Item, SpriteMaxHealth');
+      }
+    });
+
+    Crafty.c('CurHealth', {
+      init: function() {
+        this.requires('Item, SpriteCurHealth');
+      }
+    });
+
+    Crafty.c('Weapon', {
+      init: function() {
+        this.requires('Item, SpriteWeapon');
+      }
+    });
+
+    Crafty.c('Relic', {
+      init: function() {
+        this.requires('Item, SpriteRelic');
+      }
+    });
 
     Crafty.c('Wall', {
       init: function() {
