@@ -326,7 +326,9 @@ define([
     });
 
     Crafty.bind('KeyDown', function(e) {
-      if (e.key == Crafty.keys.M) {
+      var inputInFocus = $('input').is(':focus');
+
+      if (!inputInFocus && e.key == Crafty.keys.M) {
         if (that._mapEnabled) {
           that._gameModelAdpt.onDisableMap();
         } else {
