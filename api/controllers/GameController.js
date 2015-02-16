@@ -11,10 +11,10 @@ var DIMENSIONS = {
   };
 
 var ROOMS = [
-    {roomNum: 1, name: 'blue', background: '#6699FF'},
-    {roomNum: 2, name: 'black', background: '#FFFFFF'},
-    {roomNum: 3, name: 'yellow', background: '#FFFF99'},
-    {roomNum: 4, name: 'green', background: '#00FFCC'}
+    {roomNum: 1, name: 'blue', background: '#6699FF', furniture: [{type: 'Chair', x: 224, y: 32}]},
+    {roomNum: 2, name: 'black', background: '#FFFFFF', furniture: []},
+    {roomNum: 3, name: 'yellow', background: '#FFFF99', furniture: []},
+    {roomNum: 4, name: 'green', background: '#00FFCC', furniture: []}
   ];
 
 var GATEWAYS = [
@@ -88,6 +88,16 @@ module.exports = {
           gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
           gateway['direction'] = OPPOSITE_DIRECTIONS[GATEWAYS[i]['direction']];
           Gateway.create(gateway, function(err, gateway) {});
+        }
+
+
+        /* Create furniture for all rooms */
+        for (var i = 0; i < ROOMS.length; i++) {
+          for (var j = 0; j < ROOMS[i].furniture.length; j++) {
+            var furn = ROOMS[i].furniture[j];
+            furn['room'] = roomNumsToIDs[ROOMS[i][roomNum]];
+            Furniture.create(furn, function(err, room) {});
+          }
         }
 
         /* Randomly place items */

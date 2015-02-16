@@ -25,7 +25,9 @@ module.exports = {
     background: {type: 'string',
                  required: true},
     items: {collection: 'item',
-            via: 'room'}
+            via: 'room'},
+    furniture: {collection: 'furniture',
+                via: 'room'}
   }
 };
 

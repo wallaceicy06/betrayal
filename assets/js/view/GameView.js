@@ -41,6 +41,11 @@ define([
                 'SpriteMapWhiteRoom': [0,1],
                 'SpriteMapYellowRoom': [0,2],
                 'SpriteMapGreenRoom': [0,3]}
+      },
+      'images/game/chair.png' : {
+        'tile': TILE_WIDTH,
+        'tileh': TILE_WIDTH,
+        'map': {'SpriteChair': [0,0]}
       }
     }
   }
@@ -228,6 +233,18 @@ define([
       }
     });
 
+    Crafty.c('Furniture', {
+      init: function() {
+        this.requires('2D, Canvas, RoomItem, Solid');
+      }
+    });
+
+    Crafty.c('Chair', {
+      init: function() {
+        this.requires('Furniture, SpriteChair');
+      }
+    });
+
     Crafty.c('MapRoom', {
       init: function() {
         this.requires('2D, Canvas, SpriteBlueRoom');
@@ -254,6 +271,7 @@ define([
 
       setupBarriers.call(that, roomConfig.doors);
       placeItems.call(that, roomConfig.items);
+      placeFurniture.call(that, roomConfig.furniture);
 
       var oldPlayerEntity = that._player;
 
@@ -352,6 +370,15 @@ define([
     for (var i = 0; i < items.length; i++) {
       var item = Crafty.e(items[i].type).attr({x: items[i].x, y: items[i].y, type: items[i].type, stat: items[i].stat, amount: items[i].amount, itemID: items[i].id});
       this._items[items[i].id] = item;
+    }
+  }
+
+  function placeFurniture(furniture) {
+    if(furniture == undefined) {
+      return;
+    }
+    for (var i = 0; i < furniture.length; i++) {
+      Crafty.e(furniture[i].type).attr({x: furniture[i].x, y: furniture[i].y});
     }
   }
 
