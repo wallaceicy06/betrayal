@@ -616,6 +616,28 @@ define([
 
   }
 
+  function appendChatMessage(playerID, message) {
+    var sender;
+
+    if (playerID === this._playerModelAdpt.getID()) {
+      sender = this._playerModelAdpt;
+    } else {
+      for (var id in this._otherPlayerModelAdpts) {
+        if (playerID == id) {
+          sender = this._otherPlayerModelAdpts[id];
+          break;
+        }
+      }
+    }
+
+    var messageElement = document.createElement('p');
+    messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
+    messageElement.appendChild(
+        document.createTextNode(sender.getName() + ': ' + message));
+
+    $('#chatroom').find('div.messages').append(messageElement);
+  }
+
   function initGUI() {
     var that = this;
 
@@ -642,6 +664,12 @@ define([
     document.getElementById('btn-speed-dec').addEventListener('click', function() {
       that._playerModelAdpt.onSpeedDecClick();
     });
+
+    document.getElementById('btn-send-message').addEventListener('click', function() {
+      var messageText = document.getElementById('ipt-message');
+
+      that._gameModelAdpt.onSendChatMessage(messageText.value);
+    });
   }
 
   return function GameView(gameModelAdpt) {
@@ -657,6 +685,7 @@ define([
     initCrafty.call(this);
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
+    this.appendChatMessage = appendChatMessage.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);

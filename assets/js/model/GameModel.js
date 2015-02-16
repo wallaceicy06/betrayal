@@ -13,6 +13,7 @@ define([
   function joinGame(playerName, gameID) {
     var that = this;
 
+    this._gameID = gameID;
     var blueColor = 'blue';
 
     io.socket.get('/game/' + gameID, function (game) {
@@ -242,6 +243,10 @@ define([
     });
   }
 
+  function sendChatMessage(message) {
+    io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: this._player.id}, function (resData, jwr){});
+  }
+
   function initSockets() {
     var that = this;
 
@@ -321,6 +326,11 @@ define([
         that._viewAdpt.removeItem(o.data.id);
       }
     });
+
+    io.socket.on('game', function(o) {
+      console.log(o);
+      that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+    });
   }
 
   return function GameModel(viewAdpt) {
@@ -328,6 +338,7 @@ define([
     this._viewAdpt = viewAdpt;
     this._currentRoom = null;
     this._otherPlayers = {};
+    this._gameID = null;
     this._miniMap = null;
     this._currentMiniRoom = null;
 
@@ -343,6 +354,7 @@ define([
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
+    this.sendChatMessage = sendChatMessage.bind(this)
     this.reloadRoom = reloadRoom.bind(this);
     this.assembleMap = assembleMap.bind(this);
     this.start = start.bind(this);

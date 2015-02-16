@@ -194,6 +194,10 @@ define([
 
       changeColor: function(color) {
         that._view.changeColor(color);
+      },
+
+      messageReceived: function(playerID, message) {
+        that._view.appendChatMessage(playerID, message);
       }
     });
 
@@ -216,6 +220,10 @@ define([
 
       onCreateGameClick: function(name) {
         return that._model.createGame(name);
+      },
+
+      onSendChatMessage: function(message) {
+        return that._model.sendChatMessage(message);
       },
 
       onEnableMap: function() {
