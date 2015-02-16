@@ -190,6 +190,10 @@ define([
 
       changeColor: function(color) {
         that._view.changeColor(color);
+      },
+
+      messageReceived: function(message) {
+        that._view.appendChatMessage(message);
       }
     });
 

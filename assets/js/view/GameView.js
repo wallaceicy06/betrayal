@@ -462,6 +462,10 @@ define([
 
   }
 
+  function appendChatMessage(message) {
+    $('#chatroom').find('div.messages').append('<p>' + message + '</p>');
+  }
+
   function initGUI() {
     var that = this;
 
