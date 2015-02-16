@@ -462,8 +462,26 @@ define([
 
   }
 
-  function appendChatMessage(message) {
-    $('#chatroom').find('div.messages').append('<p>' + message + '</p>');
+  function appendChatMessage(playerID, message) {
+    var sender;
+
+    if (playerID === this._playerModelAdpt.getID()) {
+      sender = _playerModelAdpt;
+    } else {
+      for (var id in this._otherPlayerModelAdpts) {
+        if (playerID === id) {
+          sender = _otherPlayerModelAdpts[id];
+          break;
+        }
+      }
+    }
+
+    var messageElement = document.createElement('p');
+    messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
+    messageElement.appendChild(
+        document.createTextNode(sender.getName() + ': ' + message));
+
+    $('#chatroom').find('div.messages').append(messageElement);
   }
 
   function initGUI() {
