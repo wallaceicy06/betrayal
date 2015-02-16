@@ -151,6 +151,7 @@ define([
             }
             break;
           default:
+            console.log("Picked up " + item[0].obj.stat + " +" + item[0].obj.amount);
             that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
         }
         io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
