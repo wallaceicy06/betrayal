@@ -25,11 +25,15 @@ define([
       'tileh': TILE_WIDTH,
       'map': {'SpriteDoor': [0,0]}
       },
-      'images/game/lightning_bolt.png': {
+      'images/game/item_sprites.png': {
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
-        'map': {'SpriteSpeedInc': [0,0]}
-      }
+        'map': {'SpriteSpeedInc': [0, 0],
+                'SpriteMaxHealthInc': [1, 0],
+                'SpriteHealthInc': [2, 0],
+                'SpriteAttackInc': [3, 0],
+                'SpriteRelic': [4, 0]},
+      },
     }
   }
   var COLOR_TO_ROW = {
