@@ -12,6 +12,7 @@ define([
   function joinGame(playerName, gameID) {
     var that = this;
 
+    this._gameID = gameID;
     var blueColor = 'blue';
 
     io.socket.get('/game/' + gameID, function (game) {
@@ -201,6 +202,16 @@ define([
     });
   }
 
+  function sendChatMessage(message) {
+    io.socket.request({
+      method: 'post',
+      url: 'game/' + this._gameID + '/sendChatMessage,
+      body: {
+        message: message
+      }
+    }, function(data, jwr) {});
+  }
+
   function initSockets() {
     var that = this;
 
@@ -287,6 +298,7 @@ define([
     this._viewAdpt = viewAdpt;
     this._currentRoom = null;
     this._otherPlayers = {};
+    this._gameID = null;
 
     initSockets.call(this);
 
@@ -300,6 +312,7 @@ define([
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
+    this.sendChatMessage = sendChatMessage.bind(this)
     this.start = start.bind(this);
   }
 });

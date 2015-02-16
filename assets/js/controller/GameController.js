@@ -212,6 +212,10 @@ define([
 
       onCreateGameClick: function(name) {
         return that._model.createGame(name);
+      },
+
+      onSendChatMessage: function(message) {
+        return that._model.sendChatMessage(message);
       }
     });
 

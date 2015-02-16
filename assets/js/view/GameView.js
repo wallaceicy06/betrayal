@@ -488,6 +488,12 @@ define([
     document.getElementById('btn-speed-dec').addEventListener('click', function() {
       that._playerModelAdpt.onSpeedDecClick();
     });
+
+    document.getElementById('btn-send-message').addEventListener('click', function() {
+      var messageText = document.getElementById('ipt-message');
+
+      that._gameModelAdpt.onSendChatMessage(messageText.value);
+    });
   }
 
   return function GameView(gameModelAdpt) {
