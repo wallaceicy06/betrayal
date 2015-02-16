@@ -244,7 +244,9 @@ define([
     Crafty.defineScene('map', function(mapConfig) {
       Crafty.background('black');
 
-      var toVisit = [{room: mapConfig, x: 200, y: 200}];
+      var toVisit = [{room: mapConfig,
+                      x: that._gameModelAdpt.getDimensions().width / 2 - (TILE_WIDTH / 2),
+                      y: that._gameModelAdpt.getDimensions().height / 2 - (TILE_WIDTH / 2)}];
 
       while (toVisit.length > 0) {
         var curNode;

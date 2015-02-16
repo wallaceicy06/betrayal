@@ -32,7 +32,9 @@ define([
       }
 
       io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom, color: color}, function (player) {
-        that._player = new Player(player.id, player.name, player.color, player.room.id, {x: 64, y: 64});
+        that._player = new Player(player.id, player.name, player.color, player.room, {x: 64, y: 64});
+
+        var roomID = player.room;
 
         var playerViewAdpt = that._viewAdpt.makePlayerViewAdpt(that._player);
         that._player.installGameModelAdpt({
@@ -76,10 +78,11 @@ define([
           }
         });
 
-        that._currentRoom = player.room;
-
-        fetchRoom.call(that, that._currentRoom, function (room) {
+        fetchRoom.call(that, roomID, function (room) {
           that._currentRoom = room;
+          that._miniMap = new MapNode(room.name);
+          that._currentMiniRoom = that._miniMap;
+
           var doors = {};
           for (var i = 0; i < room.gatewaysOut.length; i++) {
             var gateway = room.gatewaysOut[i];
@@ -160,7 +163,7 @@ define([
   function onDoorVisit(doorID) {
     for (var i = 0; i < this._currentRoom.gatewaysOut.length; i++) {
       if (this._currentRoom.gatewaysOut[i].direction === doorID) {
-        // get ID of room player is going to
+        /* get ID of room player is going to */
         var id = this._currentRoom.gatewaysOut[i].roomTo;
         break;
       }
@@ -179,16 +182,29 @@ define([
       that._player.room = room.id;
       var roomConfig = {background: room.background, doors: doors, items: room.items};
 
+      var newMiniRoom = new MapNode(room.name);
+
       io.socket.put('/player/changeRoom/' + that._player.id, {room: that._currentRoom.id}, function (player) {
+        /*
+         * Set the position of the player in the new room and add that room
+         * as a connection to our mini map.
+         */
         if (doorID === 'north') {
           that._player.setPosition(that._player.x, DIMENSIONS.height - 65);
+          that._currentMiniRoom.setGateway('north', newMiniRoom);
         } else if (doorID === 'east') {
           that._player.setPosition(33, that._player.y);
+          that._currentMiniRoom.setGateway('east', newMiniRoom);
         } else if (doorID === 'south') {
           that._player.setPosition(that._player.x, 33);
+          that._currentMiniRoom.setGateway('south', newMiniRoom);
         } else if (doorID === 'west') {
           that._player.setPosition(DIMENSIONS.width - 65, that._player.y);
+          that._currentMiniRoom.setGateway('west', newMiniRoom);
         }
+
+        /* Set the current mini room to the one we just moved to. */
+        that._currentMiniRoom = newMiniRoom;
 
         that._viewAdpt.loadRoom(roomConfig);
       });
@@ -213,18 +229,7 @@ define([
   }
 
   function assembleMap() {
-    var thisRoom = new MapNode('blue');
-
-    var neRoom = new MapNode('black');
-    thisRoom.setGateway('east', neRoom);
-
-    var seRoom = new MapNode('yellow');
-    neRoom.setGateway('south', seRoom);
-
-    var swRoom = new MapNode('green');
-    seRoom.setGateway('west', swRoom);
-
-    this._viewAdpt.loadMap(thisRoom);
+    this._viewAdpt.loadMap(this._miniMap);
   }
 
   function fetchRoom(roomID, cb) {
@@ -319,6 +324,8 @@ define([
     this._viewAdpt = viewAdpt;
     this._currentRoom = null;
     this._otherPlayers = {};
+    this._miniMap = null;
+    this._currentMiniRoom = null;
 
     initSockets.call(this);
 
