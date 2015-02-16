@@ -80,7 +80,7 @@ define([
 
         fetchRoom.call(that, roomID, function (room) {
           that._currentRoom = room;
-          that._miniMap = new MapNode(room.name);
+          that._miniMap = new MapNode(room.id, room.name);
           that._currentMiniRoom = that._miniMap;
 
           var doors = {};
@@ -182,7 +182,7 @@ define([
       that._player.room = room.id;
       var roomConfig = {background: room.background, doors: doors, items: room.items};
 
-      var newMiniRoom = new MapNode(room.name);
+      var newMiniRoom = new MapNode(room.id, room.name);
 
       io.socket.put('/player/changeRoom/' + that._player.id, {room: that._currentRoom.id}, function (player) {
         /*

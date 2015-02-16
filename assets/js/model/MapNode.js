@@ -14,11 +14,16 @@ define([], function() {
     return (this._gateways[direction] !== undefined);
   }
 
-  return function MapNode(color) {
+  return function MapNode(roomID, name) {
     this._gateways = {};
 
-    Object.defineProperty(this, 'color', {
-      value: color,
+    Object.defineProperty(this, 'id', {
+      value: roomID,
+      writable: false
+    });
+
+    Object.defineProperty(this, 'name', {
+      value: name,
       writable: false
     });
 

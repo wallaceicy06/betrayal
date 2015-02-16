@@ -224,7 +224,8 @@ define([
       /* Sets the player location and re-allows door usage. */
       that._player = Crafty.e('Player').attr({x: that._playerModelAdpt.getX(),
                                               y: that._playerModelAdpt.getY(),
-                                              doorLock: false});
+                                              doorLock: false})
+                                       .setColor(that._playerModelAdpt.getColor());
 
       for (var id in that._otherPlayerModelAdpts) {
         var otherPlayer = that._otherPlayerModelAdpts[id];
@@ -254,7 +255,12 @@ define([
         curNode = toVisit.shift();
 
         Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
-                           .setColor(curNode.room.color);
+                           .setColor(curNode.room.name);
+
+        if (curNode.room.id === that._playerModelAdpt.getRoom()) {
+          Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
+                                .setColor(that._playerModelAdpt.getColor());
+        }
 
         if (curNode.room.hasGateway('north')) {
           toVisit.push({room: curNode.room.getGateway('north'),
