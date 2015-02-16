@@ -196,8 +196,8 @@ define([
         that._view.changeColor(color);
       },
 
-      messageReceived: function(message) {
-        that._view.appendChatMessage(message);
+      messageReceived: function(playerID, message) {
+        that._view.appendChatMessage(playerID, message);
       }
     });
 

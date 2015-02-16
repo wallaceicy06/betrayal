@@ -593,11 +593,11 @@ define([
     var sender;
 
     if (playerID === this._playerModelAdpt.getID()) {
-      sender = _playerModelAdpt;
+      sender = this._playerModelAdpt;
     } else {
       for (var id in this._otherPlayerModelAdpts) {
-        if (playerID === id) {
-          sender = _otherPlayerModelAdpts[id];
+        if (playerID == id) {
+          sender = this._otherPlayerModelAdpts[id];
           break;
         }
       }
@@ -658,6 +658,7 @@ define([
     initCrafty.call(this);
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
+    this.appendChatMessage = appendChatMessage.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);

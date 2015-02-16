@@ -44,6 +44,12 @@ module.exports = {
     });
   },
 
+  sendChatMessage: function(req, res) {
+    Game.message(req.params.id, {message: req.body.message, playerID: req.body.playerID});
+
+    res.json();
+  },
+
 	create: function(req, res) {
     Game.create({name: req.body.name},
                  function(err, game) {

@@ -244,13 +244,7 @@ define([
   }
 
   function sendChatMessage(message) {
-    io.socket.request({
-      method: 'post',
-      url: 'game/' + this._gameID + '/sendChatMessage,
-      body: {
-        message: message
-      }
-    }, function(data, jwr) {});
+    io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: this._player.id}, function (resData, jwr){});
   }
 
   function initSockets() {
@@ -335,6 +329,7 @@ define([
 
     io.socket.on('game', function(o) {
       console.log(o);
+      that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
     });
   }
 
