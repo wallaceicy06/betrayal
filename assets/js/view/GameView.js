@@ -29,13 +29,29 @@ define([
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteSpeedInc': [0,0]}
+      },
+      'images/game/map_rooms.png' : {
+        'tile': TILE_WIDTH,
+        'tileh': TILE_WIDTH,
+        'map': {'SpriteBlueRoom': [0,0],
+                'SpriteMapWhiteRoom': [0,1],
+                'SpriteMapYellowRoom': [0,2],
+                'SpriteMapGreenRoom': [0,3]}
       }
     }
   }
+
   var COLOR_TO_ROW = {
     'red' : 0,
     'blue' : 1,
     'green' : 2
+  };
+
+  var ROOM_TO_SPRITE = {
+    'blue': 0,
+    'black': 1,
+    'yellow': 2,
+    'green': 3
   };
 
   function initCrafty() {
@@ -180,6 +196,18 @@ define([
       }
     });
 
+    Crafty.c('MapRoom', {
+      init: function() {
+        this.requires('2D, Canvas, SpriteBlueRoom');
+      },
+
+      setColor: function(colorString) {
+        console.log("Changing room color to " + colorString);
+        var row = ROOM_TO_SPRITE[colorString];
+        this.sprite(0, row, 1, 1);
+      }
+    });
+
     Crafty.init(that._gameModelAdpt.getDimensions().width,
                 that._gameModelAdpt.getDimensions().height,
                 document.getElementById('game-stage'));
@@ -187,6 +215,73 @@ define([
     Crafty.load(ASSETS, function() {
     });
 
+    Crafty.defineScene('room', function(roomConfig) {
+      Crafty.background(roomConfig.background);
+
+      setupBarriers.call(that, roomConfig.doors);
+      placeItems.call(that, roomConfig.items);
+
+      /* Sets the player location and re-allows door usage. */
+      that._player = Crafty.e('Player').attr({x: that._playerModelAdpt.getX(),
+                                              y: that._playerModelAdpt.getY(),
+                                              doorLock: false});
+
+      for (var id in that._otherPlayerModelAdpts) {
+        var otherPlayer = that._otherPlayerModelAdpts[id];
+        if (otherPlayer.getRoom() == that._playerModelAdpt.getRoom()) {
+          makePlayerHusk.call(that, otherPlayer.getID(),
+                              otherPlayer.getX(),
+                              otherPlayer.getY(),
+                              otherPlayer.getColor());
+        }
+      }
+
+      that._mapEnabled = false;
+
+      that._player.enableControl();
+    });
+
+    Crafty.defineScene('map', function(mapConfig) {
+      Crafty.background('black');
+
+      var toVisit = [{room: mapConfig, x: 200, y: 200}];
+
+      while (toVisit.length > 0) {
+        var curNode;
+
+        curNode = toVisit.shift();
+
+        Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y}).setColor(curNode.room.color);
+
+        if (curNode.room.north) {
+          toVisit.push({room: curNode.room.north, x: curNode.x, y: curNode.y - TILE_WIDTH});
+        }
+
+        if (curNode.room.east) {
+          toVisit.push({room: curNode.room.east, x: curNode.x + TILE_WIDTH, y: curNode.y});
+        }
+
+        if (curNode.room.south) {
+          toVisit.push({room: curNode.room.south, x: curNode.x, y: curNode.y + TILE_WIDTH});
+        }
+
+        if (curNode.room.west) {
+          toVisit.push({room: curNode.room.west, x: curNode.x - TILE_WIDTH, y: curNode.y});
+        }
+      }
+
+      that._mapEnabled = true;
+    });
+
+    Crafty.bind('KeyDown', function(e) {
+      if (e.key == Crafty.keys.M) {
+        if (that._mapEnabled) {
+          that._gameModelAdpt.onDisableMap();
+        } else {
+          that._gameModelAdpt.onEnableMap();
+        }
+      }
+    });
   }
 
   function start() {
@@ -194,31 +289,11 @@ define([
   }
 
   function loadRoom(roomConfig) {
-    removeAllHusks.call(this);
+    Crafty.enterScene('room', roomConfig);
+  }
 
-    Crafty('RoomItem').each(function() { this.destroy(); });
-
-    Crafty.background(roomConfig.background);
-
-    setupBarriers.call(this, roomConfig.doors);
-    placeItems.call(this, roomConfig.items);
-
-    /* Sets the player location and re-allows door usage. */
-    this._player.attr({x: this._playerModelAdpt.getX(),
-                       y: this._playerModelAdpt.getY(),
-                       doorLock: false});
-
-    for (var id in this._otherPlayerModelAdpts) {
-      var otherPlayer = this._otherPlayerModelAdpts[id];
-      if (otherPlayer.getRoom() == this._playerModelAdpt.getRoom()) {
-        makePlayerHusk.call(this, otherPlayer.getID(),
-                            otherPlayer.getX(), otherPlayer.getY(), otherPlayer.getColor());
-
-      }
-    }
-
-    /* Enable player control once through door */
-    this._player.enableControl();
+  function loadMap(mapConfig) {
+    Crafty.enterScene('map', mapConfig);
   }
 
   function placeItems(items) {
@@ -497,12 +572,14 @@ define([
     this._otherPlayerModelAdpts = {};
     this._husks = {};
     this._items = {};
+    this._mapEnabled = false;
 
     initGUI.call(this);
     initCrafty.call(this);
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.loadRoom = loadRoom.bind(this);
+    this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);

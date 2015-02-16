@@ -195,6 +195,40 @@ define([
 
   }
 
+  function reloadRoom() {
+    var that = this;
+
+    fetchRoom.call(this, this._currentRoom.id, function(room) {
+      var doors = {};
+      for (var i = 0; i < room['gatewaysOut'].length; i++) {
+        var gateway = room['gatewaysOut'][i];
+        doors[gateway['direction']] = gateway['roomTo'];
+      }
+
+      var roomConfig = {background: room.background, doors: doors, items: room.items};
+
+      that._viewAdpt.loadRoom(roomConfig);
+    });
+  }
+
+  function assembleMap() {
+    var mapConfig = {
+      color: 'blue',
+      north: null,
+      east: null,
+      south: {
+        color: 'black',
+        north: null,
+        east: null,
+        south: null,
+        west: null
+      },
+      west: null
+    }
+
+    this._viewAdpt.loadMap(mapConfig);
+  }
+
   function fetchRoom(roomID, cb) {
     io.socket.get('/room/' + roomID, function (room) {
       cb(room);
@@ -300,6 +334,8 @@ define([
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
+    this.reloadRoom = reloadRoom.bind(this);
+    this.assembleMap = assembleMap.bind(this);
     this.start = start.bind(this);
   }
 });
