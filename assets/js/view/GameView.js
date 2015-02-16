@@ -29,9 +29,9 @@ define([
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteSpeedInc': [0, 0],
-                'SpriteMaxHealthInc': [1, 0],
-                'SpriteHealthInc': [2, 0],
-                'SpriteAttackInc': [3, 0],
+                'SpriteMaxHealth': [1, 0],
+                'SpriteCurHealth': [2, 0],
+                'SpriteWeapon': [3, 0],
                 'SpriteRelic': [4, 0]},
       },
     }

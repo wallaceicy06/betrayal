@@ -43,24 +43,28 @@ define([
           },
 
           onMaxHealthChange: function(newMaxHealth) {
+            playerViewAdpt.onMaxHealthChange(newMaxHealth);
             io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'maxHealth', newValue: newMaxHealth},
                           function (player) {});
           },
 
           onCurHealthChange: function(newCurHealth) {
+            playerViewAdpt.onCurHealthChange(newCurHealth);
             io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'curHealth', newValue: newCurHealth},
                           function (player) {});
           },
 
           onWeaponChange: function(newWeapon) {
+            playerViewAdpt.onWeaponChange(newWeapon);
             io.socket.put('/player/adjustStat/' + player.id,
-                          {stat: 'weapon', nnewValewValue: newWeapon},
+                          {stat: 'weapon', newValue: newWeapon},
                           function (player) {});
           },
 
           onRelicsChange: function(newRelics) {
+            playerViewAdpt.onRelicsChange(newRelics);
             io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'relics', newValue: newRelics},
                           function (player) {});
