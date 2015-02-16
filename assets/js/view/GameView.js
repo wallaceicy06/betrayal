@@ -65,6 +65,8 @@ define([
         this.reel('PlayerMovingUp',   600, 1, 0, 1);
         this.reel('PlayerMovingLeft', 600, 2, 0, 1);
         this.reel('PlayerMovingDown', 600, 3, 0, 1);
+
+        this.animate('PlayerMovingRight', -1);
       },
 
       setColor: function(colorString) {
@@ -75,6 +77,8 @@ define([
         this.reel('PlayerMovingUp',   600, 1, row, 1);
         this.reel('PlayerMovingLeft', 600, 2, row, 1);
         this.reel('PlayerMovingDown', 600, 3, row, 1);
+
+        return this;
       }
 
     });
@@ -205,6 +209,8 @@ define([
         console.log("Changing room color to " + colorString);
         var row = ROOM_TO_SPRITE[colorString];
         this.sprite(0, row, 1, 1);
+
+        return this;
       }
     });
 
@@ -221,11 +227,16 @@ define([
       setupBarriers.call(that, roomConfig.doors);
       placeItems.call(that, roomConfig.items);
 
+      var oldPlayerEntity = that._player;
+
       /* Sets the player location and re-allows door usage. */
       that._player = Crafty.e('Player').attr({x: that._playerModelAdpt.getX(),
                                               y: that._playerModelAdpt.getY(),
                                               doorLock: false})
                                        .setColor(that._playerModelAdpt.getColor());
+      if (oldPlayerEntity !== null) {
+        that._player.animate(oldPlayerEntity.getReel().id, -1);
+      }
 
       for (var id in that._otherPlayerModelAdpts) {
         var otherPlayer = that._otherPlayerModelAdpts[id];
