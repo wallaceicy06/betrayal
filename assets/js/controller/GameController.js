@@ -177,6 +177,10 @@ define([
         that._view.loadRoom(roomConfig);
       },
 
+      loadMap: function(mapConfig) {
+        that._view.loadMap(mapConfig);
+      },
+
       removeAllHusks: function() {
         that._view.removeAllHusks();
       },
@@ -213,6 +217,14 @@ define([
 
       onCreateGameClick: function(name) {
         return that._model.createGame(name);
+      },
+
+      onEnableMap: function() {
+        return that._model.assembleMap();
+      },
+
+      onDisableMap: function() {
+        return that._model.reloadRoom();
       }
     });
 
