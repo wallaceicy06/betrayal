@@ -185,7 +185,7 @@ define([
 
       that._currentRoom = room;
       that._player.room = room.id;
-      var roomConfig = {background: room.background, doors: doors, items: room.items};
+      var roomConfig = {background: room.background, doors: doors, items: room.items, furniture: room.furniture};
 
       var newMiniRoom = new MapNode(room.id, room.name);
 
