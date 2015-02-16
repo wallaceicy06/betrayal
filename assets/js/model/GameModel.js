@@ -6,8 +6,8 @@ define([
   'use strict';
 
   var DIMENSIONS = {
-    width: 768,
-    height: 640
+    width: 576,
+    height: 512
   }
 
   function joinGame(playerName, gameID) {

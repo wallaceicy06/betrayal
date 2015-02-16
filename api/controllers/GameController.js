@@ -5,6 +5,11 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+var DIMENSIONS = {
+  width: 576,
+  height: 512
+  };
+
 var ROOMS = [
     {roomNum: 1, name: 'blue', background: '#6699FF'},
     {roomNum: 2, name: 'black', background: '#FFFFFF'},
@@ -90,8 +95,8 @@ module.exports = {
           /* Select a random room */
           var roomNum = Math.floor((Math.random() * Object.keys(roomNumsToIDs).length) + 1);
           /* Select random x and y coordinates */
-          var x = Math.floor((Math.random() * 512) + 128); //Allow items from x = 128 to x = 640
-          var y = Math.floor((Math.random() * 384) + 128); //Allow items from y = 128 to y = 512
+          var x = Math.floor((Math.random() * (DIMENSIONS.width-128)) + 64); //Allow items anywhere in the room at least 64px from a wall
+          var y = Math.floor((Math.random() * (DIMENSIONS.height-128)) + 64);
           /* Select a random item type */
           var itemNum = Math.floor((Math.random() * ITEM_TYPES.length));
           /* Create item */
