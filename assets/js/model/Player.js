@@ -54,8 +54,10 @@ define([
         return this._curHealth;
       },
       set: function(newVal) {
-        this._maxHealth = newVal;
-        this._gameModelAdpt.onCurHealthChange(newVal);
+        if (newVal <= this._maxHealth) {
+          this._maxHealth = newVal;
+          this._gameModelAdpt.onCurHealthChange(newVal);
+        }
       }
     });
 
@@ -74,7 +76,7 @@ define([
         return this._relics;
       },
       set: function(newVal) {
-        this._maxHealth = newVal;
+        this._relics = newVal;
         this._gameModelAdpt.onRelicsChange(newVal);
       }
     });
