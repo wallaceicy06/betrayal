@@ -46,7 +46,6 @@ define([
           },
 
           onMaxHealthChange: function(newMaxHealth) {
-            console.log("In GameModelAdpt (GameModel) onMaxHealthChange - newMaxHealth = " + newMaxHealth);
             playerViewAdpt.onMaxHealthChange(newMaxHealth);
             io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'maxHealth', newValue: newMaxHealth},

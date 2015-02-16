@@ -82,7 +82,6 @@ define([
           useItem: function(stat, amount) {
             switch(stat) {
               case "maxHealth":
-                console.log("In GameController useItem, current MaxHealth = " + playerModel.maxHealth + ", amount = " + amount);
                 playerModel.maxHealth = playerModel.maxHealth + amount;
                 break;
               case "curHealth":

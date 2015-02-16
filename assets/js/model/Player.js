@@ -44,7 +44,6 @@ define([
         return this._maxHealth;
       },
       set: function(newVal) {
-        console.log("In Player setter for maxHealth, newVal = " + newVal);
         this._maxHealth = newVal;
         this._gameModelAdpt.onMaxHealthChange(newVal);
       }
@@ -77,7 +76,7 @@ define([
         return this._relics;
       },
       set: function(newVal) {
-        this._maxHealth = newVal;
+        this._relics = newVal;
         this._gameModelAdpt.onRelicsChange(newVal);
       }
     });
