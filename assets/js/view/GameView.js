@@ -251,22 +251,27 @@ define([
 
         curNode = toVisit.shift();
 
-        Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y}).setColor(curNode.room.color);
+        Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
+                           .setColor(curNode.room.color);
 
-        if (curNode.room.north) {
-          toVisit.push({room: curNode.room.north, x: curNode.x, y: curNode.y - TILE_WIDTH});
+        if (curNode.room.hasGateway('north')) {
+          toVisit.push({room: curNode.room.getGateway('north'),
+                        x: curNode.x, y: curNode.y - TILE_WIDTH});
         }
 
-        if (curNode.room.east) {
-          toVisit.push({room: curNode.room.east, x: curNode.x + TILE_WIDTH, y: curNode.y});
+        if (curNode.room.hasGateway('east')) {
+          toVisit.push({room: curNode.room.getGateway('east'),
+                        x: curNode.x + TILE_WIDTH, y: curNode.y});
         }
 
-        if (curNode.room.south) {
-          toVisit.push({room: curNode.room.south, x: curNode.x, y: curNode.y + TILE_WIDTH});
+        if (curNode.room.hasGateway('south')) {
+          toVisit.push({room: curNode.room.getGateway('south'),
+                        x: curNode.x, y: curNode.y + TILE_WIDTH});
         }
 
-        if (curNode.room.west) {
-          toVisit.push({room: curNode.room.west, x: curNode.x - TILE_WIDTH, y: curNode.y});
+        if (curNode.room.hasGateway('west')) {
+          toVisit.push({room: curNode.room.getGateway('west'),
+                        x: curNode.x - TILE_WIDTH, y: curNode.y});
         }
       }
 

@@ -1,6 +1,7 @@
 define([
-    'model/Player'
-], function(Player) {
+    'model/Player',
+    'model/MapNode'
+], function(Player, MapNode) {
 
   'use strict';
 
@@ -212,21 +213,18 @@ define([
   }
 
   function assembleMap() {
-    var mapConfig = {
-      color: 'blue',
-      north: null,
-      east: null,
-      south: {
-        color: 'black',
-        north: null,
-        east: null,
-        south: null,
-        west: null
-      },
-      west: null
-    }
+    var thisRoom = new MapNode('blue');
 
-    this._viewAdpt.loadMap(mapConfig);
+    var neRoom = new MapNode('black');
+    thisRoom.setGateway('east', neRoom);
+
+    var seRoom = new MapNode('yellow');
+    neRoom.setGateway('south', seRoom);
+
+    var swRoom = new MapNode('green');
+    seRoom.setGateway('west', swRoom);
+
+    this._viewAdpt.loadMap(thisRoom);
   }
 
   function fetchRoom(roomID, cb) {
