@@ -92,15 +92,8 @@ module.exports = {
           /* Select random x and y coordinates */
           var x = Math.floor((Math.random() * 512) + 128); //Allow items from x = 128 to x = 640
           var y = Math.floor((Math.random() * 384) + 128); //Allow items from y = 128 to y = 512
-          /* TODO: Select a random item type */
-          //var itemNum = Math.floor((Math.random() * ITEM_TYPES.length));
-          var itemNum;
-          if (i < 5) {
-            itemNum = i;
-          }
-          else {
-            itemNum = 1;
-          }
+          /* Select a random item type */
+          var itemNum = Math.floor((Math.random() * ITEM_TYPES.length));
           /* Create item */
           Item.create({type: ITEM_TYPES[itemNum].type, stat: ITEM_TYPES[itemNum].stat, amount: 1, room: roomNumsToIDs[roomNum], x: x, y: y}, function(err, item) {});
         }
