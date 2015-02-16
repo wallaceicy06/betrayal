@@ -44,6 +44,7 @@ define([
         return this._maxHealth;
       },
       set: function(newVal) {
+        console.log("In Player setter for maxHealth, newVal = " + newVal);
         this._maxHealth = newVal;
         this._gameModelAdpt.onMaxHealthChange(newVal);
       }
@@ -54,7 +55,7 @@ define([
         return this._curHealth;
       },
       set: function(newVal) {
-        if (newVal < this._maxHealth) {
+        if (newVal <= this._maxHealth) {
           this._maxHealth = newVal;
           this._gameModelAdpt.onCurHealthChange(newVal);
         }
