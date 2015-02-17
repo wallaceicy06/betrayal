@@ -328,8 +328,9 @@ define([
     });
 
     io.socket.on('game', function(o) {
-      console.log(o);
-      that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+      if (o.verb === 'messaged') {
+        that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+      }
     });
   }
 
