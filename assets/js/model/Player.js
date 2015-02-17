@@ -13,6 +13,10 @@ define([
     this._gameModelAdpt = gameModelAdpt;
   }
 
+  function destroy() {
+    this._gameModelAdpt.onDestroy();
+  }
+
   return function Player(id, name, color, room, initPos) {
     Object.defineProperty(this, 'id', {
       value: id,
@@ -106,6 +110,7 @@ define([
 
     this.installGameModelAdpt = installGameModelAdpt.bind(this);
     this.setPosition = setPosition.bind(this);
+    this.destroy = destroy.bind(this);
 
     this._speed = 5;
     this._maxHealth = 3;

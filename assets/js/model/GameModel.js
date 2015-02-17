@@ -78,6 +78,10 @@ define([
             /* Do nothing. */
           },
 
+          onDestroy: function() {
+            /* Do nothing. */
+          },
+
           onPositionChange: function(newX, newY) {
             io.socket.put('/player/' + player.id, {locX: newX, locY: newY}, function (player) {});
           }
@@ -132,6 +136,11 @@ define([
                   if (player.room === that._currentRoom.id) {
                     playerViewAdpt.setLocation(newX, newY);
                   }
+                },
+
+                onDestroy: function() {
+                  playerViewAdpt.destroy();
+                  delete that._otherPlayers[v.id];
                 }
               });
 
@@ -303,6 +312,11 @@ define([
             if (player.room === that._currentRoom.id) {
               playerViewAdpt.setLocation(newX, newY);
             }
+          },
+
+          onDestroy: function() {
+            playerViewAdpt.destroy();
+            delete that._otherPlayers[v.id];
           }
         });
 
@@ -324,6 +338,8 @@ define([
             }
           }
         }
+      } else if (o.verb === 'destroyed') {
+        that._otherPlayers[o.id].destroy();
       }
     });
 
@@ -343,8 +359,9 @@ define([
     });
 
     io.socket.on('game', function(o) {
-      console.log(o);
-      that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+      if (o.verb === 'messaged') {
+        that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+      }
     });
   }
 

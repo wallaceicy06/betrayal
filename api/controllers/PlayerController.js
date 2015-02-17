@@ -115,7 +115,7 @@ module.exports = {
         v.destroy();
       });
 
-      res.json([]);
+      res.json(found);
     });
   }
 };

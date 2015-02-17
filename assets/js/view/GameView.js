@@ -504,6 +504,13 @@ define([
      * player
      */
     return {
+      destroy: function() {
+        appendChatMessage.call(that, playerModelAdpt.getID(), 'left the game');
+        removeHusk.call(that, playerModelAdpt.getID());
+        delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
+        $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
+      },
+
       onRelicsChange: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('li.player-relics')[0].innerHTML = ('relics: ' + newRelics);
