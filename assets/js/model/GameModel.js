@@ -140,6 +140,7 @@ define([
 
                 onDestroy: function() {
                   playerViewAdpt.destroy();
+                  delete that._otherPlayers[v.id];
                 }
               });
 
@@ -300,6 +301,7 @@ define([
 
           onDestroy: function() {
             playerViewAdpt.destroy();
+            delete that._otherPlayers[v.id];
           }
         });
 

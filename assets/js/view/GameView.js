@@ -490,6 +490,7 @@ define([
       destroy: function() {
         appendChatMessage.call(that, playerModelAdpt.getID(), 'left the game');
         removeHusk.call(that, playerModelAdpt.getID());
+        delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
       },
 
