@@ -298,7 +298,7 @@ define([
 
       that._player.enableControl();
 
-      if (roomConfig.event !== undefined) {
+      if (roomConfig.event !== -1) {
         that._player.disableControl();
         var text = that._gameModelAdpt.performEvent(roomConfig.event);  //performEvent does the action of the event and returns the text to display
         var eventBackground = Crafty.e('2D, Canvas, Color')

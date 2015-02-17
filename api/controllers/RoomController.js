@@ -6,6 +6,8 @@
  */
 
 module.exports = {
-
+  removeEvent: function(req, res) {
+    Room.update(req.param('id'), {event: -1}, function(err, rooms) {});
+  }
 };
 

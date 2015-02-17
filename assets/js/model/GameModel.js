@@ -261,6 +261,7 @@ define([
    * Returns the text of the event to be displayed.
    */
   function performEvent(eventID) {
+    io.socket.put('/room/removeEvent/' + this._currentRoom.id, {}, function(resData, jwr){});
     switch(eventID) {
       case 0:
         return "Event 0";
