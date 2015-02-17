@@ -123,6 +123,10 @@ module.exports.sockets = {
   afterDisconnect: function(session, socket) {
     Player.destroy({socket: socket.id}, function(err, deletedPlayers) {
       if (err) console.log(err);
+
+      deletedPlayers.forEach(function(v, i, a) {
+        Player.publishDestroy(v.id);
+      });
     });
   },
 

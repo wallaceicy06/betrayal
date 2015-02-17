@@ -78,6 +78,10 @@ define([
             /* Do nothing. */
           },
 
+          onDestroy: function() {
+            /* Do nothing. */
+          },
+
           onPositionChange: function(newX, newY) {
             io.socket.put('/player/' + player.id, {locX: newX, locY: newY}, function (player) {});
           }
@@ -132,6 +136,10 @@ define([
                   if (player.room === that._currentRoom.id) {
                     playerViewAdpt.setLocation(newX, newY);
                   }
+                },
+
+                onDestroy: function() {
+                  playerViewAdpt.destroy();
                 }
               });
 
@@ -288,6 +296,10 @@ define([
             if (player.room === that._currentRoom.id) {
               playerViewAdpt.setLocation(newX, newY);
             }
+          },
+
+          onDestroy: function() {
+            playerViewAdpt.destroy();
           }
         });
 
@@ -309,6 +321,8 @@ define([
             }
           }
         }
+      } else if (o.verb === 'destroyed') {
+        that._otherPlayers[o.id].destroy();
       }
     });
 
