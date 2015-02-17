@@ -297,6 +297,23 @@ define([
       that._mapEnabled = false;
 
       that._player.enableControl();
+
+      if (roomConfig.event !== undefined) {
+        that._player.disableControl();
+        var text = that._gameModelAdpt.performEvent(roomConfig.event);  //performEvent does the action of the event and returns the text to display
+        var eventBackground = Crafty.e('2D, Canvas, Color')
+          .attr({x: that._gameModelAdpt.getDimensions().width/2 - 115, y: that._gameModelAdpt.getDimensions().height/2 - 39, w: 230, h: 50})
+          .color('white');
+        var eventText = Crafty.e('2D, Canvas, Text')
+          .attr({x: that._gameModelAdpt.getDimensions().width/2 - 100, y: that._gameModelAdpt.getDimensions().height/2 - 24, w: 200})
+          .text(text)
+          .textFont({size: '20px'});
+        setTimeout(function() {
+          eventBackground.destroy();    //Remove the event text box
+          eventText.destroy();
+          that._player.enableControl(); //Allow player to move again
+        }, 3000); //Display the event text box for 3 seconds
+      }
     });
 
     Crafty.defineScene('map', function(mapConfig) {

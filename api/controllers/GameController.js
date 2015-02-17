@@ -11,7 +11,7 @@ var DIMENSIONS = {
   };
 
 var ROOMS = [
-    {roomNum: 1, name: 'blue', background: '#6699FF', furniture: [{type: 'Chair', x: 224, y: 32}]},
+    {roomNum: 1, name: 'blue', background: '#6699FF', furniture: [{type: 'Chair', x: 224, y: 32}], event: 0},
     {roomNum: 2, name: 'black', background: '#FFFFFF', furniture: []},
     {roomNum: 3, name: 'yellow', background: '#FFFF99', furniture: []},
     {roomNum: 4, name: 'green', background: '#00FFCC', furniture: []}

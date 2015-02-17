@@ -93,7 +93,7 @@ define([
             var gateway = room.gatewaysOut[i];
             doors[gateway.direction] = gateway.roomTo;
           }
-          that._viewAdpt.loadRoom({background: room.background, doors: doors, items: room.items, furniture: room.furniture});
+          that._viewAdpt.loadRoom({background: room.background, doors: doors, items: room.items, furniture: room.furniture, event: room.event});
         });
 
         /* Populate other players object when join game */
@@ -185,7 +185,7 @@ define([
 
       that._currentRoom = room;
       that._player.room = room.id;
-      var roomConfig = {background: room.background, doors: doors, items: room.items, furniture: room.furniture};
+      var roomConfig = {background: room.background, doors: doors, items: room.items, furniture: room.furniture, event: room.event};
 
       var newMiniRoom = new MapNode(room.id, room.name);
 
@@ -245,6 +245,21 @@ define([
 
   function sendChatMessage(message) {
     io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: this._player.id}, function (resData, jwr){});
+  }
+
+  /*
+   * Performs the given event, altering player stats as necessary.
+   * Returns the text of the event to be displayed.
+   */
+  function performEvent(eventID) {
+    switch(eventID) {
+      case 0:
+        return "Event 0";
+        break;
+      default:
+        return "Unknown event";
+        break;
+    }
   }
 
   function initSockets() {
@@ -357,6 +372,7 @@ define([
     this.sendChatMessage = sendChatMessage.bind(this)
     this.reloadRoom = reloadRoom.bind(this);
     this.assembleMap = assembleMap.bind(this);
+    this.performEvent = performEvent.bind(this);
     this.start = start.bind(this);
   }
 });

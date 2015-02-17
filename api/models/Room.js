@@ -27,7 +27,9 @@ module.exports = {
     items: {collection: 'item',
             via: 'room'},
     furniture: {collection: 'furniture',
-                via: 'room'}
+                via: 'room'},
+    event: {type: 'integer',    //Event stored as an id, client will figure it out
+            required: false}
   }
 };
 
