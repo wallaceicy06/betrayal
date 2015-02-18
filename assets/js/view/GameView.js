@@ -360,6 +360,10 @@ define([
     this._gameModelAdpt.fetchGames();
   }
 
+  function displayGamePane() {
+    $('#game-pane').removeClass('hidden');
+  }
+
   function loadRoom(roomConfig) {
     Crafty.enterScene('room', roomConfig);
   }
@@ -695,6 +699,7 @@ define([
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
+    this.displayGamePane = displayGamePane.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);

@@ -172,6 +172,11 @@ define([
         });
       },
 
+      startGame: function(roomConfig) {
+        that._view.loadRoom(roomConfig);
+        that._view.displayGamePane();
+      },
+
       loadRoom: function(roomConfig) {
         that._view.loadRoom(roomConfig);
       },
