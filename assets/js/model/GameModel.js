@@ -97,7 +97,8 @@ define([
             var gateway = room.gatewaysOut[i];
             doors[gateway.direction] = gateway.roomTo;
           }
-          that._viewAdpt.loadRoom({background: room.background, doors: doors, items: room.items, furniture: room.furniture, event: room.event});
+          
+          that._viewAdpt.startGame({background: room.background, doors: doors, items: room.items, furniture: room.furniture, event: room.event});
         });
 
         /* Populate other players object when join game */

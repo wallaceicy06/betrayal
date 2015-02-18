@@ -301,13 +301,14 @@ define([
       if (roomConfig.event !== -1) {
         that._player.disableControl();
         var text = that._gameModelAdpt.performEvent(roomConfig.event);  //performEvent does the action of the event and returns the text to display
-        var eventBackground = Crafty.e('2D, Canvas, Color')
-          .attr({x: that._gameModelAdpt.getDimensions().width/2 - 115, y: that._gameModelAdpt.getDimensions().height/2 - 39, w: 230, h: 50})
+        var eventBackground = Crafty.e('2D, DOM, Color')
           .color('white');
-        var eventText = Crafty.e('2D, Canvas, Text')
-          .attr({x: that._gameModelAdpt.getDimensions().width/2 - 100, y: that._gameModelAdpt.getDimensions().height/2 - 24, w: 200})
+        var eventText = Crafty.e('2D, DOM, Text')
+          .css({'text-align': 'center', 'top': '15px'})
           .text(text)
           .textFont({size: '20px'});
+        eventBackground.attach(eventText);  //Attach eventText as a child of event so that they will move together
+        eventBackground.attr({x: that._gameModelAdpt.getDimensions().width/2 - 115, y: that._gameModelAdpt.getDimensions().height/2 - 39, w: 230, h: 50});
         setTimeout(function() {
           eventBackground.destroy();    //Remove the event text box
           eventText.destroy();
@@ -377,6 +378,10 @@ define([
     this._gameModelAdpt.fetchGames();
   }
 
+  function displayGamePane() {
+    $('#game-pane').removeClass('hidden');
+  }
+
   function loadRoom(roomConfig) {
     Crafty.enterScene('room', roomConfig);
   }
@@ -398,6 +403,7 @@ define([
     }
     for (var i = 0; i < furniture.length; i++) {
       Crafty.e(furniture[i].type).attr({x: furniture[i].x, y: furniture[i].y});
+      //Crafty.e('Furniture').attr({x: furniture[i].x, y: furniture[i].y}).sprite();
     }
   }
 
@@ -712,6 +718,7 @@ define([
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
+    this.displayGamePane = displayGamePane.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
