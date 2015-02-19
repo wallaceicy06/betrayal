@@ -20,14 +20,14 @@ module.exports = {
               via: 'room'},
     game: {model: 'game',
            required: true},
-    roomNum: {type: 'integer',
-              required: true},
     background: {type: 'string',
                  required: true},
     items: {collection: 'item',
             via: 'room'},
     furniture: {collection: 'furniture',
                 via: 'room'}
-  }
-};
+  },
 
+  layouts: sails.config.gameconfig.rooms
+
+};
