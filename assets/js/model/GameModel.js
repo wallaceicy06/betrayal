@@ -1,17 +1,19 @@
 define([
-    'model/Player'
-], function(Player) {
+    'model/Player',
+    'model/MapNode'
+], function(Player, MapNode) {
 
   'use strict';
 
   var DIMENSIONS = {
-    width: 768,
-    height: 640
+    width: 576,
+    height: 512
   }
 
   function joinGame(playerName, gameID) {
     var that = this;
 
+    this._gameID = gameID;
     var blueColor = 'blue';
 
     io.socket.get('/game/' + gameID, function (game) {
@@ -31,7 +33,9 @@ define([
       }
 
       io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom, color: color}, function (player) {
-        that._player = new Player(player.id, player.name, player.color, player.room.id, {x: 64, y: 64});
+        that._player = new Player(player.id, player.name, player.color, player.room, {x: 64, y: 64});
+
+        var roomID = player.room;
 
         var playerViewAdpt = that._viewAdpt.makePlayerViewAdpt(that._player);
         that._player.installGameModelAdpt({
@@ -43,24 +47,28 @@ define([
           },
 
           onMaxHealthChange: function(newMaxHealth) {
+            playerViewAdpt.onMaxHealthChange(newMaxHealth);
             io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'maxHealth', newValue: newMaxHealth},
                           function (player) {});
           },
 
           onCurHealthChange: function(newCurHealth) {
+            playerViewAdpt.onCurHealthChange(newCurHealth);
             io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'curHealth', newValue: newCurHealth},
                           function (player) {});
           },
 
           onWeaponChange: function(newWeapon) {
+            playerViewAdpt.onWeaponChange(newWeapon);
             io.socket.put('/player/adjustStat/' + player.id,
-                          {stat: 'weapon', nnewValewValue: newWeapon},
+                          {stat: 'weapon', newValue: newWeapon},
                           function (player) {});
           },
 
           onRelicsChange: function(newRelics) {
+            playerViewAdpt.onRelicsChange(newRelics);
             io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'relics', newValue: newRelics},
                           function (player) {});
@@ -70,21 +78,27 @@ define([
             /* Do nothing. */
           },
 
+          onDestroy: function() {
+            /* Do nothing. */
+          },
+
           onPositionChange: function(newX, newY) {
             io.socket.put('/player/' + player.id, {locX: newX, locY: newY}, function (player) {});
           }
         });
 
-        that._currentRoom = player.room;
-
-        fetchRoom.call(that, that._currentRoom, function (room) {
+        fetchRoom.call(that, roomID, function (room) {
           that._currentRoom = room;
+          that._miniMap = new MapNode(room.id, room.name);
+          that._currentMiniRoom = that._miniMap;
+
           var doors = {};
           for (var i = 0; i < room.gatewaysOut.length; i++) {
             var gateway = room.gatewaysOut[i];
             doors[gateway.direction] = gateway.roomTo;
           }
-          that._viewAdpt.loadRoom({background: room.background, doors: doors, items: room.items});
+
+          that._viewAdpt.startGame({background: room.background, doors: doors, items: room.items, furniture: room.furniture});
         });
 
         /* Populate other players object when join game */
@@ -96,7 +110,7 @@ define([
               var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
               player.installGameModelAdpt({
                 onSpeedChange: function(newSpeed) {
-                  /* Do nothing. */
+                  playerViewAdpt.onSpeedChange(newSpeed);
                 },
 
                 onRoomChange: function(newRoom) {
@@ -104,21 +118,30 @@ define([
                 },
 
                 onMaxHealthChange: function(newMaxHealth) {
+                  playerViewAdpt.onMaxHealthChange(newMaxHealth);
                 },
 
                 onCurHealthChange: function(newCurHealth) {
+                  playerViewAdpt.onCurHealthChange(newCurHealth);
                 },
 
                 onWeaponChange: function(newWeapon) {
+                  playerViewAdpt.onWeaponChange(newWeapon);
                 },
 
                 onRelicsChange: function(newRelics) {
+                  playerViewAdpt.onRelicsChange(newRelics);
                 },
 
                 onPositionChange: function(newX, newY) {
                   if (player.room === that._currentRoom.id) {
                     playerViewAdpt.setLocation(newX, newY);
                   }
+                },
+
+                onDestroy: function() {
+                  playerViewAdpt.destroy();
+                  delete that._otherPlayers[v.id];
                 }
               });
 
@@ -155,7 +178,7 @@ define([
   function onDoorVisit(doorID) {
     for (var i = 0; i < this._currentRoom.gatewaysOut.length; i++) {
       if (this._currentRoom.gatewaysOut[i].direction === doorID) {
-        // get ID of room player is going to
+        /* get ID of room player is going to */
         var id = this._currentRoom.gatewaysOut[i].roomTo;
         break;
       }
@@ -172,18 +195,31 @@ define([
 
       that._currentRoom = room;
       that._player.room = room.id;
-      var roomConfig = {background: room.background, doors: doors, items: room.items};
+      var roomConfig = {background: room.background, doors: doors, items: room.items, furniture: room.furniture};
+
+      var newMiniRoom = new MapNode(room.id, room.name);
 
       io.socket.put('/player/changeRoom/' + that._player.id, {room: that._currentRoom.id}, function (player) {
+        /*
+         * Set the position of the player in the new room and add that room
+         * as a connection to our mini map.
+         */
         if (doorID === 'north') {
           that._player.setPosition(that._player.x, DIMENSIONS.height - 65);
+          that._currentMiniRoom.setGateway('north', newMiniRoom);
         } else if (doorID === 'east') {
           that._player.setPosition(33, that._player.y);
+          that._currentMiniRoom.setGateway('east', newMiniRoom);
         } else if (doorID === 'south') {
           that._player.setPosition(that._player.x, 33);
+          that._currentMiniRoom.setGateway('south', newMiniRoom);
         } else if (doorID === 'west') {
           that._player.setPosition(DIMENSIONS.width - 65, that._player.y);
+          that._currentMiniRoom.setGateway('west', newMiniRoom);
         }
+
+        /* Set the current mini room to the one we just moved to. */
+        that._currentMiniRoom = newMiniRoom;
 
         that._viewAdpt.loadRoom(roomConfig);
       });
@@ -191,10 +227,34 @@ define([
 
   }
 
+  function reloadRoom() {
+    var that = this;
+
+    fetchRoom.call(this, this._currentRoom.id, function(room) {
+      var doors = {};
+      for (var i = 0; i < room['gatewaysOut'].length; i++) {
+        var gateway = room['gatewaysOut'][i];
+        doors[gateway['direction']] = gateway['roomTo'];
+      }
+
+      var roomConfig = {background: room.background, doors: doors, items: room.items};
+
+      that._viewAdpt.loadRoom(roomConfig);
+    });
+  }
+
+  function assembleMap() {
+    this._viewAdpt.loadMap(this._miniMap);
+  }
+
   function fetchRoom(roomID, cb) {
     io.socket.get('/room/' + roomID, function (room) {
       cb(room);
     });
+  }
+
+  function sendChatMessage(message) {
+    io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: this._player.id}, function (resData, jwr){});
   }
 
   function initSockets() {
@@ -211,7 +271,7 @@ define([
         var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
         player.installGameModelAdpt({
           onSpeedChange: function(newSpeed) {
-            /* Do nothing. */
+            playerViewAdpt.onSpeedChange(newSpeed);
           },
 
           onRoomChange: function(newRoom) {
@@ -219,21 +279,30 @@ define([
           },
 
           onMaxHealthChange: function(newMaxHealth) {
+            playerViewAdpt.onMaxHealthChange(newMaxHealth);
           },
 
           onCurHealthChange: function(newCurHealth) {
+            playerViewAdpt.onCurHealthChange(newCurHealth);
           },
 
           onWeaponChange: function(newWeapon) {
+            playerViewAdpt.onWeaponChange(newWeapon);
           },
 
           onRelicsChange: function(newRelics) {
+            playerViewAdpt.onRelicsChange(newRelics);
           },
 
           onPositionChange: function(newX, newY) {
             if (player.room === that._currentRoom.id) {
               playerViewAdpt.setLocation(newX, newY);
             }
+          },
+
+          onDestroy: function() {
+            playerViewAdpt.destroy();
+            delete that._otherPlayers[v.id];
           }
         });
 
@@ -248,6 +317,15 @@ define([
         if (o.data.room !== undefined) {
           that._otherPlayers[o.id].room = o.data.room;
         }
+        else {  //stat update
+          for (var key in o.data) {
+            if (key !== "updatedAt") {
+              that._otherPlayers[o.id][key] = o.data[key];
+            }
+          }
+        }
+      } else if (o.verb === 'destroyed') {
+        that._otherPlayers[o.id].destroy();
       }
     });
 
@@ -265,6 +343,12 @@ define([
         that._viewAdpt.removeItem(o.data.id);
       }
     });
+
+    io.socket.on('game', function(o) {
+      if (o.verb === 'messaged') {
+        that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+      }
+    });
   }
 
   return function GameModel(viewAdpt) {
@@ -272,6 +356,9 @@ define([
     this._viewAdpt = viewAdpt;
     this._currentRoom = null;
     this._otherPlayers = {};
+    this._gameID = null;
+    this._miniMap = null;
+    this._currentMiniRoom = null;
 
     initSockets.call(this);
 
@@ -285,6 +372,9 @@ define([
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
+    this.sendChatMessage = sendChatMessage.bind(this)
+    this.reloadRoom = reloadRoom.bind(this);
+    this.assembleMap = assembleMap.bind(this);
     this.start = start.bind(this);
   }
 });

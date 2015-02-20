@@ -98,12 +98,14 @@ module.exports = {
   adjustStat: function(req, res) {
     updateObj = {}
     updateObj[req.body.stat] = req.body.newValue;
-    Player.update(req.param('id'), updateObj, function (err, players) {
+    Player.update(req.param('id'), updateObj, function (err, updatedPlayers) {
       if (err) {
         console.log(err);
         res.json(err);
         return;
       }
+
+      Player.publishUpdate(updatedPlayers[0].id, updateObj);
     });
   },
 
@@ -113,7 +115,7 @@ module.exports = {
         v.destroy();
       });
 
-      res.json([]);
+      res.json(found);
     });
   }
 };

@@ -1,12 +1,26 @@
+<style>
+  .hidden {
+    display: none;
+  }
+</style>
+
 <h1>Betrayal</h1>
   <p>A RPG game based on <em>Betrayal at the House on the Hill</em>.</p>
 
-<div>
+<div id="game-pane" class="hidden" style="height:640px;">
   <div id="player-pane" style="display:inline-block; vertical-align: top">
     <ul id="player-list">
     </ul>
   </div>
   <div id="game-stage" style="display:inline-block; vertical-align: top"></div>
+  <div id="chatroom" style="display:inline-block; vertical-align: top; height: 100%">
+    <div class="messages" style="overflow-y:scroll; height: 100%;">
+    </div>
+    <div class="chatroom-controls">
+      <input id="ipt-message" type="text">
+      <button id="btn-send-message">Send</button>
+    </div>
+  </div>
 </div>
 
 <div>

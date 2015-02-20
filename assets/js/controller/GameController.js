@@ -1,7 +1,8 @@
 define([
+    'jquery',
     'model/GameModel',
     'view/GameView'
-], function(GameModel, GameView) {
+], function($, GameModel, GameView) {
   'use strict';
 
   function start() {
@@ -18,12 +19,32 @@ define([
     this._model = new GameModel({
       makePlayerViewAdpt: function(playerModel) {
         var playerView = that._view.makePlayerView({
+          getName: function() {
+            return playerModel.name;
+          },
+
           getID: function() {
             return playerModel.id;
           },
 
           getSpeed: function() {
             return playerModel.speed;
+          },
+
+          getMaxHealth: function() {
+            return playerModel.maxHealth;
+          },
+
+          getCurHealth: function() {
+            return playerModel.curHealth;
+          },
+
+          getWeapon: function() {
+            return playerModel.weapon;
+          },
+
+          getRelics: function() {
+            return playerModel.relics;
           },
 
           setSpeed: function(speed) {
@@ -82,8 +103,24 @@ define([
         return {
           /* Player View Adapter */
           onSpeedChange: function(newSpeed) {
-            playerView.speed({x : newSpeed, y : newSpeed});
+            playerView.setSpeed(newSpeed);
           },
+
+          onRelicsChange: function(newRelics) {
+            playerView.setRelics(newRelics);
+          },
+
+          onWeaponChange: function(newWeapon) {
+            playerView.setWeapon(newWeapon);
+          },
+
+          onCurHealthChange: function(newCurHealth) {
+            playerView.setCurHealth(newCurHealth);
+          },
+
+          onMaxHealthChange: function(newMaxHealth) {
+            playerView.setMaxHealth(newMaxHealth);
+          }
         }
       },
 
@@ -95,6 +132,26 @@ define([
 
           getName: function() {
             return playerModel.name;
+          },
+
+          getSpeed: function() {
+            return playerModel.speed;
+          },
+
+          getMaxHealth: function() {
+            return playerModel.maxHealth;
+          },
+
+          getCurHealth: function() {
+            return playerModel.curHealth;
+          },
+
+          getWeapon: function() {
+            return playerModel.weapon;
+          },
+
+          getRelics: function() {
+            return playerModel.relics;
           },
 
           getX: function() {
@@ -115,9 +172,17 @@ define([
         });
       },
 
+      startGame: function(roomConfig) {
+        that._view.loadRoom(roomConfig);
+        that._view.displayGamePane();
+      },
 
       loadRoom: function(roomConfig) {
         that._view.loadRoom(roomConfig);
+      },
+
+      loadMap: function(mapConfig) {
+        that._view.loadMap(mapConfig);
       },
 
       removeAllHusks: function() {
@@ -134,6 +199,10 @@ define([
 
       changeColor: function(color) {
         that._view.changeColor(color);
+      },
+
+      messageReceived: function(playerID, message) {
+        that._view.appendChatMessage(playerID, message);
       }
     });
 
@@ -156,6 +225,18 @@ define([
 
       onCreateGameClick: function(name) {
         return that._model.createGame(name);
+      },
+
+      onSendChatMessage: function(message) {
+        return that._model.sendChatMessage(message);
+      },
+
+      onEnableMap: function() {
+        return that._model.assembleMap();
+      },
+
+      onDisableMap: function() {
+        return that._model.reloadRoom();
       }
     });
 
