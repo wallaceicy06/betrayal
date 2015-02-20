@@ -10,6 +10,8 @@ define([
     height: 512
   }
 
+  var events;
+
   function joinGame(playerName, gameID) {
     var that = this;
 
@@ -17,6 +19,7 @@ define([
     var blueColor = 'blue';
 
     io.socket.get('/game/' + gameID, function (game) {
+      events = game.events;
       var color;
       switch (game.players.length) {
         case 0:
@@ -235,7 +238,11 @@ define([
       doors[gateway.direction] = gateway.roomTo;
     }
 
-    return {background: room.background, doors: doors, items: room.items, furniture: room.objects};
+    return {background: room.background,
+            doors: doors,
+            items: room.items,
+            furniture: room.objects,
+            event: room.event};
   }
 
   function assembleMap() {
@@ -250,6 +257,19 @@ define([
 
   function sendChatMessage(message) {
     io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: this._player.id}, function (resData, jwr){});
+  }
+
+  /*
+   * Performs the given event, altering player stats as necessary.
+   * Returns the title and text of the event to be displayed.
+   */
+  function performEvent(eventID) {
+    io.socket.put('/room/removeEvent/' + this._currentRoom.id, {}, function(resData, jwr){});
+    var event = events[eventID];
+    for (var stat in event.effect) {  //For right now, event effects only alter stats
+      this._player[stat] = this._player[stat] + event.effect[stat];
+    }
+    return {title: event.title, text: event.text};
   }
 
   function initSockets() {
@@ -370,6 +390,7 @@ define([
     this.sendChatMessage = sendChatMessage.bind(this)
     this.reloadRoom = reloadRoom.bind(this);
     this.assembleMap = assembleMap.bind(this);
+    this.performEvent = performEvent.bind(this);
     this.start = start.bind(this);
   }
 });

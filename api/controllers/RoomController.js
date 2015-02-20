@@ -20,6 +20,11 @@ module.exports = {
         console.log(err);
         res.json(err);
       })
+  },
+
+  removeEvent: function(req, res) {
+    Room.update(req.param('id'), {event: -1}, function(err, rooms) {});
   }
+
 };
 

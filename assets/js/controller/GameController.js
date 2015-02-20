@@ -237,6 +237,10 @@ define([
 
       onDisableMap: function() {
         return that._model.reloadRoom();
+      },
+
+      performEvent: function(eventID) {
+        return that._model.performEvent(eventID);
       }
     });
 

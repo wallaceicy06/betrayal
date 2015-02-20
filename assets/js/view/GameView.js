@@ -295,6 +295,29 @@ define([
       that._mapEnabled = false;
 
       that._player.enableControl();
+
+      if (roomConfig.event !== undefined && roomConfig.event !== -1) {
+        that._player.disableControl();
+        var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);  //performEvent does the action of the event and returns the text to display
+        var eventBackground = Crafty.e('2D, DOM, Color')
+          .color('white');
+        var eventTitle = Crafty.e('2D, DOM, Text')
+          .text(eventInfo.title)
+          .textFont({size: '20px'})
+          .css({'text-align': 'center', 'top': '15px'});
+        var eventText = Crafty.e('2D, DOM, Text')
+          .css({'text-align': 'center', 'top': '45px'})
+          .text(eventInfo.text)
+          .textFont({size: '14px'});
+        eventBackground.attach(eventTitle); //Attach eventTitle and eventText as children of event so that they will move together
+        eventBackground.attach(eventText);
+        eventBackground.attr({x: that._gameModelAdpt.getDimensions().width/2 - 175, y: that._gameModelAdpt.getDimensions().height/2 - 175, w: 350, h: 350});
+        setTimeout(function() {
+          eventBackground.destroy();    //Remove the event text box
+          eventText.destroy();
+          that._player.enableControl(); //Allow player to move again
+        }, 3000); //Display the event text box for 3 seconds
+      }
     });
 
     Crafty.defineScene('map', function(mapConfig) {
