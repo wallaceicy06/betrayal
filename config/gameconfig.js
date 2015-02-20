@@ -54,6 +54,7 @@ module.exports.gameconfig = {
     },
     {
       id: 'bedroom',
+      floor: '#FFFFFF',
       gateways: {
         north: true,
         east: true,
@@ -63,6 +64,7 @@ module.exports.gameconfig = {
     },
     {
       id: 'kitchen',
+      floor: '#FFFFFF',
       gateways: {
         north: true,
         east: true,
@@ -72,6 +74,7 @@ module.exports.gameconfig = {
     },
     {
       id: 'dining room',
+      floor: '#FFFFFF',
       gateways: {
         north: true,
         east: true,
