@@ -24,7 +24,7 @@ module.exports = {
     var roomsToCreate = [];
     var gatewaysToCreate = [];
 
-    var allRooms = Room.layouts.slice(1);
+    var allRooms = Object.keys(Room.layouts).slice(1);
     sails.shuffle.knuthShuffle(allRooms);
 
     var openGridLocs = [];
@@ -34,13 +34,14 @@ module.exports = {
       houseGrid[i] = new Array(16);
     }
 
-    var room = Room.layouts[0];
+    var roomID = 'entryway';
+    var room = Room.layouts[roomID];
     var x = 7;
     var y = 6;
 
-    houseGrid[x][y] = room;
+    houseGrid[x][y] = roomID;
     openGridLocs.push([6,6], [7,5], [7,7]);
-    roomsToCreate.push({game: game.id, name: room.id, background: room.floor});
+    roomsToCreate.push({game: game.id, name: roomID, background: room.floor});
 
     while (allRooms.length > 0) {
       var randLoc = Math.floor(Math.random() * openGridLocs.length);
@@ -49,9 +50,10 @@ module.exports = {
       x = openGridLocs[randLoc][0];
       y = openGridLocs[randLoc][1];
 
-      room = allRooms.pop();
-      houseGrid[x][y] = room;
-      roomsToCreate.push({game: game.id, name: room.id, background: room.floor});
+      roomID = allRooms.pop();
+      room = Room.layouts[roomID];
+      houseGrid[x][y] = roomID;
+      roomsToCreate.push({game: game.id, name: roomID, background: room.floor});
 
       if (room.gateways.north && houseGrid[x - 1][y] === undefined) {
         openGridLocs.push([x - 1, y]);
@@ -69,35 +71,41 @@ module.exports = {
 
     for (var i = 0; i < houseGrid.length; i++) {
       for (var j = 0; j < houseGrid[0].length; j++) {
-        var thisRoom = houseGrid[i][j];
+        var thisRoomID = houseGrid[i][j];
+        var thisRoom = Room.layouts[thisRoomID]
 
         if (thisRoom === undefined) {
           continue;
         }
 
-        var roomNorth = (i == 0 ? null : houseGrid[i - 1][j]);
-        var roomEast = (j == houseGrid[0].length - 1 ? null : houseGrid[i][j + 1]);
-        var roomSouth = (i == houseGrid.length - 1 ? null : houseGrid[i + 1][j]);
-        var roomWest = (j == 0 ? null : houseGrid[i][j - 1]);
+        var roomNorthID = (i == 0 ? null : houseGrid[i - 1][j]);
+        var roomEastID = (j == houseGrid[0].length - 1 ? null : houseGrid[i][j + 1]);
+        var roomSouthID = (i == houseGrid.length - 1 ? null : houseGrid[i + 1][j]);
+        var roomWestID = (j == 0 ? null : houseGrid[i][j - 1]);
+
+        var roomNorth = Room.layouts[roomNorthID];
+        var roomEast = Room.layouts[roomEastID];
+        var roomSouth = Room.layouts[roomSouthID];
+        var roomWest = Room.layouts[roomWestID];
 
         if (roomNorth != null && thisRoom.gateways.north && roomNorth.gateways.south) {
-          gatewaysToCreate.push({roomFrom: thisRoom.id, roomTo: roomNorth.id, direction: 'north'})
+          gatewaysToCreate.push({roomFrom: thisRoomID, roomTo: roomNorthID, direction: 'north'})
         }
         if (roomEast != null && thisRoom.gateways.east && roomEast.gateways.west) {
-          gatewaysToCreate.push({roomFrom: thisRoom.id, roomTo: roomEast.id, direction: 'east'})
+          gatewaysToCreate.push({roomFrom: thisRoomID, roomTo: roomEastID, direction: 'east'})
         }
         if (roomSouth != null && thisRoom.gateways.south && roomSouth.gateways.north) {
-          gatewaysToCreate.push({roomFrom: thisRoom.id, roomTo: roomSouth.id, direction: 'south'})
+          gatewaysToCreate.push({roomFrom: thisRoomID, roomTo: roomSouthID, direction: 'south'})
         }
         if (roomWest != null && thisRoom.gateways.west && roomWest.gateways.east) {
-          gatewaysToCreate.push({roomFrom: thisRoom.id, roomTo: roomWest.id, direction: 'west'})
+          gatewaysToCreate.push({roomFrom: thisRoomID, roomTo: roomWestID, direction: 'west'})
         }
       }
     }
 
     var databaseID = {};
 
-    var startRoom = Room.create(roomsToCreate)
+    Room.create(roomsToCreate)
       .then(function(rooms) {
         console.log('rooms created');
 
