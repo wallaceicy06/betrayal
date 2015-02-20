@@ -20,8 +20,6 @@ module.exports = {
               via: 'room'},
     game: {model: 'game',
            required: true},
-    roomNum: {type: 'integer',
-              required: true},
     background: {type: 'string',
                  required: true},
     items: {collection: 'item',
@@ -30,6 +28,8 @@ module.exports = {
                 via: 'room'},
     event: {type: 'integer',    //Event stored as an id, client will figure it out
             required: false}
-  }
-};
+  },
 
+  layouts: sails.config.gameconfig.rooms
+
+};

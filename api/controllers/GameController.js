@@ -64,64 +64,74 @@ module.exports = {
         return;
       }
 
-      var deferredsArray = [];
-      var promisesArray = [];
+      /* TODO old code for house generation. Item generation needs to
+       * be moved to the generateHouse helper (or another one) */
+      // var deferredsArray = [];
+      // var promisesArray = [];
 
-      for (var i = 0; i < ROOMS.length; i++) {
-        var deferred = sails.q.defer();
-        ROOMS[i]['game'] = game.id;
-        Room.create(ROOMS[i], function(err, room) {
-          roomNumsToIDs[room.roomNum] = room.id;
-          deferredsArray[room.roomNum - 1].resolve();
-        });
-        deferredsArray.push(deferred);
-        promisesArray.push(deferred.promise);
-      }
+      // for (var i = 0; i < ROOMS.length; i++) {
+        // var deferred = sails.q.defer();
+        // ROOMS[i]['game'] = game.id;
+        // Room.create(ROOMS[i], function(err, room) {
+          // roomNumsToIDs[room.roomNum] = room.id;
+          // deferredsArray[room.roomNum - 1].resolve();
+        // });
+        // deferredsArray.push(deferred);
+        // promisesArray.push(deferred.promise);
+      // }
 
-      sails.q.all(promisesArray).then(function() {
-        Game.update(game.id, {startingRoom: roomNumsToIDs[1]}, function(err, game) {});
+      // sails.q.all(promisesArray).then(function() {
+        // Game.update(game.id, {startingRoom: roomNumsToIDs[1]}, function(err, game) {});
 
-        for (var i = 0; i < GATEWAYS.length; i ++) {
-          /* Create gateway from GATEWAYS list. */
-          var gateway = {}
-          gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
-          gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
-          gateway['direction'] = GATEWAYS[i]['direction'];
-          Gateway.create(gateway, function(err, gateway) {});
+        // for (var i = 0; i < GATEWAYS.length; i ++) {
+          // [> Create gateway from GATEWAYS list. <]
+          // var gateway = {}
+          // gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
+          // gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
+          // gateway['direction'] = GATEWAYS[i]['direction'];
+          // Gateway.create(gateway, function(err, gateway) {});
 
-          /* Create corresponding gateway in other direction. */
-          gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
-          gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
-          gateway['direction'] = OPPOSITE_DIRECTIONS[GATEWAYS[i]['direction']];
-          Gateway.create(gateway, function(err, gateway) {});
-        }
+          // [> Create corresponding gateway in other direction. <]
+          // gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
+          // gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
+          // gateway['direction'] = OPPOSITE_DIRECTIONS[GATEWAYS[i]['direction']];
+          // Gateway.create(gateway, function(err, gateway) {});
+        // }
 
 
-        /* Create furniture for all rooms */
-        for (var i = 0; i < ROOMS.length; i++) {
-          for (var j = 0; j < ROOMS[i].furniture.length; j++) {
-            var furn = ROOMS[i].furniture[j];
-            furn['room'] = roomNumsToIDs[ROOMS[i][roomNum]];
-            Furniture.create(furn, function(err, room) {});
-          }
-        }
+        // [> Create furniture for all rooms <]
+        // for (var i = 0; i < ROOMS.length; i++) {
+          // for (var j = 0; j < ROOMS[i].furniture.length; j++) {
+            // var furn = ROOMS[i].furniture[j];
+            // furn['room'] = roomNumsToIDs[ROOMS[i][roomNum]];
+            // Furniture.create(furn, function(err, room) {});
+          // }
+        // }
 
-        /* Randomly place items */
-        for (var i = 0; i < 6; i++) {
-          /* Select a random room */
-          var roomNum = Math.floor((Math.random() * Object.keys(roomNumsToIDs).length) + 1);
-          /* Select random x and y coordinates */
-          var x = Math.floor((Math.random() * (DIMENSIONS.width-128)) + 64); //Allow items anywhere in the room at least 64px from a wall
-          var y = Math.floor((Math.random() * (DIMENSIONS.height-128)) + 64);
-          /* Select a random item type */
-          var itemNum = Math.floor((Math.random() * ITEM_TYPES.length));
-          /* Create item */
-          Item.create({type: ITEM_TYPES[itemNum].type, stat: ITEM_TYPES[itemNum].stat, amount: 1, room: roomNumsToIDs[roomNum], x: x, y: y}, function(err, item) {});
-        }
+        // [> Randomly place items <]
+        // for (var i = 0; i < 6; i++) {
+          // [> Select a random room <]
+          // var roomNum = Math.floor((Math.random() * Object.keys(roomNumsToIDs).length) + 1);
+          // [> Select random x and y coordinates <]
+          // var x = Math.floor((Math.random() * (DIMENSIONS.width-128)) + 64); //Allow items anywhere in the room at least 64px from a wall
+          // var y = Math.floor((Math.random() * (DIMENSIONS.height-128)) + 64);
+          // [> Select a random item type <]
+          // var itemNum = Math.floor((Math.random() * ITEM_TYPES.length));
+          // [> Create item <]
+          // Item.create({type: ITEM_TYPES[itemNum].type, stat: ITEM_TYPES[itemNum].stat, amount: 1, room: roomNumsToIDs[roomNum], x: x, y: y}, function(err, item) {});
+        // }
+      // });
+
+      Game.generateHouse(game, function(startRoom) {
+        Game.update(game.id, {startingRoom: startRoom})
+          .catch(function(err) {
+            console.log(err);
+            res.json(err);
+          })
+          .done(function() {
+            res.json(game.toJSON());
+          });
       });
-
-
-      res.json(game.toJSON());
     });
   }
 };
