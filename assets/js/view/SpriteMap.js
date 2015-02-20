@@ -21,4 +21,4 @@ define([
     'diningTable': {gridX: 0, gridY: 10, gridW: 8, gridH: 3},
     'poolTable': {gridX: 8, gridY: 10, gridW: 5, gridH: 3},
   }
-}
+});
