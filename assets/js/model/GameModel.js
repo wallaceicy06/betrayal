@@ -10,6 +10,8 @@ define([
     height: 512
   }
 
+  var events;
+
   function joinGame(playerName, gameID) {
     var that = this;
 
@@ -17,6 +19,7 @@ define([
     var blueColor = 'blue';
 
     io.socket.get('/game/' + gameID, function (game) {
+      events = game.events;
       var color;
       switch (game.players.length) {
         case 0:
@@ -97,7 +100,7 @@ define([
             var gateway = room.gatewaysOut[i];
             doors[gateway.direction] = gateway.roomTo;
           }
-          
+
           that._viewAdpt.startGame({background: room.background, doors: doors, items: room.items, furniture: room.furniture, event: room.event});
         });
 
@@ -259,18 +262,15 @@ define([
 
   /*
    * Performs the given event, altering player stats as necessary.
-   * Returns the text of the event to be displayed.
+   * Returns the title and text of the event to be displayed.
    */
   function performEvent(eventID) {
     io.socket.put('/room/removeEvent/' + this._currentRoom.id, {}, function(resData, jwr){});
-    switch(eventID) {
-      case 0:
-        return "Event 0";
-        break;
-      default:
-        return "Unknown event";
-        break;
+    var event = events[eventID];
+    for (var stat in event.effect) {  //For right now, event effects only alter stats
+      this._player[stat] = this._player[stat] + event.effect[stat];
     }
+    return {title: event.title, text: event.text};
   }
 
   function initSockets() {

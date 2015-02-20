@@ -45,6 +45,7 @@ module.exports = {
 
   findOne: function(req, res) {
     Game.findOne(req.params.id).populate('rooms').populate('players').populate('startingRoom').exec(function(err, game) {
+      game["events"] = sails.config.gameconfig.events;
       res.json(game);
     });
   },

@@ -82,5 +82,16 @@ module.exports.gameconfig = {
         west: true
       },
     }
+  ],
+  
+  events: [
+    {   //Event 0
+      title: "Image in the Mirror",
+      text: 'Your reflection in the mirror moves on its own. You realize it is \
+             you from another time. It scratches into the mirror "This will \
+             help" and hands you an item. Gain one weapon strength!',
+      effect: {weapon: 1}
+    }
   ]
+  
 }
