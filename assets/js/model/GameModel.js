@@ -187,15 +187,10 @@ define([
     var that = this;
 
     fetchRoom.call(this, id, function (room) {
-      var doors = {};
-      for (var i = 0; i < room['gatewaysOut'].length; i++) {
-        var gateway = room['gatewaysOut'][i];
-        doors[gateway['direction']] = gateway['roomTo'];
-      }
-
       that._currentRoom = room;
       that._player.room = room.id;
-      var roomConfig = {background: room.background, doors: doors, items: room.items, furniture: room.furniture};
+
+      var roomConfig = prepareRoomConfig.call(that, room);
 
       var newMiniRoom = new MapNode(room.id, room.name);
 
@@ -231,16 +226,20 @@ define([
     var that = this;
 
     fetchRoom.call(this, this._currentRoom.id, function(room) {
-      var doors = {};
-      for (var i = 0; i < room['gatewaysOut'].length; i++) {
-        var gateway = room['gatewaysOut'][i];
-        doors[gateway['direction']] = gateway['roomTo'];
-      }
-
-      var roomConfig = {background: room.background, doors: doors, items: room.items};
+      var roomConfig = prepareRoomConfig.call(that, room);
 
       that._viewAdpt.loadRoom(roomConfig);
     });
+  }
+
+  function prepareRoomConfig(room) {
+    var doors = {};
+    for (var i = 0; i < room['gatewaysOut'].length; i++) {
+      var gateway = room['gatewaysOut'][i];
+      doors[gateway['direction']] = gateway['roomTo'];
+    }
+
+    return {background: room.background, doors: doors, items: room.items, furniture: room.furniture};
   }
 
   function assembleMap() {

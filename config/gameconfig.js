@@ -1,7 +1,6 @@
 module.exports.gameconfig = {
-  rooms: [
-    {
-      id: 'entryway',
+  rooms: {
+    'entryway': {
       floor: '#6699FF',
       gateways: {
         north: true,
@@ -26,8 +25,7 @@ module.exports.gameconfig = {
         }
       ]
     },
-    {
-      id: 'livingRoom',
+    'livingRoom': {
       floor: '#990033',
       gateways: {
         north: true,
@@ -52,8 +50,7 @@ module.exports.gameconfig = {
         }
       ]
     },
-    {
-      id: 'bedroom',
+    'bedroom': {
       floor: '#FFFFFF',
       gateways: {
         north: true,
@@ -62,8 +59,7 @@ module.exports.gameconfig = {
         west: true
       },
     },
-    {
-      id: 'kitchen',
+    'kitchen': {
       floor: '#FFFFFF',
       gateways: {
         north: true,
@@ -72,8 +68,7 @@ module.exports.gameconfig = {
         west: true
       },
     },
-    {
-      id: 'dining room',
+    'dining room': {
       floor: '#FFFFFF',
       gateways: {
         north: true,
@@ -82,5 +77,5 @@ module.exports.gameconfig = {
         west: true
       },
     }
-  ]
+  }
 }
