@@ -1,7 +1,8 @@
 define([
     'jquery',
-    'crafty'
-], function($, Crafty) {
+    'crafty',
+    'view/SpriteMap',
+], function($, Crafty, SpriteMap) {
 
   'use strict';
 
@@ -46,6 +47,11 @@ define([
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteChair': [0,0]}
+      },
+      'images/game/furniture.png' : {
+        'tile': TILE_WIDTH,
+        'tileh': TILE_WIDTH,
+        'map': {'SpriteFurniture': [0,0]}
       }
     }
   }
@@ -235,7 +241,7 @@ define([
 
     Crafty.c('Furniture', {
       init: function() {
-        this.requires('2D, Canvas, RoomItem, Solid');
+        this.requires('2D, Canvas, RoomItem, Solid, SpriteFurniture');
       }
     });
 
@@ -371,11 +377,15 @@ define([
   }
 
   function placeFurniture(furniture) {
-    if(furniture == undefined) {
-      return;
-    }
     for (var i = 0; i < furniture.length; i++) {
-      Crafty.e(furniture[i].type).attr({x: furniture[i].x, y: furniture[i].y});
+      Crafty.e('Furniture').attr({x: furniture[i].gridX * TILE_WIDTH,
+                                  y: furniture[i].gridY * TILE_WIDTH,
+                                  w: SpriteMap[furniture[i].id].gridW * TILE_WIDTH,
+                                  h: SpriteMap[furniture[i].id].gridH * TILE_WIDTH})
+                           .sprite(SpriteMap[furniture[i].id].gridX,
+                                   SpriteMap[furniture[i].id].gridY,
+                                   SpriteMap[furniture[i].id].gridW,
+                                   SpriteMap[furniture[i].id].gridH);
     }
   }
 

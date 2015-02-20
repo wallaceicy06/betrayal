@@ -58,6 +58,7 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      objects: []
     },
     'kitchen': {
       floor: '#FFFFFF',
@@ -67,6 +68,7 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      objects: []
     },
     'dining room': {
       floor: '#FFFFFF',
@@ -76,6 +78,7 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      objects: []
     }
   }
 }

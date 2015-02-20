@@ -92,13 +92,9 @@ define([
           that._miniMap = new MapNode(room.id, room.name);
           that._currentMiniRoom = that._miniMap;
 
-          var doors = {};
-          for (var i = 0; i < room.gatewaysOut.length; i++) {
-            var gateway = room.gatewaysOut[i];
-            doors[gateway.direction] = gateway.roomTo;
-          }
+          var roomConfig = prepareRoomConfig.call(that, room);
 
-          that._viewAdpt.startGame({background: room.background, doors: doors, items: room.items, furniture: room.furniture});
+          that._viewAdpt.startGame(roomConfig);
         });
 
         /* Populate other players object when join game */
@@ -234,12 +230,12 @@ define([
 
   function prepareRoomConfig(room) {
     var doors = {};
-    for (var i = 0; i < room['gatewaysOut'].length; i++) {
-      var gateway = room['gatewaysOut'][i];
-      doors[gateway['direction']] = gateway['roomTo'];
+    for (var i = 0; i < room.gatewaysOut.length; i++) {
+      var gateway = room.gatewaysOut[i];
+      doors[gateway.direction] = gateway.roomTo;
     }
 
-    return {background: room.background, doors: doors, items: room.items, furniture: room.furniture};
+    return {background: room.background, doors: doors, items: room.items, furniture: room.objects};
   }
 
   function assembleMap() {
