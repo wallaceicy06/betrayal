@@ -408,7 +408,6 @@ define([
     }
     for (var i = 0; i < furniture.length; i++) {
       Crafty.e(furniture[i].type).attr({x: furniture[i].x, y: furniture[i].y});
-      //Crafty.e('Furniture').attr({x: furniture[i].x, y: furniture[i].y}).sprite();
     }
   }
 
