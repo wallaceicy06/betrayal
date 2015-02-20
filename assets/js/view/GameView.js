@@ -38,9 +38,9 @@ define([
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteBlueRoom': [0,0],
-                'SpriteMapWhiteRoom': [0,1],
-                'SpriteMapYellowRoom': [0,2],
-                'SpriteMapGreenRoom': [0,3]}
+                'SpriteWhiteRoom': [0,1],
+                'SpriteYellowRoom': [0,2],
+                'SpriteGreenRoom': [0,3]}
       },
       'images/game/chair.png' : {
         'tile': TILE_WIDTH,
@@ -247,16 +247,8 @@ define([
 
     Crafty.c('MapRoom', {
       init: function() {
-        this.requires('2D, Canvas, SpriteBlueRoom');
+        this.requires('2D, Canvas, SpriteWhiteRoom');
       },
-
-      setColor: function(colorString) {
-        console.log("Changing room color to " + colorString);
-        var row = ROOM_TO_SPRITE[colorString];
-        this.sprite(0, row, 1, 1);
-
-        return this;
-      }
     });
 
     Crafty.init(that._gameModelAdpt.getDimensions().width,
@@ -312,7 +304,6 @@ define([
         curNode = toVisit.shift();
 
         Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
-                           .setColor(curNode.room.name);
 
         if (curNode.room.id === that._playerModelAdpt.getRoom()) {
           Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
