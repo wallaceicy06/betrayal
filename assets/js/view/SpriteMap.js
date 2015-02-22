@@ -20,5 +20,11 @@ define([
     'redBed': {gridX: 3, gridY: 6, gridW: 3, gridH: 4},
     'diningTable': {gridX: 0, gridY: 10, gridW: 8, gridH: 3},
     'poolTable': {gridX: 8, gridY: 10, gridW: 5, gridH: 3},
+    'yellowCarpet': {gridX: 0, gridY: 13, gridW: 1, gridH: 1},
+    'redCarpet': {gridX: 1, gridY: 13, gridW: 1, gridH: 1},
+    'blueCarpet': {gridX: 2, gridY: 13, gridW: 1, gridH: 1},
+    'creamTile': {gridX: 3, gridY: 13, gridW: 1, gridH: 1},
+    'blueTile': {gridX: 4, gridY: 13, gridW: 1, gridH: 1},
+    'woodFloor': {gridX: 5, gridY: 13, gridW: 1, gridH: 1},
   }
 });
