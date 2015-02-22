@@ -42,8 +42,8 @@ define([
 
         var playerViewAdpt = that._viewAdpt.makePlayerViewAdpt(that._player);
         that._player.installGameModelAdpt({
-          onSpeedChange: function(newSpeed) {
-            playerViewAdpt.onSpeedChange(newSpeed);
+          onSpeedChange: function(newSpeed, oldSpeed) {
+            playerViewAdpt.onSpeedChange(newSpeed, oldSpeed);
             io.socket.put('/player/adjustStat/' + player.id,
                           {stat: 'speed', newValue: newSpeed},
                           function (player) {});

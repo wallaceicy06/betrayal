@@ -38,8 +38,9 @@ define([
         return this._speed;
       },
       set: function(newSpeed) {
+        var oldSpeed = this._speed;
         this._speed = newSpeed;
-        this._gameModelAdpt.onSpeedChange(this._speed);
+        this._gameModelAdpt.onSpeedChange(this._speed, oldSpeed);
       }
     });
 

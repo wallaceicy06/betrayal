@@ -47,7 +47,7 @@ define([
             return playerModel.relics;
           },
 
-          setSpeed: function(speed) {
+          setSpeed: function(speed) {   /* Is this method necessary? */
             playerModel.speed = speed;
           },
 
@@ -102,8 +102,9 @@ define([
 
         return {
           /* Player View Adapter */
-          onSpeedChange: function(newSpeed) {
+          onSpeedChange: function(newSpeed, oldSpeed) {
             playerView.setSpeed(newSpeed);
+            playerView.fixMovement(newSpeed - oldSpeed);
           },
 
           onRelicsChange: function(newRelics) {
