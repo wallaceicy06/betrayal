@@ -45,15 +45,15 @@ module.exports.gameconfig = {
           id: 'armchair',
           solid: true,
           rotation: 270,
-          gridX: 5,
-          gridY: 9
+          gridX: 3,
+          gridY: 8
         },
         {
           id: 'armchair',
           solid: true,
           rotation: 90,
-          gridX: 13,
-          gridY: 7
+          gridX: 12,
+          gridY: 8
         },
         {
           id: 'couch',
@@ -61,6 +61,13 @@ module.exports.gameconfig = {
           rotation: 0,
           gridX: 7,
           gridY: 4
+        },
+        {
+          id: 'squareTable',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 8
         }
       ]
     },
