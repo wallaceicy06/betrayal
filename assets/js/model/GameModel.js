@@ -10,6 +10,8 @@ define([
     height: 512
   }
 
+  var ATTACK_RADIUS = 64;
+
   var events;
 
   function joinGame(playerName, gameID) {
@@ -280,10 +282,10 @@ define([
   function attack() {
     for (var id in this._otherPlayers) {
       var otherPlayer = this._otherPlayers[id];
-      if (otherPlayer.x < this._player.x + 64
-        && otherPlayer.x > this._player.x - 32
-        && otherPlayer.y < this._player.y + 64
-        && otherPlayer.y > this._player.y - 32) {
+      if (otherPlayer.x < this._player.x + ATTACK_RADIUS + 32
+        && otherPlayer.x > this._player.x - ATTACK_RADIUS
+        && otherPlayer.y < this._player.y + ATTACK_RADIUS + 32
+        && otherPlayer.y > this._player.y - ATTACK_RADIUS) {
         /* Roll dice for combat based on weapon strength - same as board game */
         var playerDamaged;
         var damage;
