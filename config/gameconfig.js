@@ -103,7 +103,7 @@ module.exports.gameconfig = {
           solid: true,
           rotation: 0,
           gridX: 1,
-          grixY: 4
+          gridY: 4
         },
         {
           id: 'couch',
