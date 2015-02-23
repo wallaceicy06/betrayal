@@ -23,11 +23,35 @@ module.exports = {
   generateHouse: function(game, cb) {
     var roomsToCreate = [];
     var gatewaysToCreate = [];
-
-    var allRooms = Object.keys(Room.layouts).slice(1);
-    sails.shuffle.knuthShuffle(allRooms);
-
     var openGridLocs = [];
+
+    /* Put all rooms except the entryway into allRooms and shuffle. */
+    var allRooms = Object.keys(Room.layouts).slice(1);
+    allRooms = _.shuffle(allRooms);
+
+    /* Sums the total abundance to make percentages of items relative. */
+    var totalAbundance = 0;
+    _.each(_.values(Game.items), function(i) {
+      totalAbundance += i.abundance;
+    });
+
+    /* Add 2 items per room per the abundance specifications. */
+    var itemBank = [];
+    for (i in Game.items) {
+      _.times(Math.floor(Game.items[i].abundance
+                         / totalAbundance
+                         * allRooms.length * 2), function(n) {
+        itemBank.push(i);
+      });
+    }
+
+    /* Off by one error. Add one more item. */
+    itemBank.push('lightning');
+
+    /* Randomly order the items. */
+    itemBank = _.shuffle(itemBank);
+
+    console.log(itemBank);
 
     var houseGrid = new Array(14);
     for (var i = 0; i < houseGrid.length; i++) {
@@ -46,6 +70,7 @@ module.exports = {
     while (allRooms.length > 0) {
       var randLoc = Math.floor(Math.random() * openGridLocs.length);
       var randRoom = Math.floor(Math.random() * allRooms.length);
+      var itemsToCreate = [];
 
       x = openGridLocs[randLoc][0];
       y = openGridLocs[randLoc][1];
@@ -53,7 +78,53 @@ module.exports = {
       roomID = allRooms.pop();
       room = Room.layouts[roomID];
       houseGrid[x][y] = roomID;
-      roomsToCreate.push({game: game.id, name: roomID, background: room.floor});
+
+      var excludePts = [];
+      var i, j;
+
+      /* Exclude walls. */
+      for (i = 0; i < Room.dimensions.gridW; i++) {
+        for (j = 0; j < Room.dimensions.gridH; j++) {
+          if (i == 0 || i == Room.dimensions.gridW - 1) {
+            excludePts.push([i, j]);
+          } else if (j == 0 || j == Room.dimensions.gridH - 1) {
+            excludePts.push([i, j]);
+          }
+        }
+      }
+
+      /* Exclude objects. */
+      _.each(Room.layouts[roomID].objects, function(o) {
+        var x = o.gridX;
+        var y = o.gridY;
+
+        for (i = o.gridX; i < o.gridX + Game.sprites[o.id].gridW; i++) {
+          for (j = o.gridY; j < o.gridY + Game.sprites[o.id].gridH; j++) {
+            excludePts.push([i, j]);
+          }
+        }
+      });
+
+      _.times(2, function(n) {
+        var item = itemBank.pop();
+        var loc = RandomService.randomGridLoc(Room.dimensions.gridW,
+                                              Room.dimensions.gridH,
+                                              excludePts);
+
+        itemsToCreate.push({type: item,
+                            stat: Game.items[item].stat,
+                            amount: Game.items[item].amount,
+                            gridX: loc.x,
+                            gridY: loc.y});
+      });
+
+      console.log('room ' + roomID + ' is excluding');
+      console.log(excludePts);
+
+      roomsToCreate.push({game: game.id,
+                          name: roomID,
+                          background: room.floor,
+                          items: itemsToCreate});
 
       if (room.gateways.north && houseGrid[x - 1][y] === undefined) {
         openGridLocs.push([x - 1, y]);
@@ -72,11 +143,12 @@ module.exports = {
     for (var i = 0; i < houseGrid.length; i++) {
       for (var j = 0; j < houseGrid[0].length; j++) {
         var thisRoomID = houseGrid[i][j];
-        var thisRoom = Room.layouts[thisRoomID]
 
-        if (thisRoom === undefined) {
+        if (thisRoomID === undefined) {
           continue;
         }
+
+        var thisRoom = Room.layouts[thisRoomID]
 
         var roomNorthID = (i == 0 ? null : houseGrid[i - 1][j]);
         var roomEastID = (j == houseGrid[0].length - 1 ? null : houseGrid[i][j + 1]);
@@ -88,17 +160,29 @@ module.exports = {
         var roomSouth = Room.layouts[roomSouthID];
         var roomWest = Room.layouts[roomWestID];
 
-        if (roomNorth != null && thisRoom.gateways.north && roomNorth.gateways.south) {
-          gatewaysToCreate.push({roomFrom: thisRoomID, roomTo: roomNorthID, direction: 'north'})
+        if (roomNorth != null && thisRoom.gateways.north
+            && roomNorth.gateways.south) {
+          gatewaysToCreate.push({roomFrom: thisRoomID,
+                                 roomTo: roomNorthID,
+                                 direction: 'north'})
         }
-        if (roomEast != null && thisRoom.gateways.east && roomEast.gateways.west) {
-          gatewaysToCreate.push({roomFrom: thisRoomID, roomTo: roomEastID, direction: 'east'})
+        if (roomEast != null && thisRoom.gateways.east
+            && roomEast.gateways.west) {
+          gatewaysToCreate.push({roomFrom: thisRoomID,
+                                 roomTo: roomEastID,
+                                 direction: 'east'})
         }
-        if (roomSouth != null && thisRoom.gateways.south && roomSouth.gateways.north) {
-          gatewaysToCreate.push({roomFrom: thisRoomID, roomTo: roomSouthID, direction: 'south'})
+        if (roomSouth != null && thisRoom.gateways.south
+            && roomSouth.gateways.north) {
+          gatewaysToCreate.push({roomFrom: thisRoomID,
+                                 roomTo: roomSouthID,
+                                 direction: 'south'})
         }
-        if (roomWest != null && thisRoom.gateways.west && roomWest.gateways.east) {
-          gatewaysToCreate.push({roomFrom: thisRoomID, roomTo: roomWestID, direction: 'west'})
+        if (roomWest != null && thisRoom.gateways.west
+            && roomWest.gateways.east) {
+          gatewaysToCreate.push({roomFrom: thisRoomID,
+                                 roomTo: roomWestID,
+                                 direction: 'west'})
         }
       }
     }
@@ -138,6 +222,9 @@ module.exports = {
       .done(function() {
         cb(databaseID['entryway']);
       });
-  }
-};
+  },
 
+  items: sails.config.gameconfig.items,
+
+  sprites: sails.config.gameconfig.sprites
+};

@@ -30,6 +30,8 @@ module.exports = {
             required: false}
   },
 
-  layouts: sails.config.gameconfig.rooms
+  layouts: sails.config.gameconfig.rooms,
+
+  dimensions: sails.config.gameconfig.dimensions
 
 };

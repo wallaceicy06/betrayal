@@ -10,8 +10,6 @@ define([
     height: 512
   }
 
-  var events;
-
   function joinGame(playerName, gameID) {
     var that = this;
 
@@ -19,7 +17,9 @@ define([
     var blueColor = 'blue';
 
     io.socket.get('/game/' + gameID, function (game) {
-      events = game.events;
+      that._events = game.events;
+      that._viewAdpt.installSpriteMap(game.sprites);
+
       var color;
       switch (game.players.length) {
         case 0:
@@ -265,7 +265,7 @@ define([
    */
   function performEvent(eventID) {
     io.socket.put('/room/removeEvent/' + this._currentRoom.id, {}, function(resData, jwr){});
-    var event = events[eventID];
+    var event = this._events[eventID];
     for (var stat in event.effect) {  //For right now, event effects only alter stats
       this._player[stat] = this._player[stat] + event.effect[stat];
     }
@@ -374,6 +374,7 @@ define([
     this._gameID = null;
     this._miniMap = null;
     this._currentMiniRoom = null;
+    this._events = null;
 
     initSockets.call(this);
 

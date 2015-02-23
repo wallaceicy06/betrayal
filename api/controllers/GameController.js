@@ -4,48 +4,16 @@
  * @description :: Server-side logic for managing games
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
-
-var DIMENSIONS = {
-  width: 576,
-  height: 512
-  };
-
-var ROOMS = [
-    {roomNum: 1, name: 'blue', background: '#6699FF', furniture: [{type: 'Chair', x: 224, y: 32}], event: 0},
-    {roomNum: 2, name: 'black', background: '#FFFFFF', furniture: [], event: -1},
-    {roomNum: 3, name: 'yellow', background: '#FFFF99', furniture: [], event: -1},
-    {roomNum: 4, name: 'green', background: '#00FFCC', furniture: [], event: -1}
-  ];
-
-var GATEWAYS = [
-    {roomFrom: 1, roomTo: 2, direction: 'east'},
-    {roomFrom: 1, roomTo: 4, direction: 'south'},
-    {roomFrom: 2, roomTo: 3, direction: 'south'},
-    {roomFrom: 4, roomTo: 3, direction: 'east'}
-  ];
-
-var OPPOSITE_DIRECTIONS = {
-  'east': 'west',
-  'west': 'east',
-  'north': 'south',
-  'south': 'north'
-};
-
-var roomNumsToIDs = {};
-
-var ITEM_TYPES = [
-  {type: 'SpeedInc', stat: 'speed'},
-  {type: 'MaxHealth', stat: 'maxHealth'},
-  {type: 'CurHealth', stat: 'curHealth'},
-  {type: 'Weapon', stat: 'weapon'},
-  {type: 'Relic', stat: 'relics'}
-];
-
 module.exports = {
 
   findOne: function(req, res) {
-    Game.findOne(req.params.id).populate('rooms').populate('players').populate('startingRoom').exec(function(err, game) {
-      game["events"] = sails.config.gameconfig.events;
+    Game.findOne(req.params.id)
+        .populate('rooms')
+        .populate('players')
+        .populate('startingRoom')
+        .exec(function(err, game) {
+      game.events = sails.config.gameconfig.events;
+      game.sprites = sails.config.gameconfig.sprites;
       res.json(game);
     });
   },
@@ -64,64 +32,6 @@ module.exports = {
         res.json(err);
         return;
       }
-
-      /* TODO old code for house generation. Item generation needs to
-       * be moved to the generateHouse helper (or another one) */
-      // var deferredsArray = [];
-      // var promisesArray = [];
-
-      // for (var i = 0; i < ROOMS.length; i++) {
-        // var deferred = sails.q.defer();
-        // ROOMS[i]['game'] = game.id;
-        // Room.create(ROOMS[i], function(err, room) {
-          // roomNumsToIDs[room.roomNum] = room.id;
-          // deferredsArray[room.roomNum - 1].resolve();
-        // });
-        // deferredsArray.push(deferred);
-        // promisesArray.push(deferred.promise);
-      // }
-
-      // sails.q.all(promisesArray).then(function() {
-        // Game.update(game.id, {startingRoom: roomNumsToIDs[1]}, function(err, game) {});
-
-        // for (var i = 0; i < GATEWAYS.length; i ++) {
-          // [> Create gateway from GATEWAYS list. <]
-          // var gateway = {}
-          // gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
-          // gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
-          // gateway['direction'] = GATEWAYS[i]['direction'];
-          // Gateway.create(gateway, function(err, gateway) {});
-
-          // [> Create corresponding gateway in other direction. <]
-          // gateway['roomFrom'] = roomNumsToIDs[GATEWAYS[i]['roomTo']];
-          // gateway['roomTo'] = roomNumsToIDs[GATEWAYS[i]['roomFrom']];
-          // gateway['direction'] = OPPOSITE_DIRECTIONS[GATEWAYS[i]['direction']];
-          // Gateway.create(gateway, function(err, gateway) {});
-        // }
-
-
-        // [> Create furniture for all rooms <]
-        // for (var i = 0; i < ROOMS.length; i++) {
-          // for (var j = 0; j < ROOMS[i].furniture.length; j++) {
-            // var furn = ROOMS[i].furniture[j];
-            // furn['room'] = roomNumsToIDs[ROOMS[i][roomNum]];
-            // Furniture.create(furn, function(err, room) {});
-          // }
-        // }
-
-        // [> Randomly place items <]
-        // for (var i = 0; i < 6; i++) {
-          // [> Select a random room <]
-          // var roomNum = Math.floor((Math.random() * Object.keys(roomNumsToIDs).length) + 1);
-          // [> Select random x and y coordinates <]
-          // var x = Math.floor((Math.random() * (DIMENSIONS.width-128)) + 64); //Allow items anywhere in the room at least 64px from a wall
-          // var y = Math.floor((Math.random() * (DIMENSIONS.height-128)) + 64);
-          // [> Select a random item type <]
-          // var itemNum = Math.floor((Math.random() * ITEM_TYPES.length));
-          // [> Create item <]
-          // Item.create({type: ITEM_TYPES[itemNum].type, stat: ITEM_TYPES[itemNum].stat, amount: 1, room: roomNumsToIDs[roomNum], x: x, y: y}, function(err, item) {});
-        // }
-      // });
 
       Game.generateHouse(game, function(startRoom) {
         Game.update(game.id, {startingRoom: startRoom})

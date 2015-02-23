@@ -172,6 +172,10 @@ define([
         });
       },
 
+      installSpriteMap: function(sprites) {
+        that._view.installSpriteMap(sprites);
+      },
+
       startGame: function(roomConfig) {
         that._view.loadRoom(roomConfig);
         that._view.displayGamePane();

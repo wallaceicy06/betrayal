@@ -14,10 +14,10 @@ module.exports = {
            required: true},
     amount: {type: 'integer',
              required: true},
-    x: {type: 'integer',
-        required: true},
-    y: {type: 'integer',
-        required: true},
+    gridX: {type: 'integer',
+            required: true},
+    gridY: {type: 'integer',
+            required: true},
     room: {model: 'room',
            required: true}
   }
