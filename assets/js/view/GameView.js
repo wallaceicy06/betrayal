@@ -16,24 +16,17 @@ define([
                 'SpritePlayerBlue': [0, 1],
                 'SpritePlayerGreen': [0, 2]},
       },
-      'images/game/wall.png': {
+      'images/game/furniture.png': {
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
-        'map': {'SpriteWall': [0, 0]}
-      },
-      'images/game/door.png': {
-      'tile': TILE_WIDTH,
-      'tileh': TILE_WIDTH,
-      'map': {'SpriteDoor': [0,0]}
-      },
-      'images/game/item_sprites.png': {
-        'tile': TILE_WIDTH,
-        'tileh': TILE_WIDTH,
-        'map': {'SpriteSpeedInc': [0, 0],
-                'SpriteMaxHealth': [1, 0],
-                'SpriteCurHealth': [2, 0],
-                'SpriteWeapon': [3, 0],
-                'SpriteRelic': [4, 0]},
+        'map': {'SpriteFurniture': [0,0],
+                'SpriteWall': [7, 13],
+                'SpriteDoor': [6,13],
+                'SpriteSpeedInc': [0, 14],
+                'SpriteMaxHealth': [1, 14],
+                'SpriteCurHealth': [2, 14],
+                'SpriteWeapon': [3, 14],
+                'SpriteRelic': [4, 14]},
       },
       'images/game/map_rooms.png' : {
         'tile': TILE_WIDTH,
@@ -48,11 +41,6 @@ define([
         'tileh': TILE_WIDTH,
         'map': {'SpriteChair': [0,0]}
       },
-      'images/game/furniture.png' : {
-        'tile': TILE_WIDTH,
-        'tileh': TILE_WIDTH,
-        'map': {'SpriteFurniture': [0,0]}
-      }
     }
   }
 
