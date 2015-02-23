@@ -176,9 +176,9 @@ define([
       },
 
       fixMovement: function(increaseBy) {
-        /* Increase absolute value of movement in both x and y by 1
-           because releasing a key decreases movement by speed, and
-           we are increasing speed. Prevents weird gravity. */
+        /* Increase absolute value of movement in both x and y by the amount
+           speed was increased by because releasing a key decreases movement
+           by speed, and we are increasing speed. Prevents weird gravity. */
         if(this._movement.x > 0) {
           this._movement.x = this._movement.x + increaseBy;
         }
@@ -458,22 +458,6 @@ define([
       },
 
       fixMovement: function(increaseBy) {
-        /* Increase absolute value of movement in both x and y by 1
-           because releasing a key decreases movement by speed, and
-           we are increasing speed. Prevents weird gravity. 
-        if(that._player._movement.x > 0) {
-          that._player._movement.x = that._player._movement.x + increaseBy;
-        }
-        if(that._player._movement.x < 0) {
-          that._player._movement.x = that._player._movement.x - increaseBy;
-        }
-        if(that._player._movement.y > 0) {
-          that._player._movement.y = that._player._movement.y + increaseBy;
-        }
-        if(that._player._movement.y < 0) {
-          that._player._movement.y = that._player._movement.y - increaseBy;
-        }
-        */
         that._player.fixMovement(increaseBy);
       }
     }
@@ -703,6 +687,12 @@ define([
     $('#chatroom').find('div.messages').append(messageElement);
   }
 
+  function appendEvent(message) {
+    var messageElement = document.createElement('p');
+    messageElement.appendChild(document.createTextNode(message));
+    $('#chatroom').find('div.messages').append(messageElement);
+  }
+
   function initGUI() {
     var that = this;
 
@@ -754,6 +744,7 @@ define([
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
+    this.appendEvent = appendEvent.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);

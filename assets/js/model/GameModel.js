@@ -259,6 +259,10 @@ define([
     io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: this._player.id}, function (resData, jwr){});
   }
 
+  function sendEventMessage(message) {
+    io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: undefined}, function (resData, jwr){});
+  }
+
   /*
    * Performs the given event, altering player stats as necessary.
    * Returns the title and text of the event to be displayed.
@@ -276,9 +280,15 @@ define([
   function attack() {
     for (var id in this._otherPlayers) {
       var otherPlayer = this._otherPlayers[id];
-      if (otherPlayer.x < this._player.x + 64 && otherPlayer.x > this._player.x - 32 && otherPlayer.y < this._player.y + 64 && otherPlayer.y > this._player.y - 32) {
-        console.log(this._player.name + " hit " + otherPlayer.name);
+      if (otherPlayer.x < this._player.x + 64
+        && otherPlayer.x > this._player.x - 32
+        && otherPlayer.y < this._player.y + 64
+        && otherPlayer.y > this._player.y - 32) {
+        this.sendEventMessage(this._player.name + " hit " + otherPlayer.name + "!");
         otherPlayer.curHealth--;
+        io.socket.put('/player/adjustStat/' + id,
+                      {stat: 'curHealth', newValue: otherPlayer.curHealth},
+                      function (player) {});
       }
     }
   }
@@ -335,18 +345,29 @@ define([
         that._otherPlayers[o.id] = player;
 
         playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
-      } else if (o.verb === 'updated' && o.id !== that._player.id) {
-        if (o.data.locX !== undefined && o.data.locY !== undefined) {
+      } else if (o.verb === 'updated') {
+        if (o.data.locX !== undefined
+          && o.data.locY !== undefined
+          && o.id !== that._player.id) {
           that._otherPlayers[o.id].x = o.data.locX;
           that._otherPlayers[o.id].y = o.data.locY;
         }
-        if (o.data.room !== undefined) {
+        if (o.data.room !== undefined && o.id !== that._player.id) {
           that._otherPlayers[o.id].room = o.data.room;
         }
         else {  //stat update
-          for (var key in o.data) {
-            if (key !== "updatedAt") {
-              that._otherPlayers[o.id][key] = o.data[key];
+          if (o.id !== that._player.id) {
+            for (var key in o.data) {
+              if (key !== "updatedAt") {
+                that._otherPlayers[o.id][key] = o.data[key];
+              }
+            }
+          }
+          else {
+            for (var key in o.data) {
+              if (key !== 'updatedAt') {
+                that._player[key] = o.data[key];
+              }
             }
           }
         }
@@ -398,7 +419,8 @@ define([
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
-    this.sendChatMessage = sendChatMessage.bind(this)
+    this.sendChatMessage = sendChatMessage.bind(this);
+    this.sendEventMessage = sendEventMessage.bind(this);
     this.reloadRoom = reloadRoom.bind(this);
     this.assembleMap = assembleMap.bind(this);
     this.performEvent = performEvent.bind(this);

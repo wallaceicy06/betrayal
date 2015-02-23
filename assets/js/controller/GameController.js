@@ -203,7 +203,12 @@ define([
       },
 
       messageReceived: function(playerID, message) {
-        that._view.appendChatMessage(playerID, message);
+        if (playerID == undefined) {
+          that._view.appendEvent(message);
+        }
+        else {
+          that._view.appendChatMessage(playerID, message);
+        }
       }
     });
 
