@@ -694,14 +694,6 @@ define([
       that._gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
     });
 
-    document.getElementById('btn-speed-inc').addEventListener('click', function() {
-      that._playerModelAdpt.onSpeedIncClick(1);
-    });
-
-    document.getElementById('btn-speed-dec').addEventListener('click', function() {
-      that._playerModelAdpt.onSpeedDecClick();
-    });
-
     document.getElementById('btn-send-message').addEventListener('click', function() {
       var messageText = document.getElementById('ipt-message');
 
