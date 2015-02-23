@@ -51,8 +51,6 @@ module.exports = {
     /* Randomly order the items. */
     itemBank = _.shuffle(itemBank);
 
-    console.log(itemBank);
-
     var houseGrid = new Array(14);
     for (var i = 0; i < houseGrid.length; i++) {
       houseGrid[i] = new Array(16);
@@ -78,6 +76,10 @@ module.exports = {
       roomID = allRooms.pop();
       room = Room.layouts[roomID];
       houseGrid[x][y] = roomID;
+
+      openGridLocs = _.filter(openGridLocs, function(loc) {
+        return !(_.isEqual(loc, [x, y]));
+      });
 
       var excludePts = [];
       var i, j;
@@ -118,27 +120,25 @@ module.exports = {
                             gridY: loc.y});
       });
 
-      console.log('room ' + roomID + ' is excluding');
-      console.log(excludePts);
-
       roomsToCreate.push({game: game.id,
                           name: roomID,
                           background: room.floor,
                           items: itemsToCreate});
 
-      if (room.gateways.north && houseGrid[x - 1][y] === undefined) {
+      if (room.gateways.north && houseGrid[x - 1][y] == undefined) {
         openGridLocs.push([x - 1, y]);
       }
-      if (room.gateways.east && houseGrid[x][y + 1] === undefined) {
+      if (room.gateways.east && houseGrid[x][y + 1] == undefined) {
         openGridLocs.push([x, y + 1]);
       }
-      if (room.gateways.south && houseGrid[x + 1][y] === undefined) {
+      if (room.gateways.south && houseGrid[x + 1][y] == undefined) {
         openGridLocs.push([x + 1, y]);
       }
-      if (room.gateways.west && houseGrid[x][y - 1] === undefined) {
+      if (room.gateways.west && houseGrid[x][y - 1] == undefined) {
         openGridLocs.push([x, y - 1]);
       }
     }
+
 
     for (var i = 0; i < houseGrid.length; i++) {
       for (var j = 0; j < houseGrid[0].length; j++) {
@@ -191,8 +191,6 @@ module.exports = {
 
     Room.create(roomsToCreate)
       .then(function(rooms) {
-        console.log('rooms created');
-
         var events = Object.keys(sails.config.gameconfig.events);
 
         rooms.forEach(function(v, i, a) {
@@ -214,7 +212,7 @@ module.exports = {
         return Gateway.create(gatewaysToCreate);
       })
       .then(function(gateways) {
-        console.log('gateways created');
+        /* Gateways created. */
       })
       .catch(function(err) {
         console.log(err);

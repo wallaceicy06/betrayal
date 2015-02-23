@@ -81,6 +81,9 @@ define([
 
           useItem: function(stat, amount) {
             switch(stat) {
+              case "speed":
+                playerModel.speed = playerModel.speed + amount;
+                break;
               case "maxHealth":
                 playerModel.maxHealth = playerModel.maxHealth + amount;
                 break;

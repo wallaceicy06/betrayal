@@ -76,7 +76,6 @@ define([
       },
 
       setColor: function(colorString) {
-        console.log("Changing player color to " + colorString);
         var row = COLOR_TO_ROW[colorString];
         this.sprite(0, row, 1, 1);
         this.reel('PlayerMovingRight',600, 0, row, 1);
@@ -148,19 +147,12 @@ define([
         if (this.attr('itemLock')) {
           return;
         }
+
         this.attr({'itemLock' : true});
         var thisPlayer = this;
-        switch(item[0].obj.type) {
-          case "SpeedInc":
-            var increaseBy = item[0].obj.amount;
 
-            that._playerModelAdpt.onSpeedIncClick(increaseBy);
-            /* I don't think a fixMovement is necessary here anymore b/c it is
-               called in playerViewAdpt made in GameController */
-            break;
-          default:
-            that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
-        }
+        that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
+
         io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
           thisPlayer.attr({'itemLock': false});
         });
@@ -188,7 +180,7 @@ define([
 
     Crafty.c('Item', {
       init: function() {
-        this.requires('2D, Canvas, RoomItem, SpriteRelic');
+        this.requires('2D, Canvas, RoomItem, SpriteFurniture');
       },
     });
 
@@ -370,7 +362,12 @@ define([
                                         type: items[i].type,
                                         stat: items[i].stat,
                                         amount: items[i].amount,
-                                        itemID: items[i].id});
+                                        itemID: items[i].id})
+                                  .sprite(this._spriteMap[items[i].type].gridX,
+                                          this._spriteMap[items[i].type].gridY,
+                                          this._spriteMap[items[i].type].gridW,
+                                          this._spriteMap[items[i].type].gridH);
+
       this._items[items[i].id] = item;
     }
   }
@@ -435,7 +432,7 @@ define([
       fixMovement: function(increaseBy) {
         /* Increase absolute value of movement in both x and y by 1
            because releasing a key decreases movement by speed, and
-           we are increasing speed. Prevents weird gravity. 
+           we are increasing speed. Prevents weird gravity.
         if(that._player._movement.x > 0) {
           that._player._movement.x = that._player._movement.x + increaseBy;
         }
