@@ -272,6 +272,17 @@ define([
     return {title: event.title, text: event.text};
   }
 
+  /* This player deals damage to all other players within a certain radius */
+  function attack() {
+    for (var id in this._otherPlayers) {
+      var otherPlayer = this._otherPlayers[id];
+      if (otherPlayer.x < this._player.x + 64 && otherPlayer.x > this._player.x - 32 && otherPlayer.y < this._player.y + 64 && otherPlayer.y > this._player.y - 32) {
+        console.log(this._player.name + " hit " + otherPlayer.name);
+        otherPlayer.curHealth--;
+      }
+    }
+  }
+
   function initSockets() {
     var that = this;
 
@@ -391,6 +402,7 @@ define([
     this.reloadRoom = reloadRoom.bind(this);
     this.assembleMap = assembleMap.bind(this);
     this.performEvent = performEvent.bind(this);
+    this.attack = attack.bind(this);
     this.start = start.bind(this);
   }
 });

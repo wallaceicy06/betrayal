@@ -377,6 +377,10 @@ define([
           that._gameModelAdpt.onEnableMap();
         }
       }
+
+      if (!inputInFocus && e.key == Crafty.keys.SPACE) {
+        that._gameModelAdpt.attack();
+      }
     });
   }
 
@@ -710,6 +714,9 @@ define([
         alert('Please enter a non-empty name.');
         return
       }
+
+      /* Disable join button */
+      this.disabled = true;
 
       that._gameModelAdpt.onJoinClick(name.value, select[select.selectedIndex].value);
     });
