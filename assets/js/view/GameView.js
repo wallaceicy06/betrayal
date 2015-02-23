@@ -167,22 +167,8 @@ define([
             var increaseBy = item[0].obj.amount;
 
             that._playerModelAdpt.onSpeedIncClick(increaseBy);
-
-            /* Increase absolute value of movement in both x and y by 1
-               because releasing a key decreases movement by speed, and
-               we are increasing speed. Prevents weird gravity. */
-            if(this._movement.x > 0) {
-              this._movement.x = this._movement.x + increaseBy;
-            }
-            if(this._movement.x < 0) {
-              this._movement.x = this._movement.x - increaseBy;
-            }
-            if(this._movement.y > 0) {
-              this._movement.y = this._movement.y + increaseBy;
-            }
-            if(this._movement.y < 0) {
-              this._movement.y = this._movement.y - increaseBy;
-            }
+            /* I don't think a fixMovement is necessary here anymore b/c it is
+               called in playerViewAdpt made in GameController */
             break;
           default:
             that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
@@ -190,6 +176,24 @@ define([
         io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
           thisPlayer.attr({'itemLock': false});
         });
+      },
+
+      fixMovement: function(increaseBy) {
+        /* Increase absolute value of movement in both x and y by 1
+           because releasing a key decreases movement by speed, and
+           we are increasing speed. Prevents weird gravity. */
+        if(this._movement.x > 0) {
+          this._movement.x = this._movement.x + increaseBy;
+        }
+        if(this._movement.x < 0) {
+          this._movement.x = this._movement.x - increaseBy;
+        }
+        if(this._movement.y > 0) {
+          this._movement.y = this._movement.y + increaseBy;
+        }
+        if(this._movement.y < 0) {
+          this._movement.y = this._movement.y - increaseBy;
+        }
       }
 
     });
@@ -438,6 +442,26 @@ define([
         that._player.speed({x: newSpeed, y: newSpeed});
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('li.player-speed')[0].innerHTML = ('speed: ' + newSpeed);
+      },
+
+      fixMovement: function(increaseBy) {
+        /* Increase absolute value of movement in both x and y by 1
+           because releasing a key decreases movement by speed, and
+           we are increasing speed. Prevents weird gravity. 
+        if(that._player._movement.x > 0) {
+          that._player._movement.x = that._player._movement.x + increaseBy;
+        }
+        if(that._player._movement.x < 0) {
+          that._player._movement.x = that._player._movement.x - increaseBy;
+        }
+        if(that._player._movement.y > 0) {
+          that._player._movement.y = that._player._movement.y + increaseBy;
+        }
+        if(that._player._movement.y < 0) {
+          that._player._movement.y = that._player._movement.y - increaseBy;
+        }
+        */
+        that._player.fixMovement(increaseBy);
       }
     }
   }
