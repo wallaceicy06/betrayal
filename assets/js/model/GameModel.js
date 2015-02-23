@@ -284,11 +284,38 @@ define([
         && otherPlayer.x > this._player.x - 32
         && otherPlayer.y < this._player.y + 64
         && otherPlayer.y > this._player.y - 32) {
-        this.sendEventMessage(this._player.name + " hit " + otherPlayer.name + "!");
-        otherPlayer.curHealth--;
-        io.socket.put('/player/adjustStat/' + id,
-                      {stat: 'curHealth', newValue: otherPlayer.curHealth},
-                      function (player) {});
+        /* Roll dice for combat based on weapon strength - same as board game */
+        var playerDamaged;
+        var damage;
+        var myRoll = 0;
+        for (var i = 0; i < this._player.weapon; i++) {
+          myRoll += Math.floor(Math.random() * 2);
+        }
+        var otherRoll = 0;
+        for (var i = 0; i < otherPlayer.weapon; i++) {
+          otherRoll += Math.floor(Math.random() * 2);
+        }
+        if (myRoll > otherRoll) {
+          playerDamaged = otherPlayer;
+          damage = myRoll - otherRoll;
+        }
+        else if (myRoll < otherRoll) {
+          playerDamaged = this._player;
+          damage = otherRoll - myRoll;
+        }
+        if (playerDamaged == undefined) {
+          this.sendEventMessage(this._player.name + " attacked " + 
+            otherPlayer.name + "! No one was hurt.");
+        }
+        else {
+          playerDamaged.curHealth -= damage;
+          this.sendEventMessage(this._player.name + " attacked " +
+            otherPlayer.name + "! " + playerDamaged.name + " took " + damage
+            + " damage.");
+          io.socket.put('/player/adjustStat/' + id,
+                        {stat: 'curHealth', newValue: otherPlayer.curHealth},
+                        function (player) {});
+        }
       }
     }
   }
