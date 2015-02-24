@@ -9,6 +9,8 @@ module.exports = {
 
   autoWatch: false,
 
+  autosubscribe: [],
+
   attributes: {
     name: {type: 'string',
            required: true},
@@ -30,6 +32,8 @@ module.exports = {
             required: false}
   },
 
-  layouts: sails.config.gameconfig.rooms
+  layouts: sails.config.gameconfig.rooms,
+
+  dimensions: sails.config.gameconfig.dimensions
 
 };
