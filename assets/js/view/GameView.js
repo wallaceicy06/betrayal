@@ -1,8 +1,7 @@
 define([
     'jquery',
-    'crafty',
-    'view/SpriteMap',
-], function($, Crafty, SpriteMap) {
+    'crafty'
+], function($, Crafty) {
 
   'use strict';
 
@@ -16,24 +15,17 @@ define([
                 'SpritePlayerBlue': [0, 1],
                 'SpritePlayerGreen': [0, 2]},
       },
-      'images/game/wall.png': {
+      'images/game/furniture.png': {
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
-        'map': {'SpriteWall': [0, 0]}
-      },
-      'images/game/door.png': {
-      'tile': TILE_WIDTH,
-      'tileh': TILE_WIDTH,
-      'map': {'SpriteDoor': [0,0]}
-      },
-      'images/game/item_sprites.png': {
-        'tile': TILE_WIDTH,
-        'tileh': TILE_WIDTH,
-        'map': {'SpriteSpeedInc': [0, 0],
-                'SpriteMaxHealth': [1, 0],
-                'SpriteCurHealth': [2, 0],
-                'SpriteWeapon': [3, 0],
-                'SpriteRelic': [4, 0]},
+        'map': {'SpriteFurniture': [0,0],
+                'SpriteWall': [7, 13],
+                'SpriteDoor': [6,13],
+                'SpriteSpeedInc': [0, 14],
+                'SpriteMaxHealth': [1, 14],
+                'SpriteCurHealth': [2, 14],
+                'SpriteWeapon': [3, 14],
+                'SpriteRelic': [4, 14]},
       },
       'images/game/map_rooms.png' : {
         'tile': TILE_WIDTH,
@@ -48,11 +40,6 @@ define([
         'tileh': TILE_WIDTH,
         'map': {'SpriteChair': [0,0]}
       },
-      'images/game/furniture.png' : {
-        'tile': TILE_WIDTH,
-        'tileh': TILE_WIDTH,
-        'map': {'SpriteFurniture': [0,0]}
-      }
     }
   }
 
@@ -68,6 +55,10 @@ define([
     'yellow': 2,
     'green': 3
   };
+
+  function installSpriteMap(sprites) {
+    this._spriteMap = sprites;
+  }
 
   function initCrafty() {
     var that = this;
@@ -85,7 +76,6 @@ define([
       },
 
       setColor: function(colorString) {
-        console.log("Changing player color to " + colorString);
         var row = COLOR_TO_ROW[colorString];
         this.sprite(0, row, 1, 1);
         this.reel('PlayerMovingRight',600, 0, row, 1);
@@ -157,19 +147,12 @@ define([
         if (this.attr('itemLock')) {
           return;
         }
+
         this.attr({'itemLock' : true});
         var thisPlayer = this;
-        switch(item[0].obj.type) {
-          case "SpeedInc":
-            var increaseBy = item[0].obj.amount;
 
-            that._playerModelAdpt.onSpeedIncClick(increaseBy);
-            /* I don't think a fixMovement is necessary here anymore b/c it is
-               called in playerViewAdpt made in GameController */
-            break;
-          default:
-            that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
-        }
+        that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
+
         io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
           thisPlayer.attr({'itemLock': false});
         });
@@ -197,38 +180,8 @@ define([
 
     Crafty.c('Item', {
       init: function() {
-        this.requires('2D, Canvas, RoomItem');
-      }
-    });
-
-    Crafty.c('SpeedInc', {
-      init: function() {
-        this.requires('Item, SpriteSpeedInc');
-      }
-    });
-
-    Crafty.c('MaxHealth', {
-      init: function() {
-        this.requires('Item, SpriteMaxHealth');
-      }
-    });
-
-    Crafty.c('CurHealth', {
-      init: function() {
-        this.requires('Item, SpriteCurHealth');
-      }
-    });
-
-    Crafty.c('Weapon', {
-      init: function() {
-        this.requires('Item, SpriteWeapon');
-      }
-    });
-
-    Crafty.c('Relic', {
-      init: function() {
-        this.requires('Item, SpriteRelic');
-      }
+        this.requires('2D, Canvas, RoomItem, SpriteFurniture');
+      },
     });
 
     Crafty.c('Wall', {
@@ -245,7 +198,13 @@ define([
 
     Crafty.c('Furniture', {
       init: function() {
-        this.requires('2D, Canvas, RoomItem, Solid, SpriteFurniture');
+        this.requires('2D, Canvas, RoomItem, SpriteFurniture');
+      }
+    });
+
+    Crafty.c('SolidFurniture', {
+      init: function() {
+        this.requires('Furniture, Solid');
       }
     });
 
@@ -402,21 +361,38 @@ define([
 
   function placeItems(items) {
     for (var i = 0; i < items.length; i++) {
-      var item = Crafty.e(items[i].type).attr({x: items[i].x, y: items[i].y, type: items[i].type, stat: items[i].stat, amount: items[i].amount, itemID: items[i].id});
+      var item = Crafty.e('Item').attr({x: items[i].gridX * TILE_WIDTH,
+                                        y: items[i].gridY * TILE_WIDTH,
+                                        type: items[i].type,
+                                        stat: items[i].stat,
+                                        amount: items[i].amount,
+                                        itemID: items[i].id})
+                                  .sprite(this._spriteMap[items[i].type].gridX,
+                                          this._spriteMap[items[i].type].gridY,
+                                          this._spriteMap[items[i].type].gridW,
+                                          this._spriteMap[items[i].type].gridH);
+
       this._items[items[i].id] = item;
     }
   }
 
   function placeFurniture(furniture) {
     for (var i = 0; i < furniture.length; i++) {
-      Crafty.e('Furniture').attr({x: furniture[i].gridX * TILE_WIDTH,
-                                  y: furniture[i].gridY * TILE_WIDTH,
-                                  w: SpriteMap[furniture[i].id].gridW * TILE_WIDTH,
-                                  h: SpriteMap[furniture[i].id].gridH * TILE_WIDTH})
-                           .sprite(SpriteMap[furniture[i].id].gridX,
-                                   SpriteMap[furniture[i].id].gridY,
-                                   SpriteMap[furniture[i].id].gridW,
-                                   SpriteMap[furniture[i].id].gridH);
+      var newFurniture;
+      if (furniture[i].solid) {
+        newFurniture = Crafty.e('SolidFurniture');
+      } else {
+        newFurniture = Crafty.e('Furniture');
+      }
+
+      newFurniture.attr({x: furniture[i].gridX * TILE_WIDTH,
+                         y: furniture[i].gridY * TILE_WIDTH,
+                         w: this._spriteMap[furniture[i].id].gridW * TILE_WIDTH,
+                         h: this._spriteMap[furniture[i].id].gridH * TILE_WIDTH})
+                  .sprite(this._spriteMap[furniture[i].id].gridX,
+                          this._spriteMap[furniture[i].id].gridY,
+                          this._spriteMap[furniture[i].id].gridW,
+                          this._spriteMap[furniture[i].id].gridH);
     }
   }
 
@@ -715,14 +691,6 @@ define([
       that._gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
     });
 
-    document.getElementById('btn-speed-inc').addEventListener('click', function() {
-      that._playerModelAdpt.onSpeedIncClick(1);
-    });
-
-    document.getElementById('btn-speed-dec').addEventListener('click', function() {
-      that._playerModelAdpt.onSpeedDecClick();
-    });
-
     document.getElementById('btn-send-message').addEventListener('click', function() {
       var messageText = document.getElementById('ipt-message');
 
@@ -738,6 +706,7 @@ define([
     this._husks = {};
     this._items = {};
     this._mapEnabled = false;
+    this._spriteMap = null;
 
     initGUI.call(this);
     initCrafty.call(this);
@@ -746,6 +715,7 @@ define([
     this.appendChatMessage = appendChatMessage.bind(this);
     this.appendEvent = appendEvent.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
+    this.installSpriteMap = installSpriteMap.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
