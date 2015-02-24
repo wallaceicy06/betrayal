@@ -38,15 +38,12 @@ module.exports = {
     /* Add 2 items per room per the abundance specifications. */
     var itemBank = [];
     for (i in Game.items) {
-      _.times(Math.floor(Game.items[i].abundance
+      _.times(Math.ceil(Game.items[i].abundance
                          / totalAbundance
                          * allRooms.length * 2), function(n) {
         itemBank.push(i);
       });
     }
-
-    /* Off by one error. Add one more item. */
-    itemBank.push('lightning');
 
     /* Randomly order the items. */
     itemBank = _.shuffle(itemBank);
