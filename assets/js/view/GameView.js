@@ -19,18 +19,13 @@ define([
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteFurniture': [0,0],
-                //'SpriteWall': [7, 13],
+                'SpriteWall': [7, 13],
                 'SpriteDoor': [6,13],
                 'SpriteSpeedInc': [0, 14],
                 'SpriteMaxHealth': [1, 14],
                 'SpriteCurHealth': [2, 14],
                 'SpriteWeapon': [3, 14],
                 'SpriteRelic': [4, 14]},
-      },
-      'images/game/wall.png': {
-        'tile': TILE_WIDTH,
-        'tileh': TILE_WIDTH,
-        'map': {'SpriteWall': [0,0]}
       },
       'images/game/map_rooms.png' : {
         'tile': TILE_WIDTH,
