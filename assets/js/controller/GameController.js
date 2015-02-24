@@ -202,7 +202,12 @@ define([
       },
 
       messageReceived: function(playerID, message) {
-        that._view.appendChatMessage(playerID, message);
+        if (playerID == undefined) {
+          that._view.appendEvent(message);
+        }
+        else {
+          that._view.appendChatMessage(playerID, message);
+        }
       }
     });
 
@@ -241,6 +246,10 @@ define([
 
       performEvent: function(eventID) {
         return that._model.performEvent(eventID);
+      },
+
+      attack: function() {
+        that._model.attack();
       }
     });
 

@@ -10,6 +10,8 @@ define([
     height: 512
   }
 
+  var ATTACK_RADIUS = 64;
+
   function joinGame(playerName, gameID) {
     var that = this;
 
@@ -259,6 +261,10 @@ define([
     io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: this._player.id}, function (resData, jwr){});
   }
 
+  function sendEventMessage(message) {
+    io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: undefined}, function (resData, jwr){});
+  }
+
   /*
    * Performs the given event, altering player stats as necessary.
    * Returns the title and text of the event to be displayed.
@@ -270,6 +276,50 @@ define([
       this._player[stat] = this._player[stat] + event.effect[stat];
     }
     return {title: event.title, text: event.text};
+  }
+
+  /* This player deals damage to all other players within a certain radius */
+  function attack() {
+    for (var id in this._otherPlayers) {
+      var otherPlayer = this._otherPlayers[id];
+      if (otherPlayer.x < this._player.x + ATTACK_RADIUS + 32
+        && otherPlayer.x > this._player.x - ATTACK_RADIUS
+        && otherPlayer.y < this._player.y + ATTACK_RADIUS + 32
+        && otherPlayer.y > this._player.y - ATTACK_RADIUS) {
+        /* Roll dice for combat based on weapon strength - same as board game */
+        var playerDamaged;
+        var damage;
+        var myRoll = 0;
+        for (var i = 0; i < this._player.weapon; i++) {
+          myRoll += Math.floor(Math.random() * 2);
+        }
+        var otherRoll = 0;
+        for (var i = 0; i < otherPlayer.weapon; i++) {
+          otherRoll += Math.floor(Math.random() * 2);
+        }
+        if (myRoll > otherRoll) {
+          playerDamaged = otherPlayer;
+          damage = myRoll - otherRoll;
+        }
+        else if (myRoll < otherRoll) {
+          playerDamaged = this._player;
+          damage = otherRoll - myRoll;
+        }
+        if (playerDamaged == undefined) {
+          this.sendEventMessage(this._player.name + " attacked " + 
+            otherPlayer.name + "! No one was hurt.");
+        }
+        else {
+          playerDamaged.curHealth -= damage;
+          this.sendEventMessage(this._player.name + " attacked " +
+            otherPlayer.name + "! " + playerDamaged.name + " took " + damage
+            + " damage.");
+          io.socket.put('/player/adjustStat/' + id,
+                        {stat: 'curHealth', newValue: otherPlayer.curHealth},
+                        function (player) {});
+        }
+      }
+    }
   }
 
   function initSockets() {
@@ -324,22 +374,32 @@ define([
         that._otherPlayers[o.id] = player;
 
         playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
-      } else if (o.verb === 'updated' && o.id !== that._player.id) {
-        if (o.data.locX !== undefined && o.data.locY !== undefined) {
+      } else if (o.verb === 'updated') {
+        if (o.data.locX !== undefined
+          && o.data.locY !== undefined
+          && o.id !== that._player.id) {
           that._otherPlayers[o.id].x = o.data.locX;
           that._otherPlayers[o.id].y = o.data.locY;
         }
         /* Temporary bug fix? */
         if (o.data.room !== undefined) {
-          if (o.data.room !== null) {
+          if (o.data.room !== null && o.id !== that._player.id) {
             that._otherPlayers[o.id].room = o.data.room;
           }
         /* Stat update */
-        } else {
-          for (var key in o.data) {
-            /* TODO: this is super jank. */
-            if (key !== "updatedAt") {
-              that._otherPlayers[o.id][key] = o.data[key];
+        } else { 
+          if (o.id !== that._player.id) {
+            for (var key in o.data) {
+              if (key !== "updatedAt") { //TODO: make this less jank
+                that._otherPlayers[o.id][key] = o.data[key];
+              }
+            }
+          }
+          else {
+            for (var key in o.data) {
+              if (key !== 'updatedAt') {
+                that._player[key] = o.data[key];
+              }
             }
           }
         }
@@ -394,10 +454,12 @@ define([
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
-    this.sendChatMessage = sendChatMessage.bind(this)
+    this.sendChatMessage = sendChatMessage.bind(this);
+    this.sendEventMessage = sendEventMessage.bind(this);
     this.reloadRoom = reloadRoom.bind(this);
     this.assembleMap = assembleMap.bind(this);
     this.performEvent = performEvent.bind(this);
+    this.attack = attack.bind(this);
     this.start = start.bind(this);
   }
 });

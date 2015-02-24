@@ -38,9 +38,11 @@ define([
         return this._speed;
       },
       set: function(newSpeed) {
-        var oldSpeed = this._speed;
-        this._speed = newSpeed;
-        this._gameModelAdpt.onSpeedChange(this._speed, oldSpeed);
+        if (newSpeed !== this._speed) {
+          var oldSpeed = this._speed;
+          this._speed = newSpeed;
+          this._gameModelAdpt.onSpeedChange(this._speed, oldSpeed);
+        }
       }
     });
 
@@ -49,8 +51,10 @@ define([
         return this._maxHealth;
       },
       set: function(newVal) {
-        this._maxHealth = newVal;
-        this._gameModelAdpt.onMaxHealthChange(newVal);
+        if (newVal !== this._maxHealth) {
+          this._maxHealth = newVal;
+          this._gameModelAdpt.onMaxHealthChange(newVal);
+        }
       }
     });
 
@@ -59,8 +63,8 @@ define([
         return this._curHealth;
       },
       set: function(newVal) {
-        if (newVal <= this._maxHealth) {
-          this._maxHealth = newVal;
+        if (newVal !== this._curHealth && newVal <= this._maxHealth) {
+          this._curHealth = newVal;
           this._gameModelAdpt.onCurHealthChange(newVal);
         }
       }
@@ -71,8 +75,10 @@ define([
         return this._weapon;
       },
       set: function(newVal) {
-        this._weapon = newVal;
-        this._gameModelAdpt.onWeaponChange(newVal);
+        if (newVal !== this._weapon) {
+          this._weapon = newVal;
+          this._gameModelAdpt.onWeaponChange(newVal);
+        }
       }
     });
 
@@ -81,8 +87,10 @@ define([
         return this._relics;
       },
       set: function(newVal) {
-        this._relics = newVal;
-        this._gameModelAdpt.onRelicsChange(newVal);
+        if (newVal !== this._relics) {
+          this._relics = newVal;
+          this._gameModelAdpt.onRelicsChange(newVal);
+        }
       }
     });
 
