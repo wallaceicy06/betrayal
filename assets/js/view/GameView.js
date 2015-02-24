@@ -403,7 +403,8 @@ define([
                   .sprite(this._spriteMap[furniture[i].id].gridX,
                           this._spriteMap[furniture[i].id].gridY,
                           this._spriteMap[furniture[i].id].gridW,
-                          this._spriteMap[furniture[i].id].gridH);
+                          this._spriteMap[furniture[i].id].gridH)
+      newFurniture.rotation = furniture[i].rotation;
     }
   }
 
