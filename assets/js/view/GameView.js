@@ -297,10 +297,21 @@ define([
 
         Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
 
+        /* If other players in room, draw them. */
+        for(var id in that._otherPlayerModelAdpts) {
+          var otherPlayer = that._otherPlayerModelAdpts[id];
+          if (curNode.room.id === otherPlayer.getRoom()) {
+            Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
+                                  .setColor(otherPlayer.getColor());
+          }
+        }
+
+        /* Draw ourselves after other players so we are on top. */
         if (curNode.room.id === that._playerModelAdpt.getRoom()) {
           Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
                                 .setColor(that._playerModelAdpt.getColor());
         }
+
 
         if (curNode.room.hasGateway('north')) {
           toVisit.push({room: curNode.room.getGateway('north'),
@@ -698,16 +709,6 @@ define([
 
       that._gameModelAdpt.onSendChatMessage(messageText.value);
     });
-    // document.getElementById('form-send-message').onSubmit = function() {
-      // var messageText = document.getElementById('ipt-message');
-
-      // that._gameModelAdpt.onSendChatMessage(messageText.value);
-    // };
-    // document.getElementById('btn-send-message').addEventListener('click', function() {
-      // var messageText = document.getElementById('ipt-message');
-
-      // that._gameModelAdpt.onSendChatMessage(messageText.value);
-    // });
   }
 
   return function GameView(gameModelAdpt) {
