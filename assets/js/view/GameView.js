@@ -691,11 +691,23 @@ define([
       that._gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
     });
 
-    document.getElementById('btn-send-message').addEventListener('click', function() {
+    $('#form-send-message').submit(function(e) {
+      event.preventDefault();
+
       var messageText = document.getElementById('ipt-message');
 
       that._gameModelAdpt.onSendChatMessage(messageText.value);
     });
+    // document.getElementById('form-send-message').onSubmit = function() {
+      // var messageText = document.getElementById('ipt-message');
+
+      // that._gameModelAdpt.onSendChatMessage(messageText.value);
+    // };
+    // document.getElementById('btn-send-message').addEventListener('click', function() {
+      // var messageText = document.getElementById('ipt-message');
+
+      // that._gameModelAdpt.onSendChatMessage(messageText.value);
+    // });
   }
 
   return function GameView(gameModelAdpt) {
