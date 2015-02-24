@@ -181,5 +181,4 @@ module.exports.gameconfig = {
       effect: {curHealth: -1}
     }
   }
-
 }

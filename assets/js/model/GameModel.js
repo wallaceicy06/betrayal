@@ -329,11 +329,15 @@ define([
           that._otherPlayers[o.id].x = o.data.locX;
           that._otherPlayers[o.id].y = o.data.locY;
         }
+        /* Temporary bug fix? */
         if (o.data.room !== undefined) {
-          that._otherPlayers[o.id].room = o.data.room;
-        }
-        else {  //stat update
+          if (o.data.room !== null) {
+            that._otherPlayers[o.id].room = o.data.room;
+          }
+        /* Stat update */
+        } else {
           for (var key in o.data) {
+            /* TODO: this is super jank. */
             if (key !== "updatedAt") {
               that._otherPlayers[o.id][key] = o.data[key];
             }
@@ -345,17 +349,19 @@ define([
     });
 
     io.socket.on('room', function(o) {
-      if (o.verb === 'addedTo' && o.addedId !== that._player.id && o.id === that._currentRoom.id) {
-        /* TODO Not sure if we need this anymore. */
-      } else if (o.verb === 'removedFrom' && o.id === that._currentRoom.id) {
-        /* TODO Not sure if we need this anymore. */
-      } else if (o.verb === 'messaged' && o.data.verb === 'playerUpdated'
-                 && o.data.id in that._otherPlayers
-                 && o.id === that._currentRoom.id
-                 && o.data.id !== that._player.id) {
-        that._otherPlayers[o.data.id].setPosition(o.data.data.locX, o.data.data.locY);
-      } else if (o.verb === 'messaged' && o.data.verb === 'itemRemoved' && o.id === that._currentRoom.id) {
+      if (o.verb === 'messaged' && o.data.verb === 'playerUpdated'
+          && o.data.id in that._otherPlayers
+          && o.id === that._currentRoom.id
+          && o.data.id !== that._player.id) {
+
+        that._otherPlayers[o.data.id].setPosition(o.data.data.locX,
+                                                  o.data.data.locY);
+
+      } else if (o.verb === 'messaged' && o.data.verb === 'itemRemoved'
+                 && o.id === that._currentRoom.id) {
+
         that._viewAdpt.removeItem(o.data.id);
+
       }
     });
 

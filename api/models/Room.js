@@ -9,6 +9,8 @@ module.exports = {
 
   autoWatch: false,
 
+  autosubscribe: [],
+
   attributes: {
     name: {type: 'string',
            required: true},
