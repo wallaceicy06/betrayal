@@ -288,7 +288,8 @@ define([
   function attack() {
     for (var id in this._otherPlayers) {
       var otherPlayer = this._otherPlayers[id];
-      if (otherPlayer.x < this._player.x + ATTACK_RADIUS + 32
+      if (otherPlayer.room === this._player.room
+        && otherPlayer.x < this._player.x + ATTACK_RADIUS + 32
         && otherPlayer.x > this._player.x - ATTACK_RADIUS
         && otherPlayer.y < this._player.y + ATTACK_RADIUS + 32
         && otherPlayer.y > this._player.y - ATTACK_RADIUS) {
