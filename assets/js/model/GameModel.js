@@ -60,10 +60,16 @@ define([
           },
 
           onCurHealthChange: function(newCurHealth) {
-            playerViewAdpt.onCurHealthChange(newCurHealth);
-            io.socket.put('/player/adjustStat/' + player.id,
-                          {stat: 'curHealth', newValue: newCurHealth},
-                          function (player) {});
+            if (newCurHealth < 1) {
+              that._viewAdpt.notifyDead();
+              io.socket.delete('/player/' + player.id, {}, function(data) {});
+            }
+            else {
+              playerViewAdpt.onCurHealthChange(newCurHealth);
+              io.socket.put('/player/adjustStat/' + player.id,
+                            {stat: 'curHealth', newValue: newCurHealth},
+                            function (player) {});
+            }
           },
 
           onWeaponChange: function(newWeapon) {
@@ -287,7 +293,8 @@ define([
   function attack() {
     for (var id in this._otherPlayers) {
       var otherPlayer = this._otherPlayers[id];
-      if (otherPlayer.x < this._player.x + ATTACK_RADIUS + 32
+      if (otherPlayer.room === this._player.room
+        && otherPlayer.x < this._player.x + ATTACK_RADIUS + 32
         && otherPlayer.x > this._player.x - ATTACK_RADIUS
         && otherPlayer.y < this._player.y + ATTACK_RADIUS + 32
         && otherPlayer.y > this._player.y - ATTACK_RADIUS) {
@@ -409,7 +416,7 @@ define([
           }
         }
       } else if (o.verb === 'destroyed') {
-        that._otherPlayers[o.id].destroy();
+          that._otherPlayers[o.id].destroy();
       }
     });
 

@@ -516,7 +516,7 @@ define([
      */
     return {
       destroy: function() {
-        appendChatMessage.call(that, playerModelAdpt.getID(), 'left the game');
+        appendChatMessage.call(that, playerModelAdpt.getID(), 'has died');
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
@@ -681,6 +681,18 @@ define([
     $('#chatroom').find('div.messages').append(messageElement);
   }
 
+  function notifyDead() {
+    this._player.disableControl();
+    var messageBackground = Crafty.e('2D, DOM, Color')
+      .color('white');
+    var messageText = Crafty.e('2D, DOM, Text')
+      .css({'text-align': 'center', 'top': '15px'})
+      .text("You Died - Game Over")
+      .textFont({size: '20px'});
+    messageBackground.attach(messageText); //Attach text as child of background so that they will move together
+    messageBackground.attr({x: this._gameModelAdpt.getDimensions().width/2 - 125, y: this._gameModelAdpt.getDimensions().height/2 - 25, w: 250, h: 50});
+  }
+
   function initGUI() {
     var that = this;
 
@@ -733,6 +745,7 @@ define([
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
+    this.notifyDead = notifyDead.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
