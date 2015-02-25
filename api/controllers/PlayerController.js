@@ -30,10 +30,7 @@ module.exports = {
         return Player.find({game: newPlayer.game});
       })
       .then(function(players) {
-        Player.subscribe(req.socket, players, ['update', 'destroy']);
-        players.forEach(function(v, i, a) {
-          Player.subscribe(v.socket, newPlayer, ['update', 'destroy']);
-        });
+        Player.subscribe(req, players, ['update', 'destroy']);
 
         /* Publish player creation */
         Player.publishCreate(newPlayer);
@@ -81,7 +78,7 @@ module.exports = {
       .then(function(players) {
         player = players[0];
 
-        return Room.findOne(player.room);
+        return Room.findOne(player.room).populate('players');
       })
       .then(function(room) {
         /*
@@ -95,7 +92,7 @@ module.exports = {
 
         Player.publishUpdate(player.id, {room: player.room});
 
-        res.json(player);
+        res.json(room.players);
       })
       .catch(function(err) {
         console.log(err);
@@ -127,6 +124,17 @@ module.exports = {
       res.json(found);
     });
   },
+
+  subscribe: function(req, res) {
+    Player.findOne(req.params.id)
+      .then(function(player) {
+        Player.subscribe(req, player, ['update', 'destroy']);
+      })
+      .catch(function(err) {
+        console.log(err);
+        res.json(err);
+      });
+  }
 
   /*
    * TODO keeping for debugging if necessary, but ready to be garbage

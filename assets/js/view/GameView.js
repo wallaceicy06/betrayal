@@ -592,6 +592,11 @@ define([
       setLocation: function(newX, newY) {
         var husk = that._husks[playerModelAdpt.getID()];
 
+        /* Don't try to change location for a husk that doesn't exist. */
+        if (husk === undefined) {
+          return;
+        }
+
         var oldX = husk.x;
         var oldY = husk.y;
 

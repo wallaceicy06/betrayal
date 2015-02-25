@@ -114,7 +114,7 @@ define([
 
         /* Populate other players object when join game */
         game.players.forEach(function(v, i, a) {
-          var player = new Player(v.id, v.name, v.color, v.room.id, {x: v.locX, y: v.locY})
+          var player = new Player(v.id, v.name, v.color, v.room, {x: v.locX, y: v.locY})
 
           var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
           player.installGameModelAdpt({
@@ -154,9 +154,12 @@ define([
             }
           });
 
+          /* Subscribe to the new player. */
+          io.socket.get('/player/subscribe/' + v.id, function(resData) {});
+
           that._otherPlayers[v.id] = player;
 
-          playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
+          playerViewAdpt.setVisibility(player.room === roomID);
         });
 
         that._gameID = parseInt(gameID);
@@ -202,7 +205,9 @@ define([
 
       var newMiniRoom = new MapNode(room.id, room.name);
 
-      io.socket.put('/player/changeRoom/' + that._player.id, {room: that._currentRoom.id}, function (player) {
+      io.socket.put('/player/changeRoom/' + that._player.id,
+                    {room: that._currentRoom.id}, function (playersInRoom) {
+
         /*
          * Set the position of the player in the new room and add that room
          * as a connection to our mini map.
@@ -220,6 +225,13 @@ define([
           that._player.setPosition(DIMENSIONS.width - 65, that._player.y);
           that._currentMiniRoom.setGateway('west', newMiniRoom);
         }
+
+        /* Set locations of other players in room. */
+        playersInRoom.forEach(function(v, i, a) {
+          if (v.id != that._player.id) {
+            that._otherPlayers[v.id].setPosition(v.locX, v.locY);
+          }
+        });
 
         /* Set the current mini room to the one we just moved to. */
         that._currentMiniRoom = newMiniRoom;
@@ -381,6 +393,9 @@ define([
         });
 
         that._otherPlayers[o.id] = player;
+
+        /* Subscribe to the new player. */
+        io.socket.get('/player/subscribe/' + o.id, function(resData) {});
 
         playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
       } else if (o.verb === 'updated') {
