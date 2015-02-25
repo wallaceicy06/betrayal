@@ -16,6 +16,7 @@ define([
     'rug': {gridX: 0, gridY: 3, gridW: 5, gridH: 3},
     'squareTable': {gridX: 5, gridY: 3, gridW: 3, gridH: 3},
     'piano': {gridX: 8, gridY: 3, gridW: 4, gridH: 2},
+    'stove': {gridX: 12, gridY: 3, gridW: 2, gridH: 2},
     'blueBed': {gridX: 0, gridY: 6, gridW: 3, gridH: 4},
     'redBed': {gridX: 3, gridY: 6, gridW: 3, gridH: 4},
     'diningTable': {gridX: 0, gridY: 10, gridW: 8, gridH: 3},
@@ -26,5 +27,6 @@ define([
     'creamTile': {gridX: 3, gridY: 13, gridW: 1, gridH: 1},
     'blueTile': {gridX: 4, gridY: 13, gridW: 1, gridH: 1},
     'woodFloor': {gridX: 5, gridY: 13, gridW: 1, gridH: 1},
+    'wall': {gridX: 7, gridY: 13, gridW: 1, gridH: 1},
   }
 });

@@ -15,6 +15,7 @@ module.exports.gameconfig = {
     'rug': {gridX: 0, gridY: 3, gridW: 5, gridH: 3},
     'squareTable': {gridX: 5, gridY: 3, gridW: 3, gridH: 3},
     'piano': {gridX: 8, gridY: 3, gridW: 4, gridH: 2},
+    'stove': {gridX: 12, gridY: 3, gridW: 2, gridH: 2},
     'blueBed': {gridX: 0, gridY: 6, gridW: 3, gridH: 4},
     'redBed': {gridX: 3, gridY: 6, gridW: 3, gridH: 4},
     'diningTable': {gridX: 0, gridY: 10, gridW: 8, gridH: 3},
@@ -25,6 +26,7 @@ module.exports.gameconfig = {
     'creamTile': {gridX: 3, gridY: 13, gridW: 1, gridH: 1},
     'blueTile': {gridX: 4, gridY: 13, gridW: 1, gridH: 1},
     'woodFloor': {gridX: 5, gridY: 13, gridW: 1, gridH: 1},
+    'wall': {gridX: 7, gridY: 13, gridW: 1, gridH: 1},
     'lightning': {gridX: 0, gridY: 14, gridW: 1, gridH: 1},
     'heart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
     'firstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
@@ -81,16 +83,23 @@ module.exports.gameconfig = {
           gridY: 1
         },
         {
+          id: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 16,
+          gridY: 1
+        },
+        {
           id: 'rug',
           solid: false,
           rotation: 0,
-          gridX: 6,
+          gridX: 7,
           gridY: 7
         }
       ]
     },
     'livingRoom': {
-      floor: '#990033',
+      floor: '#EBACA4',
       gateways: {
         north: true,
         east: true,
@@ -101,28 +110,89 @@ module.exports.gameconfig = {
         {
           id: 'armchair',
           solid: true,
-          rotation: 0,
-          gridX: 1,
-          gridY: 4
+          rotation: 270,
+          gridX: 3,
+          gridY: 10
+        },
+        {
+          id: 'armchair',
+          solid: true,
+          rotation: 90,
+          gridX: 14,
+          gridY: 8
         },
         {
           id: 'couch',
           solid: true,
-          rotation: 180,
-          gridX: 10,
+          rotation: 0,
+          gridX: 7,
+          gridY: 4
+        },
+        {
+          id: 'squareTable',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
           gridY: 8
         }
       ]
     },
-    'bedroom': {
-      floor: '#FFFFFF',
+    'gameRoom': {
+      floor: '#A3CBCC',
       gateways: {
         north: true,
         east: true,
         south: true,
         west: true
       },
-      objects: []
+      objects: [
+        {
+          id: 'poolTable',
+          solid: true,
+          rotation: 0,
+          gridX: 6,
+          gridY: 7
+        },
+        {
+          id: 'couch',
+          solid: true,
+          rotation: 0,
+          gridX: 11,
+          gridY: 1
+        }
+      ]
+    },
+    'pianoRoom': {
+      floor: '#A3CBCC',
+      gateways: {
+        north: true,
+        east: true,
+        south: true,
+        west: true
+      },
+      objects: [
+        {
+          id: 'piano',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 10
+        },
+        {
+          id: 'loveseat',
+          solid: true,
+          rotation: 0,
+          gridX: 12,
+          gridY: 4
+        },
+        {
+          id: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 14,
+          gridY: 4
+        },
+      ]
     },
     'kitchen': {
       floor: '#FFFFFF',
@@ -132,18 +202,385 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
-      objects: []
+      objects: [
+        {
+          id: 'woodTable',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 4
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 3
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 0,
+          gridX: 9,
+          gridY: 3
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 9,
+          gridY: 7
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 11,
+          gridY: 7
+        },
+        {
+          id: 'graniteCounter',
+          solid: true,
+          rotation: 0,
+          gridX: 1,
+          gridY: 9
+        },
+        {
+          id: 'kitchenSink',
+          solid: true,
+          rotation: 0,
+          gridX: 5,
+          gridY: 9
+        },
+        {
+          id: 'graniteCounter',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 9
+        },
+        {
+          id: 'stove',
+          solid: true,
+          rotation: 270,
+          gridX: 1,
+          gridY: 13
+        },
+      ]
     },
     'dining room': {
-      floor: '#FFFFFF',
+      floor: '#E3CD86',
       gateways: {
         north: true,
         east: true,
         south: true,
         west: true
       },
-      objects: []
-    }
+      objects: [
+        {
+          id: 'diningTable',
+          solid: true,
+          rotation: 0,
+          gridX: 5,
+          gridY: 7
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 6
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 0,
+          gridX: 9,
+          gridY: 6
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 0,
+          gridX: 11,
+          gridY: 6
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 8,
+          gridY: 11
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 10,
+          gridY: 11
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 12,
+          gridY: 11
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 270,
+          gridX: 4,
+          gridY: 9
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 90,
+          gridX: 14,
+          gridY: 8
+        },
+      ]
+    },
+    'bedroom': {
+      floor: '#A3CBCC',
+      gateways: {
+        north: true,
+        east: true,
+        south: true,
+        west: true
+      },
+      objects: [
+        {
+          id: 'blueBed',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 1
+        },
+        {
+          id: 'woodTable',
+          solid: true,
+          rotation: 0,
+          gridX: 11,
+          gridY: 1
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 14,
+          gridY: 4
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 14
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 13
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 12
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 11
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 10
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 9
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 1,
+          gridY: 9
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 2,
+          gridY: 9
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 9
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 4,
+          gridY: 9
+        },
+        {
+          id: 'toilet',
+          solid: true,
+          rotation: 0,
+          gridX: 2,
+          gridY: 10
+        },
+        {
+          id: 'sink',
+          solid: true,
+          rotation: 180,
+          gridX: 4,
+          gridY: 15
+        },
+      ]
+    },
+    'bedroom2': {
+      floor: '#E3CD86',
+      gateways: {
+        north: true,
+        east: true,
+        south: true,
+        west: true
+      },
+      objects: [
+        {
+          id: 'redBed',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 1
+        },
+        {
+          id: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 14,
+          gridY: 1
+        },
+        {
+          id: 'woodTable',
+          solid: true,
+          rotation: 0,
+          gridX: 11,
+          gridY: 13
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 0,
+          gridX: 12,
+          gridY: 12
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 14
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 13
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 12
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 11
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 10
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 9
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 1,
+          gridY: 9
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 2,
+          gridY: 9
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 9
+        },
+        {
+          id: 'wall',
+          solid: true,
+          rotation: 0,
+          gridX: 4,
+          gridY: 9
+        },
+        {
+          id: 'toilet',
+          solid: true,
+          rotation: 0,
+          gridX: 2,
+          gridY: 10
+        },
+        {
+          id: 'sink',
+          solid: true,
+          rotation: 180,
+          gridX: 4,
+          gridY: 15
+        },
+      ]
+    },
   },
 
   events: {

@@ -297,10 +297,21 @@ define([
 
         Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
 
+        /* If other players in room, draw them. */
+        for(var id in that._otherPlayerModelAdpts) {
+          var otherPlayer = that._otherPlayerModelAdpts[id];
+          if (curNode.room.id === otherPlayer.getRoom()) {
+            Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
+                                  .setColor(otherPlayer.getColor());
+          }
+        }
+
+        /* Draw ourselves after other players so we are on top. */
         if (curNode.room.id === that._playerModelAdpt.getRoom()) {
           Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
                                 .setColor(that._playerModelAdpt.getColor());
         }
+
 
         if (curNode.room.hasGateway('north')) {
           toVisit.push({room: curNode.room.getGateway('north'),
@@ -392,7 +403,8 @@ define([
                   .sprite(this._spriteMap[furniture[i].id].gridX,
                           this._spriteMap[furniture[i].id].gridY,
                           this._spriteMap[furniture[i].id].gridW,
-                          this._spriteMap[furniture[i].id].gridH);
+                          this._spriteMap[furniture[i].id].gridH)
+      newFurniture.rotation = furniture[i].rotation;
     }
   }
 
@@ -703,7 +715,9 @@ define([
       that._gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
     });
 
-    document.getElementById('btn-send-message').addEventListener('click', function() {
+    $('#form-send-message').submit(function(e) {
+      event.preventDefault();
+
       var messageText = document.getElementById('ipt-message');
 
       that._gameModelAdpt.onSendChatMessage(messageText.value);
