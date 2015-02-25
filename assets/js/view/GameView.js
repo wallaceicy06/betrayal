@@ -401,6 +401,7 @@ define([
 
   function displayGamePane() {
     $('#game-pane').removeClass('hidden');
+    $('#join-pane').addClass('hidden');
   }
 
   function loadRoom(roomConfig) {
@@ -656,6 +657,8 @@ define([
     var gameOptions = document.getElementById('select-game');
 
     gameOptions.options.add(new Option(game.name, game.id));
+
+    document.getElementById('btn-join').disabled = false;
   }
 
   function setGameOptions(games) {
@@ -663,6 +666,10 @@ define([
 
     /* Clear the game options combo box. */
     gameOptions.length = 0;
+
+    if (games.length > 0) {
+      document.getElementById('btn-join').disabled = false;
+    }
 
     games.forEach(function(v, i, a) {
       addGameOption.call(this, v);
