@@ -112,13 +112,13 @@ module.exports.gameconfig = {
           solid: true,
           rotation: 270,
           gridX: 3,
-          gridY: 8
+          gridY: 10
         },
         {
           id: 'armchair',
           solid: true,
           rotation: 90,
-          gridX: 12,
+          gridX: 14,
           gridY: 8
         },
         {
@@ -225,6 +225,20 @@ module.exports.gameconfig = {
           gridY: 3
         },
         {
+          id: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 9,
+          gridY: 7
+        },
+        {
+          id: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 11,
+          gridY: 7
+        },
+        {
           id: 'graniteCounter',
           solid: true,
           rotation: 0,
@@ -250,7 +264,7 @@ module.exports.gameconfig = {
           solid: true,
           rotation: 270,
           gridX: 1,
-          gridY: 11
+          gridY: 13
         },
       ]
     },
@@ -295,21 +309,21 @@ module.exports.gameconfig = {
           id: 'chair',
           solid: true,
           rotation: 180,
-          gridX: 7,
+          gridX: 8,
           gridY: 11
         },
         {
           id: 'chair',
           solid: true,
           rotation: 180,
-          gridX: 9,
+          gridX: 10,
           gridY: 11
         },
         {
           id: 'chair',
           solid: true,
           rotation: 180,
-          gridX: 11,
+          gridX: 12,
           gridY: 11
         },
         {
@@ -324,7 +338,7 @@ module.exports.gameconfig = {
           solid: true,
           rotation: 90,
           gridX: 14,
-          gridY: 9
+          gridY: 8
         },
       ]
     },
@@ -354,9 +368,9 @@ module.exports.gameconfig = {
         {
           id: 'chair',
           solid: true,
-          rotation: 0,
-          gridX: 12,
-          gridY: 3
+          rotation: 180,
+          gridX: 14,
+          gridY: 4
         },
         {
           id: 'wall',
@@ -439,8 +453,8 @@ module.exports.gameconfig = {
           id: 'sink',
           solid: true,
           rotation: 180,
-          gridX: 2,
-          gridY: 14
+          gridX: 4,
+          gridY: 15
         },
       ]
     },
@@ -562,8 +576,8 @@ module.exports.gameconfig = {
           id: 'sink',
           solid: true,
           rotation: 180,
-          gridX: 2,
-          gridY: 14
+          gridX: 4,
+          gridY: 15
         },
       ]
     },
