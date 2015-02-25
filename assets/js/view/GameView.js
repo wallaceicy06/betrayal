@@ -790,6 +790,16 @@ define([
             e.preventDefault();
         }
     }, false);
+
+    $('#ipt-message').each(function(index, value) {
+      value.onfocus = function() {
+        that._player.disableControl();
+      }
+
+      value.onblur = function() {
+        that._player.enableControl();
+      }
+    });
   }
 
   return function GameView(gameModelAdpt) {
