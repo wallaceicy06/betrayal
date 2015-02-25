@@ -340,16 +340,57 @@ define([
     Crafty.bind('KeyDown', function(e) {
       var inputInFocus = $('input').is(':focus');
 
-      if (!inputInFocus && e.key == Crafty.keys.M) {
-        if (that._mapEnabled) {
-          that._gameModelAdpt.onDisableMap();
-        } else {
-          that._gameModelAdpt.onEnableMap();
-        }
-      }
+      if (!inputInFocus) {
+        switch(e.key) {
+          case Crafty.keys.M:
 
-      if (!inputInFocus && e.key == Crafty.keys.SPACE) {
-        that._gameModelAdpt.attack();
+            if (that._mapEnabled) {
+              that._gameModelAdpt.onDisableMap();
+              that._player.enableControl();
+            } else {
+              that._gameModelAdpt.onEnableMap();
+              that._player.disableControl();
+            }
+            break;
+
+          case Crafty.keys.SPACE:
+
+            that._gameModelAdpt.attack();
+            break;
+
+          case Crafty.keys.C:
+
+            /*
+             * This timeout is to prevent the letter 'c' from being typed in
+             * the chat box since this event will be handled by it as soon as
+             * the box becomes in focus.
+             */
+            setTimeout(function() {
+              that._player.disableControl();
+              document.getElementById('ipt-message').focus();
+            }, 10);
+            break;
+
+          default:
+
+            break;
+        }
+      } else {
+        switch(e.key) {
+          case Crafty.keys.ESC:
+
+            /* Focuses the game div. */
+            window.location.hash = '#game-stage';
+
+            /* De-focuses all input elements. */
+            $('input').blur();
+
+            that._player.enableControl();
+            break;
+
+          default:
+            break;
+        }
       }
     });
   }
@@ -718,9 +759,11 @@ define([
     $('#form-send-message').submit(function(e) {
       event.preventDefault();
 
-      var messageText = document.getElementById('ipt-message');
+      var inputField = document.getElementById('ipt-message');
 
-      that._gameModelAdpt.onSendChatMessage(messageText.value);
+      that._gameModelAdpt.onSendChatMessage(inputField.value);
+
+      inputField.value = '';
     });
   }
 
