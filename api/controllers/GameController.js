@@ -35,12 +35,14 @@ module.exports = {
 
       Game.generateHouse(game, function(startRoom) {
         Game.update(game.id, {startingRoom: startRoom})
+          .then(function(updatedGames) {
+            var updatedGame = updatedGames[0];
+            Game.publishCreate(updatedGame);
+            res.json(updatedGame);
+          })
           .catch(function(err) {
             console.log(err);
             res.json(err);
-          })
-          .done(function() {
-            res.json(game.toJSON());
           });
       });
     });

@@ -451,7 +451,9 @@ define([
     });
 
     io.socket.on('game', function(o) {
-      if (o.verb === 'messaged') {
+      if (o.verb === 'created') {
+        that._viewAdpt.addGame(o.data);
+      } else if (o.verb === 'messaged') {
         that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
       }
     });

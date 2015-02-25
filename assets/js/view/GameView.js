@@ -652,6 +652,12 @@ define([
     }
   }
 
+  function addGameOption(game) {
+    var gameOptions = document.getElementById('select-game');
+
+    gameOptions.options.add(new Option(game.name, game.id));
+  }
+
   function setGameOptions(games) {
     var gameOptions = document.getElementById('select-game');
 
@@ -659,7 +665,7 @@ define([
     gameOptions.length = 0;
 
     games.forEach(function(v, i, a) {
-      gameOptions.options.add(new Option(v.name, v.id));
+      addGameOption.call(this, v);
     });
   }
 
@@ -803,6 +809,7 @@ define([
     this.notifyDead = notifyDead.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
+    this.addGameOption = addGameOption.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
     this.start = start.bind(this);
   }
