@@ -9,7 +9,7 @@ module.exports = {
 
   autoWatch: false,
 
-  autosubscribe: [],
+  autosubscribe: ['message'],
 
   attributes: {
   	name: {type: 'string',

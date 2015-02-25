@@ -326,6 +326,7 @@ define([
           playerDamaged = this._player;
           damage = otherRoll - myRoll;
         }
+
         if (playerDamaged == undefined) {
           this.sendEventMessage(this._player.name + " attacked " +
             otherPlayer.name + "! No one was hurt.");
