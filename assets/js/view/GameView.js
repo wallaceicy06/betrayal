@@ -504,7 +504,7 @@ define([
      */
     return {
       destroy: function() {
-        appendChatMessage.call(that, playerModelAdpt.getID(), 'left the game');
+        appendChatMessage.call(that, playerModelAdpt.getID(), 'has died');
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
