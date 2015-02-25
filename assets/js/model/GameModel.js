@@ -16,25 +16,27 @@ define([
   function joinGame(playerName, gameID) {
     var that = this;
 
-    var blueColor = 'blue';
-
     io.socket.get('/game/' + gameID, function (game) {
       that._events = game.events;
       that._viewAdpt.installSpriteMap(game.sprites);
 
       var color;
-      switch (game.players.length) {
-        case 0:
-          color = 'blue';
-          break;
-        case 1:
-          color = 'red';
-          break;
-        case 2:
-          color = 'green';
-          break;
-        default:
-          color = 'green';
+      if (game.players.length === 0) {
+        color = 'blue';
+      } else {
+        switch (game.players[game.players.length - 1].color) {
+          case 'blue':
+            color = 'red';
+            break;
+          case 'red':
+            color = 'green';
+            break;
+          case 'green':
+            color = 'blue';
+            break;
+          default:
+            color = 'green';
+        }
       }
 
       io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom, color: color}, function (player) {
@@ -326,6 +328,7 @@ define([
           playerDamaged = this._player;
           damage = otherRoll - myRoll;
         }
+
         if (playerDamaged == undefined) {
           this.sendEventMessage(this._player.name + " attacked " +
             otherPlayer.name + "! No one was hurt.");
