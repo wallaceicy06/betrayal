@@ -154,6 +154,7 @@ define([
             }
           });
 
+          /* TODO is this actually needed? */
           /* Subscribe to the new player. */
           io.socket.get('/player/subscribe/' + v.id, function(resData) {});
 
