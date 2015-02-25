@@ -11,6 +11,7 @@ define([
   }
 
   var ATTACK_RADIUS = 64;
+  var MIN_SEND_WAIT = 20;
 
   function joinGame(playerName, gameID) {
     var that = this;
@@ -88,7 +89,11 @@ define([
           },
 
           onPositionChange: function(newX, newY) {
-            io.socket.put('/player/' + player.id, {locX: newX, locY: newY}, function (player) {});
+            var curTime = new Date().getTime();
+            if (curTime - that._lastSend > MIN_SEND_WAIT) {
+              io.socket.put('/player/' + player.id, {locX: newX, locY: newY}, function (player) {});
+              that._lastSend = curTime;
+            }
           }
         });
 
@@ -306,7 +311,7 @@ define([
           damage = otherRoll - myRoll;
         }
         if (playerDamaged == undefined) {
-          this.sendEventMessage(this._player.name + " attacked " + 
+          this.sendEventMessage(this._player.name + " attacked " +
             otherPlayer.name + "! No one was hurt.");
         }
         else {
@@ -387,7 +392,7 @@ define([
             that._otherPlayers[o.id].room = o.data.room;
           }
         /* Stat update */
-        } else { 
+        } else {
           if (o.id !== that._player.id) {
             for (var key in o.data) {
               if (key !== "updatedAt") { //TODO: make this less jank
@@ -441,6 +446,7 @@ define([
     this._miniMap = null;
     this._currentMiniRoom = null;
     this._events = null;
+    this._lastSend = new Date().getTime();
 
     initSockets.call(this);
 
