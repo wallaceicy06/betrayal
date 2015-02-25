@@ -30,9 +30,9 @@ module.exports = {
         return Player.find({game: newPlayer.game});
       })
       .then(function(players) {
-        Player.subscribe(req.socket, players);
+        Player.subscribe(req.socket, players, ['update', 'destroy']);
         players.forEach(function(v, i, a) {
-          Player.subscribe(v.socket, newPlayer);
+          Player.subscribe(v.socket, newPlayer, ['update', 'destroy']);
         });
 
         /* Publish player creation */

@@ -9,7 +9,7 @@ module.exports = {
 
   autoWatch: false,
 
-  autoSubscribe: ['destroy'],
+  autosubscribe: [],
 
   attributes: {
     name: {type: 'string',

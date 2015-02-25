@@ -16,7 +16,6 @@ define([
   function joinGame(playerName, gameID) {
     var that = this;
 
-    this._gameID = gameID;
     var blueColor = 'blue';
 
     io.socket.get('/game/' + gameID, function (game) {
@@ -114,56 +113,53 @@ define([
         });
 
         /* Populate other players object when join game */
-        io.socket.get('/player', function (err, jwr) {
-          jwr.body.forEach(function (v, i, a) {
-            if (v.id !== that._player.id) {
-              var player = new Player(v.id, v.name, v.color, v.room.id, {x: v.locX, y: v.locY})
+        game.players.forEach(function(v, i, a) {
+          var player = new Player(v.id, v.name, v.color, v.room.id, {x: v.locX, y: v.locY})
 
-              var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
-              player.installGameModelAdpt({
-                onSpeedChange: function(newSpeed) {
-                  playerViewAdpt.onSpeedChange(newSpeed);
-                },
+          var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
+          player.installGameModelAdpt({
+            onSpeedChange: function(newSpeed) {
+              playerViewAdpt.onSpeedChange(newSpeed);
+            },
 
-                onRoomChange: function(newRoom) {
-                  playerViewAdpt.setVisibility(newRoom === that._currentRoom.id);
-                },
+            onRoomChange: function(newRoom) {
+              playerViewAdpt.setVisibility(newRoom === that._currentRoom.id);
+            },
 
-                onMaxHealthChange: function(newMaxHealth) {
-                  playerViewAdpt.onMaxHealthChange(newMaxHealth);
-                },
+            onMaxHealthChange: function(newMaxHealth) {
+              playerViewAdpt.onMaxHealthChange(newMaxHealth);
+            },
 
-                onCurHealthChange: function(newCurHealth) {
-                  playerViewAdpt.onCurHealthChange(newCurHealth);
-                },
+            onCurHealthChange: function(newCurHealth) {
+              playerViewAdpt.onCurHealthChange(newCurHealth);
+            },
 
-                onWeaponChange: function(newWeapon) {
-                  playerViewAdpt.onWeaponChange(newWeapon);
-                },
+            onWeaponChange: function(newWeapon) {
+              playerViewAdpt.onWeaponChange(newWeapon);
+            },
 
-                onRelicsChange: function(newRelics) {
-                  playerViewAdpt.onRelicsChange(newRelics);
-                },
+            onRelicsChange: function(newRelics) {
+              playerViewAdpt.onRelicsChange(newRelics);
+            },
 
-                onPositionChange: function(newX, newY) {
-                  if (player.room === that._currentRoom.id) {
-                    playerViewAdpt.setLocation(newX, newY);
-                  }
-                },
+            onPositionChange: function(newX, newY) {
+              if (player.room === that._currentRoom.id) {
+                playerViewAdpt.setLocation(newX, newY);
+              }
+            },
 
-                onDestroy: function() {
-                  playerViewAdpt.destroy();
-                  delete that._otherPlayers[v.id];
-                }
-              });
-
-              that._otherPlayers[v.id] = player;
-
-              playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
+            onDestroy: function() {
+              playerViewAdpt.destroy();
+              delete that._otherPlayers[v.id];
             }
           });
+
+          that._otherPlayers[v.id] = player;
+
+          playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
         });
 
+        that._gameID = parseInt(gameID);
       });
     });
   }
@@ -338,7 +334,8 @@ define([
     var that = this;
 
     io.socket.on('player', function(o) {
-      if (o.verb === 'created' && o.id !== that._player.id) {
+      if (o.verb === 'created' && o.data.game === that._gameID
+          && o.id !== that._player.id) {
         var player =  new Player(o.id,
                                  o.data.name,
                                  o.data.color,
