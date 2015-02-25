@@ -208,6 +208,10 @@ define([
         else {
           that._view.appendChatMessage(playerID, message);
         }
+      },
+
+      notifyDead: function() {
+        that._view.notifyDead();
       }
     });
 
