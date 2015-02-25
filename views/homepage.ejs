@@ -17,19 +17,23 @@
     <div class="messages" style="overflow-y:scroll; height: 100%;">
     </div>
     <div class="chatroom-controls">
-      <form id="form-send-message">
-        <input id="ipt-message" name="message" type="text">
-        <button id="btn-send-message" type="submit">Send</button>
+      <form id="form-send-message" class="form-inline">
+        <input id="ipt-message" class="form-control" name="message" type="text">
+        <button id="btn-send-message" class="btn btn-default" type="submit">Send</button>
       </form>
     </div>
   </div>
 </div>
 
 <div>
-  <input id="ipt-name" type="text">
-  <button id="btn-join">Join</button>
-  <select id="select-game"></select>
+  <form class="form-inline">
+    <input id="ipt-name" type="text" class="form-control" placeholder="player name">
+    <select id="select-game" class="form-control"></select>
+    <button id="btn-join" type="submit" class="btn btn-primary">Join</button>
+  </form>
   <br>
-  <input id="ipt-game-name" type="text">
-  <button id="btn-create-game">Create Game</button>
+  <form class= "form-inline">
+    <input id="ipt-game-name" type="text" class="form-control" placeholder="new game name">
+    <button id="btn-create-game" type="submit" class="btn btn-default">Create Game</button>
+  </form>
 </div>
