@@ -416,9 +416,14 @@ define([
     this._gameModelAdpt.fetchGames();
   }
 
-  function displayGamePane() {
-    $('#game-pane').removeClass('hidden');
-    $('#join-pane').addClass('hidden');
+  function displayGamePane(display) {
+    if (display === true) {
+      $('#game-pane').removeClass('hidden');
+      $('#join-pane').addClass('hidden');
+    } else {
+      $('#game-pane').addClass('hidden');
+      $('#join-pane').removeClass('hidden');
+    }
   }
 
   function loadRoom(roomConfig) {

@@ -5,7 +5,7 @@ define([
 ], function($, GameModel, GameView) {
   'use strict';
 
-  /* 
+  /*
    * Start both the model and view
    */
   function start() {
@@ -180,7 +180,7 @@ define([
 
       startGame: function(roomConfig) {
         that._view.loadRoom(roomConfig);
-        that._view.displayGamePane();
+        that._view.displayGamePane(true);
       },
 
       loadRoom: function(roomConfig) {
@@ -228,6 +228,9 @@ define([
        */
       notifyDead: function() {
         that._view.notifyDead();
+        setTimeout(function() {
+          that._view.displayGamePane(false);
+        }, 3000);
       }
     });
 
