@@ -26,7 +26,7 @@ module.exports = {
                  required: true},
     items: {collection: 'item',
             via: 'room'},
-    event: {type: 'integer',    //Event stored as an id, client will figure it out
+    event: {type: 'integer',
             required: false}
   },
 
