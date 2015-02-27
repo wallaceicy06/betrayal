@@ -46,23 +46,21 @@ module.exports = {
   update: function(req, res) {
 
     Player.update(req.param('id'), {locX: req.body.locX,
-                                    locY: req.body.locY},
-                  function (err, players) {
-      var updatedPlayer = players[0];
+                                    locY: req.body.locY})
+      .then(function(players) {
+        var updatedPlayer = players[0];
 
-      if (err) {
+        Room.message(updatedPlayer.room, {id: updatedPlayer.id,
+                                          verb: 'playerUpdated',
+                                          data: {locX: updatedPlayer.locX,
+                                                 locY: updatedPlayer.locY}});
+
+        res.json(updatedPlayer.toJSON());
+      })
+      .catch(function(err) {
         console.log(err);
         res.json(err);
-        return;
-      }
-
-      Room.message(updatedPlayer.room, {id: updatedPlayer.id,
-                                        verb: 'playerUpdated',
-                                        data: {locX: updatedPlayer.locX,
-                                               locY: updatedPlayer.locY}});
-
-      res.json(updatedPlayer.toJSON());
-    });
+      });
   },
 
   changeRoom: function(req, res) {
@@ -115,16 +113,6 @@ module.exports = {
     });
   },
 
-  destroyAll: function(req, res) {
-    Player.find({}, function(err, found) {
-      found.forEach(function(v, i, a) {
-        v.destroy();
-      });
-
-      res.json(found);
-    });
-  },
-
   subscribe: function(req, res) {
     Player.findOne(req.params.id)
       .then(function(player) {
@@ -135,38 +123,5 @@ module.exports = {
         res.json(err);
       });
   }
-
-  /*
-   * TODO keeping for debugging if necessary, but ready to be garbage
-   * collected.
-   */
-  // subs: function(req, res) {
-    // var idToPlayer = {};
-
-    // Player.find({}, function(err, found) {
-      // var subs = {};
-
-      // _.each(found, function(i) {
-        // idToPlayer[i.socket] = i.name;
-      // });
-
-      // console.log(idToPlayer);
-
-      // console.log(found);
-      // _.each(found, function(i) {
-        // var s = [];
-
-        // _.each(Player.subscribers(i), function(t) {
-          // s.push(idToPlayer[t.id]);
-        // });
-
-        // subs[i.name] = s;
-      // });
-
-      // console.log(subs);
-
-      // res.json(subs);
-    // });
-  // }
 };
 
