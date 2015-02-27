@@ -67,7 +67,7 @@ module.exports.gameconfig = {
   },
   rooms: {
     'entryway': {
-      floor: '#6699FF',
+      floor: '#F0DEC7',
       gateways: {
         north: true,
         east: true,
@@ -195,7 +195,7 @@ module.exports.gameconfig = {
       ]
     },
     'kitchen': {
-      floor: '#FFFFFF',
+      floor: '#F0DEC7',
       gateways: {
         north: true,
         east: true,
