@@ -39,13 +39,20 @@ define([
         }
       }
 
-      io.socket.post('/player', {name: playerName, game: game.id, room: game.startingRoom, color: color}, function (player) {
-        that._player = new Player(player.id, player.name, player.color, player.room, {x: 64, y: 64});
+      io.socket.post('/player', {name: playerName,
+                                 game: game.id,
+                                 room: game.startingRoom,
+                                 color: color}, function (player) {
+
+        that._player = new Player(player.id, player.name, player.color,
+                                  player.room, {x: 64, y: 64});
 
         var roomID = player.room;
 
         var playerViewAdpt = that._viewAdpt.makePlayerViewAdpt(that._player);
         that._player.installGameModelAdpt({
+          /* (This) Player Model -> Game Model adapter. */
+
           onSpeedChange: function(newSpeed, oldSpeed) {
             playerViewAdpt.onSpeedChange(newSpeed, oldSpeed);
             io.socket.put('/player/adjustStat/' + player.id,
@@ -98,7 +105,8 @@ define([
           onPositionChange: function(newX, newY) {
             var curTime = new Date().getTime();
             if (curTime - that._lastSend > MIN_SEND_WAIT) {
-              io.socket.put('/player/' + player.id, {locX: newX, locY: newY}, function (player) {});
+              io.socket.put('/player/' + player.id, {locX: newX, locY: newY},
+                            function (player) {});
               that._lastSend = curTime;
             }
           }
@@ -116,10 +124,13 @@ define([
 
         /* Populate other players object when join game */
         game.players.forEach(function(v, i, a) {
-          var player = new Player(v.id, v.name, v.color, v.room, {x: v.locX, y: v.locY})
+          var player = new Player(v.id, v.name, v.color, v.room,
+                                  {x: v.locX, y: v.locY});
 
           var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
           player.installGameModelAdpt({
+            /* (Other) Player Model -> Game Model Adapter */
+
             onSpeedChange: function(newSpeed) {
               playerViewAdpt.onSpeedChange(newSpeed);
             },
@@ -155,10 +166,6 @@ define([
               delete that._otherPlayers[v.id];
             }
           });
-
-          /* TODO is this actually needed? */
-          /* Subscribe to the new player. */
-          io.socket.get('/player/subscribe/' + v.id, function(resData) {});
 
           that._otherPlayers[v.id] = player;
 
@@ -280,11 +287,14 @@ define([
   }
 
   function sendChatMessage(message) {
-    io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: this._player.id}, function (resData, jwr){});
+    io.socket.put('/game/sendChatMessage/' + this._gameID,
+                  {message: message, playerID: this._player.id},
+                  function (resData, jwr) {});
   }
 
   function sendEventMessage(message) {
-    io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message, playerID: undefined}, function (resData, jwr){});
+    io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message,
+                  playerID: undefined}, function (resData, jwr) {});
   }
 
   /*
@@ -292,9 +302,11 @@ define([
    * Returns the title and text of the event to be displayed.
    */
   function performEvent(eventID) {
-    io.socket.put('/room/removeEvent/' + this._currentRoom.id, {}, function(resData, jwr){});
+    io.socket.put('/room/removeEvent/' + this._currentRoom.id, {},
+                  function(resData, jwr) {});
     var event = this._events[eventID];
-    for (var stat in event.effect) {  //For right now, event effects only alter stats
+    for (var stat in event.effect) {
+      /* For right now, event effects only alter stats. */
       this._player[stat] = this._player[stat] + event.effect[stat];
     }
     return {title: event.title, text: event.text};
@@ -352,6 +364,7 @@ define([
     io.socket.on('player', function(o) {
       if (o.verb === 'created' && o.data.game === that._gameID
           && o.id !== that._player.id) {
+
         var player =  new Player(o.id,
                                  o.data.name,
                                  o.data.color,
@@ -360,6 +373,8 @@ define([
 
         var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
         player.installGameModelAdpt({
+          /* (Other) Player -> Game Model adapter. */
+
           onSpeedChange: function(newSpeed) {
             playerViewAdpt.onSpeedChange(newSpeed);
           },
@@ -418,7 +433,8 @@ define([
         } else {
           if (o.id !== that._player.id) {
             for (var key in o.data) {
-              if (key !== "updatedAt") { //TODO: make this less jank
+              if (key !== "updatedAt") {
+                /* TODO: make this less jank. */
                 that._otherPlayers[o.id][key] = o.data[key];
               }
             }

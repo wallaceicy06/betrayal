@@ -23,42 +23,13 @@ module.exports = {
   },
 
   removeEvent: function(req, res) {
-    Room.update(req.param('id'), {event: -1}, function(err, rooms) {});
-  },
-
-  subs: function(req, res) {
-    var idToPlayer = {};
-
-    Player.find({})
-      .then(function(found) {
-
-        _.each(found, function(i) {
-          idToPlayer[i.socket] = i.name;
-        });
-
-        console.log(idToPlayer);
-
-        return Room.find({});
-      })
-      .then(function(rooms) {
-        var subs = {};
-
-        _.each(rooms, function(i) {
-          var s = [];
-
-          _.each(Room.subscribers(i), function(r) {
-            s.push(idToPlayer[r.id]);
-          });
-
-          subs[i.name] = s;
-        });
-
-        console.log(subs);
-        res.json(subs);
-      })
+    Room.update(req.param('id'), {event: -1})
       .catch(function(err) {
         console.log(err);
         res.json(err);
+      })
+      .done(function() {
+        res.json();
       });
   },
 }

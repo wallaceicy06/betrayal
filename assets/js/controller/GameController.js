@@ -5,6 +5,9 @@ define([
 ], function($, GameModel, GameView) {
   'use strict';
 
+  /*
+   * Start both the model and view
+   */
   function start() {
     this._model.start();
     this._view.start();
@@ -17,8 +20,12 @@ define([
     var that = this;
 
     this._model = new GameModel({
+      /* Game Model -> Game View Adapter */
+
       makePlayerViewAdpt: function(playerModel) {
         var playerView = that._view.makePlayerView({
+          /* Player View -> Player Model Adapter for our player */
+
           getName: function() {
             return playerModel.name;
           },
@@ -45,10 +52,6 @@ define([
 
           getRelics: function() {
             return playerModel.relics;
-          },
-
-          setSpeed: function(speed) {   /* Is this method necessary? */
-            playerModel.speed = speed;
           },
 
           getX: function() {
@@ -96,7 +99,8 @@ define([
         });
 
         return {
-          /* Player View Adapter */
+          /* Player Model -> Player View Adapter */
+
           onSpeedChange: function(newSpeed, oldSpeed) {
             playerView.setSpeed(newSpeed);
             playerView.fixMovement(newSpeed - oldSpeed);
@@ -122,6 +126,8 @@ define([
 
       addOtherPlayer: function(playerModel) {
         return that._view.addOtherPlayer({
+          /* Player View -> Player Model Adapter for other players*/
+
           getID: function() {
             return playerModel.id;
           },
@@ -174,7 +180,7 @@ define([
 
       startGame: function(roomConfig) {
         that._view.loadRoom(roomConfig);
-        that._view.displayGamePane();
+        that._view.displayGamePane(true);
       },
 
       loadRoom: function(roomConfig) {
@@ -205,6 +211,9 @@ define([
         that._view.changeColor(color);
       },
 
+      /*
+       * Received a chat or event message that needs to be displayed
+       */
       messageReceived: function(playerID, message) {
         if (playerID == undefined) {
           that._view.appendEvent(message);
@@ -214,12 +223,20 @@ define([
         }
       },
 
+      /*
+       * Notify our player that they have died
+       */
       notifyDead: function() {
         that._view.notifyDead();
+        setTimeout(function() {
+          that._view.displayGamePane(false);
+        }, 3000);
       }
     });
 
     this._view = new GameView({
+      /* Game View -> Game Model Adapter */
+
       fetchGames: function() {
         return that._model.fetchGames();
       },

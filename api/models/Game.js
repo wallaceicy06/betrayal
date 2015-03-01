@@ -150,8 +150,10 @@ module.exports = {
         var thisRoom = Room.layouts[thisRoomID]
 
         var roomNorthID = (i == 0 ? null : houseGrid[i - 1][j]);
-        var roomEastID = (j == houseGrid[0].length - 1 ? null : houseGrid[i][j + 1]);
-        var roomSouthID = (i == houseGrid.length - 1 ? null : houseGrid[i + 1][j]);
+        var roomEastID = (j == houseGrid[0].length - 1
+                          ? null : houseGrid[i][j + 1]);
+        var roomSouthID = (i == houseGrid.length - 1
+                           ? null : houseGrid[i + 1][j]);
         var roomWestID = (j == 0 ? null : houseGrid[i][j - 1]);
 
         var roomNorth = Room.layouts[roomNorthID];

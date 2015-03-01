@@ -223,7 +223,8 @@ define([
       that._player = Crafty.e('Player').attr({x: that._playerModelAdpt.getX(),
                                               y: that._playerModelAdpt.getY(),
                                               doorLock: false})
-                                       .setColor(that._playerModelAdpt.getColor());
+                                       .setColor(that._playerModelAdpt
+                                                     .getColor());
       if (oldPlayerEntity !== null) {
         that._player.animate(oldPlayerEntity.getReel().id, -1);
       }
@@ -244,7 +245,11 @@ define([
 
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
         that._player.disableControl();
-        var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);  //performEvent does the action of the event and returns the text to display
+        /*
+         * performEvent does the action of the event and returns the text to
+         * display.
+         */
+        var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);
         var eventBackground = Crafty.e('2D, DOM, Color')
           .color('white');
         var eventTitle = Crafty.e('2D, DOM, Text')
@@ -255,14 +260,24 @@ define([
           .css({'text-align': 'center', 'top': '45px'})
           .text(eventInfo.text)
           .textFont({size: '14px'});
-        eventBackground.attach(eventTitle); //Attach eventTitle and eventText as children of event so that they will move together
+        /*
+         * Attach eventTitle and eventText as children of event so that they
+         * will move together.
+         */
+        eventBackground.attach(eventTitle);
         eventBackground.attach(eventText);
-        eventBackground.attr({x: that._gameModelAdpt.getDimensions().width/2 - 175, y: that._gameModelAdpt.getDimensions().height/2 - 175, w: 350, h: 350});
+        eventBackground.attr({x: that._gameModelAdpt.getDimensions().width/2
+                                 - 175,
+                              y: that._gameModelAdpt.getDimensions().height/2
+                                 - 175, w: 350, h: 350});
+
         setTimeout(function() {
-          eventBackground.destroy();    //Remove the event text box
+          /* Remove the event text box. */
+          eventBackground.destroy();
           eventText.destroy();
-          that._player.enableControl(); //Allow player to move again
-        }, 3000); //Display the event text box for 3 seconds
+          /* Allow player to move again. */
+          that._player.enableControl();
+        }, 3000); /* Display the event text box for 3 seconds. */
       }
     });
 
@@ -270,8 +285,10 @@ define([
       Crafty.background('black');
 
       var toVisit = [{room: mapConfig,
-                      x: that._gameModelAdpt.getDimensions().width / 2 - (TILE_WIDTH / 2),
-                      y: that._gameModelAdpt.getDimensions().height / 2 - (TILE_WIDTH / 2)}];
+                      x: that._gameModelAdpt.getDimensions().width / 2
+                         - (TILE_WIDTH / 2),
+                      y: that._gameModelAdpt.getDimensions().height / 2
+                         - (TILE_WIDTH / 2)}];
 
       while (toVisit.length > 0) {
         var curNode;
@@ -382,9 +399,14 @@ define([
     this._gameModelAdpt.fetchGames();
   }
 
-  function displayGamePane() {
-    $('#game-pane').removeClass('hidden');
-    $('#join-pane').addClass('hidden');
+  function displayGamePane(display) {
+    if (display === true) {
+      $('#game-pane').removeClass('hidden');
+      $('#join-pane').addClass('hidden');
+    } else {
+      $('#game-pane').addClass('hidden');
+      $('#join-pane').removeClass('hidden');
+    }
   }
 
   function loadRoom(roomConfig) {
@@ -423,8 +445,10 @@ define([
 
       newFurniture.attr({x: furniture[i].gridX * TILE_WIDTH,
                          y: furniture[i].gridY * TILE_WIDTH,
-                         w: this._spriteMap[furniture[i].id].gridW * TILE_WIDTH,
-                         h: this._spriteMap[furniture[i].id].gridH * TILE_WIDTH})
+                         w: this._spriteMap[furniture[i].id].gridW
+                            * TILE_WIDTH,
+                         h: this._spriteMap[furniture[i].id].gridH
+                            * TILE_WIDTH})
                   .sprite(this._spriteMap[furniture[i].id].gridX,
                           this._spriteMap[furniture[i].id].gridY,
                           this._spriteMap[furniture[i].id].gridW,
@@ -456,12 +480,14 @@ define([
 
       setCurHealth: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-cur-health')[0].innerHTML = ('cur health: ' + newCurHealth);
+          .find('li.player-cur-health')[0].innerHTML = ('cur health: '
+                                                        + newCurHealth);
       },
 
       setMaxHealth: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-max-health')[0].innerHTML = ('max health: ' + newMaxHealth);
+          .find('li.player-max-health')[0].innerHTML = ('max health: '
+                                                        + newMaxHealth);
       },
 
       setSpeed: function(newSpeed) {
@@ -496,13 +522,15 @@ define([
     var playerMaxHealth = document.createElement('li');
     playerMaxHealth.className = 'player-max-health';
     playerMaxHealth.appendChild(
-        document.createTextNode('max health: ' + playerModelAdpt.getMaxHealth()));
+        document.createTextNode('max health: '
+                                + playerModelAdpt.getMaxHealth()));
     playerStats.appendChild(playerMaxHealth);
 
     var playerCurHealth = document.createElement('li');
     playerCurHealth.className = 'player-cur-health';
     playerCurHealth.appendChild(
-        document.createTextNode('cur health: ' + playerModelAdpt.getCurHealth()));
+        document.createTextNode('cur health: '
+                                + playerModelAdpt.getCurHealth()));
     playerStats.appendChild(playerCurHealth);
 
     var playerWeapon = document.createElement('li');
@@ -560,12 +588,14 @@ define([
 
       onCurHealthChange: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-cur-health')[0].innerHTML = ('cur health: ' + newCurHealth);
+          .find('li.player-cur-health')[0].innerHTML = ('cur health: '
+                                                        + newCurHealth);
       },
 
       onMaxHealthChange: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-max-health')[0].innerHTML = ('max health: ' + newMaxHealth);
+          .find('li.player-max-health')[0].innerHTML = ('max health: '
+                                                        + newMaxHealth);
       },
 
       onSpeedChange: function(newSpeed) {
@@ -607,7 +637,8 @@ define([
       setVisibility: function(visible) {
         if (visible === true) {
           makePlayerHusk.call(that, playerModelAdpt.getID(),
-                              playerModelAdpt.getX(), playerModelAdpt.getY(), playerModelAdpt.getColor());
+                              playerModelAdpt.getX(), playerModelAdpt.getY(),
+                              playerModelAdpt.getColor());
         } else {
           removeHusk.call(that, playerModelAdpt.getID());
         }
@@ -617,7 +648,8 @@ define([
 
   function removeAllHusks() {
     for (var key in this._husks) {
-      this._husks[key].destroy(); // destroy Crafty entity
+      /* Destroy Crafty entity. */
+      this._husks[key].destroy();
     }
     this._husks = {};
   }
@@ -664,32 +696,48 @@ define([
     var heightInTiles = this._gameModelAdpt.getDimensions().height/TILE_WIDTH;
 
     for (var j = 0; j < widthInTiles; j++) {
-      if(!('north' in gateways && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
+      if(!('north' in gateways
+           && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
+
         Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: 0});
       }
       else {
         Crafty.e('Door').attr({x: j * TILE_WIDTH, y: 0, doorID: 'north'});
       }
-      if(!('south' in gateways && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
-        Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: (heightInTiles - 1) * TILE_WIDTH});
+      if(!('south' in gateways
+           && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
+        Crafty.e('Wall').attr({x: j * TILE_WIDTH,
+                               y: (heightInTiles - 1) * TILE_WIDTH});
       }
       else {
-        Crafty.e('Door').attr({x: j * TILE_WIDTH, y: (heightInTiles - 1) * TILE_WIDTH, doorID: 'south'});
+        Crafty.e('Door').attr({x: j * TILE_WIDTH,
+                               y: (heightInTiles - 1) * TILE_WIDTH,
+                               doorID: 'south'});
       }
     }
 
     for (var i = 0; i < heightInTiles; i++) {
-      if(!('west' in gateways && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
-        Crafty.e('Wall').attr({x: 0, y: i * TILE_WIDTH});
+      if(!('west' in gateways
+           && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
+
+        Crafty.e('Wall').attr({x: 0,
+                               y: i * TILE_WIDTH});
       }
       else {
-        Crafty.e('Door').attr({x: 0, y: i * TILE_WIDTH, doorID: 'west'});
+        Crafty.e('Door').attr({x: 0,
+                               y: i * TILE_WIDTH,
+                               doorID: 'west'});
       }
-      if(!('east' in gateways && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
-        Crafty.e('Wall').attr({x: (widthInTiles - 1) * TILE_WIDTH, y: i * TILE_WIDTH});
+      if(!('east' in gateways
+           && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
+
+        Crafty.e('Wall').attr({x: (widthInTiles - 1) * TILE_WIDTH,
+                               y: i * TILE_WIDTH});
       }
       else {
-        Crafty.e('Door').attr({x: (widthInTiles - 1) * TILE_WIDTH, y: i * TILE_WIDTH, doorID: 'east'});
+        Crafty.e('Door').attr({x: (widthInTiles - 1) * TILE_WIDTH,
+                               y: i * TILE_WIDTH,
+                               doorID: 'east'});
       }
     }
 
@@ -731,8 +779,15 @@ define([
       .css({'text-align': 'center', 'top': '15px'})
       .text("You Died - Game Over")
       .textFont({size: '20px'});
-    messageBackground.attach(messageText); //Attach text as child of background so that they will move together
-    messageBackground.attr({x: this._gameModelAdpt.getDimensions().width/2 - 125, y: this._gameModelAdpt.getDimensions().height/2 - 25, w: 250, h: 50});
+
+    /* Attach text as child of background so that they will move together. */
+    messageBackground.attach(messageText);
+    messageBackground.attr({x: this._gameModelAdpt.getDimensions().width/2
+                               - 125,
+                            y: this._gameModelAdpt.getDimensions().height/2
+                               - 25,
+                            w: 250,
+                            h: 50});
   }
 
   function initGUI() {
@@ -750,11 +805,15 @@ define([
       /* Disable join button. */
       this.disabled = true;
 
-      that._gameModelAdpt.onJoinClick(name.value, select[select.selectedIndex].value);
+      that._gameModelAdpt.onJoinClick(name.value,
+                                      select[select.selectedIndex].value);
     });
 
-    document.getElementById('btn-create-game').addEventListener('click', function() {
-      that._gameModelAdpt.onCreateGameClick(document.getElementById('ipt-game-name').value);
+    document.getElementById('btn-create-game')
+            .addEventListener('click', function() {
+
+      that._gameModelAdpt.onCreateGameClick(
+        document.getElementById('ipt-game-name').value);
     });
 
     $('#form-send-message').submit(function(e) {
