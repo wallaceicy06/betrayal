@@ -9,7 +9,7 @@ module.exports = {
 
   autoWatch: false,
 
-  autosubscribe: ['message'],
+  autosubscribe: ['message', 'update'],
 
   attributes: {
   	name: {type: 'string',
@@ -19,7 +19,9 @@ module.exports = {
     startingRoom: {model: 'room',
                    required: false},
     players: {collection: 'player',
-              via: 'game'}
+              via: 'game'},
+    relicsRemaining: {type: 'integer',
+                      required: false}
   },
 
   generateHouse: function(game, cb) {
@@ -37,15 +39,22 @@ module.exports = {
       totalAbundance += i.abundance;
     });
 
+    var numRelics = 0;
+
     /* Add 2 items per room per the abundance specifications. */
     var itemBank = [];
     for (i in Game.items) {
-      _.times(Math.ceil(Game.items[i].abundance
-                         / totalAbundance
+      _.times(Math.ceil(Game.items[i].abundance / totalAbundance
                          * allRooms.length * 2), function(n) {
+        if (Game.items[i].stat === 'relics') {
+          numRelics++;
+        }
         itemBank.push(i);
       });
     }
+
+    console.log("Num Relics = " + numRelics);
+    Game.update(game.id, {relicsRemaining: numRelics}, function(game){});
 
     /* Randomly order the items. */
     itemBank = _.shuffle(itemBank);

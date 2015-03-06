@@ -244,40 +244,12 @@ define([
       that._player.enableControl();
 
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
-        that._player.disableControl();
         /*
          * performEvent does the action of the event and returns the text to
          * display.
          */
         var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);
-        var eventBackground = Crafty.e('2D, DOM, Color')
-          .color('white');
-        var eventTitle = Crafty.e('2D, DOM, Text')
-          .text(eventInfo.title)
-          .textFont({size: '20px'})
-          .css({'text-align': 'center', 'top': '15px'});
-        var eventText = Crafty.e('2D, DOM, Text')
-          .css({'text-align': 'center', 'top': '45px'})
-          .text(eventInfo.text)
-          .textFont({size: '14px'});
-        /*
-         * Attach eventTitle and eventText as children of event so that they
-         * will move together.
-         */
-        eventBackground.attach(eventTitle);
-        eventBackground.attach(eventText);
-        eventBackground.attr({x: that._gameModelAdpt.getDimensions().width/2
-                                 - 175,
-                              y: that._gameModelAdpt.getDimensions().height/2
-                                 - 175, w: 350, h: 350});
-
-        setTimeout(function() {
-          /* Remove the event text box. */
-          eventBackground.destroy();
-          eventText.destroy();
-          /* Allow player to move again. */
-          that._player.enableControl();
-        }, 3000); /* Display the event text box for 3 seconds. */
+        displayTextOverlay(eventInfo.title, eventInfo.text, 5000, that);
       }
     });
 
@@ -790,6 +762,45 @@ define([
                             h: 50});
   }
 
+  /**
+   * Display a title and text for the given amount of time as an overlay
+   * Disable player movement while text is being displayed
+   * (Used for events, death, etc.)
+   * timeout must be in ms
+   * gameView is this GameView (in this function, "this" is the window)
+   */
+  function displayTextOverlay(title, text, timeout, gameView) {
+    gameView._player.disableControl();
+    var overlayBackground = Crafty.e('2D, DOM, Color')
+      .color('white');
+    var overlayTitle = Crafty.e('2D, DOM, Text')
+      .text(title)
+      .textFont({size: '20px'})
+      .css({'text-align': 'center', 'top': '15px'});
+    var overlayText = Crafty.e('2D, DOM, Text')
+      .css({'text-align': 'center', 'top': '45px'})
+      .text(text)
+      .textFont({size: '14px'});
+    /*
+      * Attach eventTitle and eventText as children of event so that they
+      * will move together.
+      */
+    overlayBackground.attach(overlayTitle);
+    overlayBackground.attach(overlayText);
+    overlayBackground.attr({x: gameView._gameModelAdpt.getDimensions().width/2
+                              - 175,
+                          y: gameView._gameModelAdpt.getDimensions().height/2
+                              - 175, w: 350, h: 350});
+
+    setTimeout(function() {
+      /* Remove the event text box. */
+      overlayBackground.destroy();
+      overlayText.destroy();
+      /* Allow player to move again. */
+      gameView._player.enableControl();
+    }, timeout); /* Display the event text box for 3 seconds. */
+  }
+
   function initGUI() {
     var that = this;
 
@@ -861,6 +872,7 @@ define([
     this.appendChatMessage = appendChatMessage.bind(this);
     this.appendEvent = appendEvent.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
+    this.displayTextOverlay = displayTextOverlay.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);

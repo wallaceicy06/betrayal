@@ -231,6 +231,10 @@ define([
         setTimeout(function() {
           that._view.displayGamePane(false);
         }, 3000);
+      },
+
+      displayTextOverlay: function(title, text, timeout) {
+        that._view.displayTextOverlay(title, text, timeout, that._view);
       }
     });
 

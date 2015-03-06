@@ -314,6 +314,10 @@ define([
 
   /* This player deals damage to all other players within a certain radius */
   function attack() {
+    if (!this._combatEnabled) {
+      console.log("Combat not enabled yet!");
+      return;
+    }
     for (var id in this._otherPlayers) {
       var otherPlayer = this._otherPlayers[id];
       if (otherPlayer.room === this._player.room
@@ -474,6 +478,12 @@ define([
         that._viewAdpt.addGame(o.data);
       } else if (o.verb === 'messaged') {
         that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+      } else if (o.verb === 'updated') {
+        /*
+         * An update on the game indicates that the haunt is starting
+         */
+        that._combatEnabled = true;
+        that._viewAdpt.displayTextOverlay("Haunt", "The haunt is now beginning.", 5000);
       }
     });
   }
@@ -488,6 +498,7 @@ define([
     this._currentMiniRoom = null;
     this._events = null;
     this._lastSend = new Date().getTime();
+    this._combatEnabled = false;
 
     initSockets.call(this);
 
