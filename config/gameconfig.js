@@ -595,7 +595,7 @@ module.exports.gameconfig = {
        },
     1: {
         title: 'Smoke',
-        text: 'A strange smoke fills the room. You can feel if weakening you \
+        text: 'A strange smoke fills the room. You can feel it weakening you \
               with each breath. Lose one speed.',
         effect: {speed: -1}
       },

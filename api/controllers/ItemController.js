@@ -25,17 +25,26 @@ module.exports = {
             }
 
             //TODO: Find a cleaner way to do this
-            Game.findOne(room.game, function (err, game) {
-              if (err) {
+            Game.findOne(room.game).populate('players')
+              .then(function (game) {
+                if (game.relicsRemaining - 1 == 0) {
+                  var playerNum = Math.floor(Math.random() * game.players.length);
+                  var traitor = game.players[playerNum];
+                  Game.update(game.id, {traitor: traitor}, function(err, updatedGame) {
+                    if (err) {
+                      console.log(err);
+                      res.json(err);
+                    }
+
+                    Game.publishUpdate(game.id, {traitor: traitor});
+                  });
+                }
+                Game.update(game.id, {relicsRemaining: (game.relicsRemaining - 1)}, function(err, game) {});
+              })
+              .catch(function (err) {
                 console.log(err);
                 res.json(err);
-              }
-
-              if (game.relicsRemaining - 1 == 0) {
-                Game.publishUpdate(game.id, {relicsRemaining: (game.relicsRemaining - 1)});
-              }
-              Game.update(game.id, {relicsRemaining: (game.relicsRemaining - 1)}, function(err, game) {});
-            });
+              });
           });
         }
 

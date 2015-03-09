@@ -21,7 +21,9 @@ module.exports = {
     players: {collection: 'player',
               via: 'game'},
     relicsRemaining: {type: 'integer',
-                      required: false}
+                      required: false},
+    traitor: {model: 'player',
+              required: false}
   },
 
   generateHouse: function(game, cb) {

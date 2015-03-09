@@ -483,7 +483,12 @@ define([
          * An update on the game indicates that the haunt is starting
          */
         that._combatEnabled = true;
-        that._viewAdpt.displayTextOverlay("Haunt", "The haunt is now beginning.", 5000);
+        if (o.data.traitor.id === that._player.id) {
+          that._viewAdpt.displayTextOverlay("Haunt", "You are the traitor!", 5000);
+        }
+        else {
+          that._viewAdpt.displayTextOverlay("Haunt", "The haunt is now beginning.", 5000);
+        }
       }
     });
   }
