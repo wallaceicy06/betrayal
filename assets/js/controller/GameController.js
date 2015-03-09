@@ -249,6 +249,10 @@ define([
         return that._model.onDoorVisit(doorID);
       },
 
+      onFurnitureInteract: function(furnitureID) {
+        return that._model.onFurnitureInteract(furnitureID);
+      },
+
       onJoinClick: function(name, gameID) {
         return that._model.joinGame(name, gameID);
       },

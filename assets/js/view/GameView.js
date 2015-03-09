@@ -108,6 +108,19 @@ define([
         }
       },
 
+      interact: function() {
+        var player = this; /* the player */
+
+        Crafty('Furniture').each(function(f) {
+          // console.log('i am at ' + that.x + ', ' + that.y);
+          // console.log(this.interactRect());
+          if (player.within(this.interactRect())) {
+            console.log('interacting with a piece' + this.furnitureID);
+            that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
+          }
+        });
+      },
+
       useDoor: function(doorParts) {
         /*
          * If the door lock has been enabled, this will prevent a door from
@@ -183,6 +196,15 @@ define([
     Crafty.c('Furniture', {
       init: function() {
         this.requires('2D, Canvas, RoomItem, SpriteFurniture');
+      },
+
+      interactRect: function() {
+        return {
+          _x: this.x - TILE_WIDTH,
+          _y: this.y - TILE_WIDTH,
+          _w: this.w + 2 * TILE_WIDTH,
+          _h: this.h + 2 * TILE_WIDTH
+        };
       }
     });
 
@@ -372,6 +394,11 @@ define([
             }, 10);
             break;
 
+          case Crafty.keys.I:
+
+            that._player.interact();
+            break;
+
           default:
 
             break;
@@ -449,7 +476,8 @@ define([
                          w: this._spriteMap[furniture[i].id].gridW
                             * TILE_WIDTH,
                          h: this._spriteMap[furniture[i].id].gridH
-                            * TILE_WIDTH})
+                            * TILE_WIDTH,
+                         furnitureID: furniture[i].id})
                   .sprite(this._spriteMap[furniture[i].id].gridX,
                           this._spriteMap[furniture[i].id].gridY,
                           this._spriteMap[furniture[i].id].gridW,
