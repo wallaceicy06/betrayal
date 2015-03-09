@@ -6,49 +6,32 @@ define([
 
   'use strict';
 
+  var COLOR_TO_ROW = {
+    'red' : 15,
+    'blue' : 16,
+    'green' : 17
+  };
   var TILE_WIDTH = 32;
   var ASSETS = {
     'sprites': {
-      'images/game/player_sprites.png': {
-        'tile': TILE_WIDTH,
-        'tileh': TILE_WIDTH,
-        'map': {'SpritePlayerRed': [0, 0],
-                'SpritePlayerBlue': [0, 1],
-                'SpritePlayerGreen': [0, 2]},
-      },
-      'images/game/furniture.png': {
+      'images/game/sprites.png': {
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteFurniture': [0,0],
                 'SpriteWall': [7, 13],
                 'SpriteDoor': [6,13],
+                'SpriteWhiteRoom': [8, 13],
                 'SpriteSpeedInc': [0, 14],
                 'SpriteMaxHealth': [1, 14],
                 'SpriteCurHealth': [2, 14],
                 'SpriteWeapon': [3, 14],
-                'SpriteRelic': [4, 14]},
-      },
-      'images/game/map_rooms.png' : {
-        'tile': TILE_WIDTH,
-        'tileh': TILE_WIDTH,
-        'map': {'SpriteBlueRoom': [0,0],
-                'SpriteWhiteRoom': [0,1],
-                'SpriteYellowRoom': [0,2],
-                'SpriteGreenRoom': [0,3]}
-      },
-      'images/game/chair.png' : {
-        'tile': TILE_WIDTH,
-        'tileh': TILE_WIDTH,
-        'map': {'SpriteChair': [0,0]}
-      },
+                'SpriteRelic': [4, 14],
+                'SpritePlayerRed': [0, COLOR_TO_ROW['red']],
+                'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],
+                'SpritePlayerGreen': [0, COLOR_TO_ROW['green']]},
+      }
     }
   }
-
-  var COLOR_TO_ROW = {
-    'red' : 0,
-    'blue' : 1,
-    'green' : 2
-  };
 
   var ROOM_TO_SPRITE = {
     'blue': 0,
