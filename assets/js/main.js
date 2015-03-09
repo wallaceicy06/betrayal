@@ -3,13 +3,15 @@ require.config({
     'bootstrap': {
       deps: ['jquery']
     },
-    'crafty': {}
+    'crafty': {},
+    'underscore': {}
   },
   baseUrl: '/js/',
   paths: {
     'bootstrap': 'dependencies/bootstrap',
     'jquery': 'dependencies/jquery',
-    'crafty': 'dependencies/crafty'
+    'crafty': 'dependencies/crafty',
+    'underscore': 'dependencies/underscore'
   }
 });
 
