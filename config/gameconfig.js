@@ -222,14 +222,14 @@ module.exports.gameconfig = {
           id: 'chair',
           solid: true,
           rotation: 0,
-          gridX: 9,
+          gridX: 10,
           gridY: 3
         },
         {
           id: 'chair',
           solid: true,
           rotation: 180,
-          gridX: 9,
+          gridX: 8,
           gridY: 7
         },
         {
@@ -289,7 +289,7 @@ module.exports.gameconfig = {
           id: 'chair',
           solid: true,
           rotation: 0,
-          gridX: 7,
+          gridX: 6,
           gridY: 6
         },
         {
@@ -303,21 +303,21 @@ module.exports.gameconfig = {
           id: 'chair',
           solid: true,
           rotation: 0,
-          gridX: 11,
+          gridX: 12,
           gridY: 6
         },
         {
           id: 'chair',
           solid: true,
           rotation: 180,
-          gridX: 8,
+          gridX: 6,
           gridY: 11
         },
         {
           id: 'chair',
           solid: true,
           rotation: 180,
-          gridX: 10,
+          gridX: 9,
           gridY: 11
         },
         {
@@ -447,7 +447,7 @@ module.exports.gameconfig = {
           id: 'toilet',
           solid: true,
           rotation: 0,
-          gridX: 2,
+          gridX: 3,
           gridY: 10
         },
         {
@@ -456,6 +456,13 @@ module.exports.gameconfig = {
           rotation: 180,
           gridX: 4,
           gridY: 15
+        },
+        {
+          id: 'bookshelf',
+          solid: true,
+          rotation: 0,
+          gridX: 13,
+          gridY: 14
         },
       ]
     },
@@ -479,7 +486,7 @@ module.exports.gameconfig = {
           id: 'plant',
           solid: true,
           rotation: 0,
-          gridX: 14,
+          gridX: 12,
           gridY: 1
         },
         {
@@ -570,7 +577,7 @@ module.exports.gameconfig = {
           id: 'toilet',
           solid: true,
           rotation: 0,
-          gridX: 2,
+          gridX: 3,
           gridY: 10
         },
         {
@@ -579,6 +586,13 @@ module.exports.gameconfig = {
           rotation: 180,
           gridX: 4,
           gridY: 15
+        },
+        {
+          id: 'bookshelf',
+          solid: true,
+          rotation: 0,
+          gridX: 13,
+          gridY: 1
         },
       ]
     },

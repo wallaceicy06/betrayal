@@ -1,7 +1,8 @@
 define([
     'jquery',
+    'underscore',
     'crafty'
-], function($, Crafty) {
+], function($, _, Crafty) {
 
   'use strict';
 
