@@ -2,6 +2,34 @@
   .hidden {
     display: none;
   }
+  .invisible {
+    visibility: hidden;
+  }
+  img {
+      height: 16;
+      width: 16;
+  }
+  img.full_heart {
+    content:url("images/game/full_heart.png");
+  }
+  img.empty_heart {
+    content:url("images/game/empty_heart.png");
+  }
+  img.small_lightning {
+    content:url("images/game/small_lightning.png");
+  }
+  img.small_sword {
+    content:url("images/game/small_sword.png");
+  }
+  img.small_jewel {
+    content:url("images/game/small_jewel.png");
+  }
+  .player-list-item {
+    width: 140;
+    padding: 3px;
+    margin: 3px;
+    border:1px solid #000000;
+  }
 </style>
 
 <h1>Betrayal</h1>
@@ -9,8 +37,8 @@
 
 <div id="game-pane" class="hidden" style="height:640px;">
   <div id="player-pane" style="display:inline-block; vertical-align: top">
-    <ul id="player-list">
-    </ul>
+    <div id="player-list">
+    </div>
   </div>
   <div id="game-stage" style="display:inline-block; vertical-align: top"></div>
   <div id="chatroom" style="display:inline-block; vertical-align: top; height: 100%">
