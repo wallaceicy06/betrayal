@@ -634,5 +634,17 @@ module.exports.gameconfig = {
               health.',
         effect: {curHealth: -1}
     }
+  },
+
+  haunts: {
+    'The Plant Haunt': {  //TODO: Real title and flavor text
+        heroText: "One of your comrades has turned against you. Collect all \
+                  the keys and get to the entryway before it's too late!",
+        traitorText: 'You hear a voice speaking to you. It seems to be coming \
+                     from inside the walls. It promises you great power. The \
+                     power to transform into any shape you wish. All you must \
+                     do is destroy those fools who came here with you.\n\n \
+                     Press t to alter your appearance. Press space to attack.',
+       }
   }
 }

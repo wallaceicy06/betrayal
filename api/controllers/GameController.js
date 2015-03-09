@@ -14,6 +14,7 @@ module.exports = {
       .then(function(game) {
         game.events = sails.config.gameconfig.events;
         game.sprites = sails.config.gameconfig.sprites;
+        game.haunts = sails.config.gameconfig.haunts;
         res.json(game);
       })
       .catch(function(err) {

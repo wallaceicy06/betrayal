@@ -23,7 +23,9 @@ module.exports = {
     relicsRemaining: {type: 'integer',
                       required: false},
     traitor: {model: 'player',
-              required: false}
+              required: false},
+    haunt: {type: 'string',
+            required: false}
   },
 
   generateHouse: function(game, cb) {
@@ -236,5 +238,7 @@ module.exports = {
 
   items: sails.config.gameconfig.items,
 
-  sprites: sails.config.gameconfig.sprites
+  sprites: sails.config.gameconfig.sprites,
+
+  haunts: sails.config.gameconfig.haunts
 };

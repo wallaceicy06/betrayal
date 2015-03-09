@@ -28,15 +28,16 @@ module.exports = {
             Game.findOne(room.game).populate('players')
               .then(function (game) {
                 if (game.relicsRemaining - 1 == 0) {
-                  var playerNum = Math.floor(Math.random() * game.players.length);
-                  var traitor = game.players[playerNum];
-                  Game.update(game.id, {traitor: traitor}, function(err, updatedGame) {
+                  var traitor = game.players[Math.floor(Math.random() * game.players.length)];
+                  var allHaunts = Object.keys(Game.haunts);
+                  var haunt = allHaunts[Math.floor(Math.random() * allHaunts.length)];
+                  Game.update(game.id, {traitor: traitor, haunt: haunt}, function(err, updatedGame) {
                     if (err) {
                       console.log(err);
                       res.json(err);
                     }
 
-                    Game.publishUpdate(game.id, {traitor: traitor});
+                    Game.publishUpdate(game.id, {traitor: traitor, haunt: haunt});
                   });
                 }
                 Game.update(game.id, {relicsRemaining: (game.relicsRemaining - 1)}, function(err, game) {});

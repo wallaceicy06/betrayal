@@ -18,6 +18,7 @@ define([
 
     io.socket.get('/game/' + gameID, function (game) {
       that._events = game.events;
+      that._haunts = game.haunts;
       that._viewAdpt.installSpriteMap(game.sprites);
 
       var color;
@@ -484,10 +485,10 @@ define([
          */
         that._combatEnabled = true;
         if (o.data.traitor.id === that._player.id) {
-          that._viewAdpt.displayTextOverlay("Haunt", "You are the traitor!", 5000);
+          that._viewAdpt.displayTextOverlay(o.data.haunt, that._haunts[o.data.haunt].traitorText, 10000);
         }
         else {
-          that._viewAdpt.displayTextOverlay("Haunt", "The haunt is now beginning.", 5000);
+          that._viewAdpt.displayTextOverlay(o.data.haunt, that._haunts[o.data.haunt].heroText, 10000);
         }
       }
     });
@@ -502,6 +503,7 @@ define([
     this._miniMap = null;
     this._currentMiniRoom = null;
     this._events = null;
+    this._haunts = null;
     this._lastSend = new Date().getTime();
     this._combatEnabled = false;
 
