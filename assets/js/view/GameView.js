@@ -475,30 +475,61 @@ define([
     return {
       setRelics: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('div.player-relics')[0].innerHTML = ('relics: ' + newRelics);
+          .find('div.player-relics img').each(function(index) {
+            if (index < newRelics) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setWeapon: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('div.player-weapon')[0].innerHTML = ('weapon: ' + newWeapon);
+          .find('div.player-weapon img').each(function(index) {
+            if (index < newWeapon) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setCurHealth: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('div.player-cur-health')[0].innerHTML = ('cur health: '
-                                                        + newCurHealth);
+          .find('div.player-health img').each(function(index) {
+            if (index < newCurHealth) {
+              $(this).removeClass('empty_heart');
+              $(this).addClass('full_heart');
+            } else {
+              $(this).removeClass('full_heart');
+              $(this).addClass('empty_heart');
+            }
+          });
       },
 
       setMaxHealth: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('div.player-max-health')[0].innerHTML = ('max health: '
-                                                        + newMaxHealth);
+          .find('div.player-health img').each(function(index) {
+            if (index < newMaxHealth) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setSpeed: function(newSpeed) {
         that._player.speed({x: newSpeed, y: newSpeed});
+
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('div.player-speed')[0].innerHTML = ('speed: ' + newSpeed);
+          .find('div.player-speed img').each(function(index) {
+            if (index < newSpeed) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       fixMovement: function(increaseBy) {
@@ -558,7 +589,7 @@ define([
     player.appendChild(playerWeapon);
 
     var playerRelics = document.createElement('div');
-    playerWeapon.className = 'player-relics';
+    playerRelics.className = 'player-relics';
     html = '';
     for (var i = 0; i < MAX_STAT; i++) {
       if (i < playerModelAdpt.getRelics()) {
@@ -600,30 +631,60 @@ define([
 
       onRelicsChange: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-relics')[0].innerHTML = ('relics: ' + newRelics);
+          .find('div.player-relics img').each(function(index) {
+            if (index < newRelics) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
 
       onWeaponChange: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-weapon')[0].innerHTML = ('weapon: ' + newWeapon);
+          .find('div.player-weapon img').each(function(index) {
+            if (index < newWeapon) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       onCurHealthChange: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-cur-health')[0].innerHTML = ('cur health: '
-                                                        + newCurHealth);
+          .find('div.player-health img').each(function(index) {
+            if (index < newCurHealth) {
+              $(this).removeClass('empty_heart');
+              $(this).addClass('full_heart');
+            } else {
+              $(this).removeClass('full_heart');
+              $(this).addClass('empty_heart');
+            }
+          });
       },
 
       onMaxHealthChange: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-max-health')[0].innerHTML = ('max health: '
-                                                        + newMaxHealth);
+          .find('div.player-health img').each(function(index) {
+            if (index < newMaxHealth) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       onSpeedChange: function(newSpeed) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-speed')[0].innerHTML = ('speed: ' + newSpeed);
+          .find('div.player-speed img').each(function(index) {
+            if (index < newSpeed) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setLocation: function(newX, newY) {
