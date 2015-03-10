@@ -543,6 +543,7 @@ define([
 
     var player = document.createElement('div');
     player.style.cssText = 'color: ' + playerModelAdpt.getColor() + ';';
+    player.style.border = '1px solid ' + playerModelAdpt.getColor();
     player.id = playerModelAdpt.getID();
     player.className = 'player-list-item';
     player.appendChild(document.createTextNode(playerModelAdpt.getName()));
