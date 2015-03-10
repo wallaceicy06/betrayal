@@ -114,6 +114,11 @@ define([
       }
     });
 
+    Object.defineProperty(this, 'isTraitor', {
+      value: false,
+      writable: true
+    });
+
     this._gameModelAdpt = null;
     this._room = room;
 

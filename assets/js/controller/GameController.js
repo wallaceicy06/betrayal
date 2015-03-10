@@ -195,6 +195,10 @@ define([
         that._view.removeAllHusks();
       },
 
+      changePlayerSprite: function(spriteName) {
+        that._view.changePlayerSprite(spriteName);
+      },
+
       removeItem: function(id) {
         that._view.removeItem(id);
       },
@@ -279,6 +283,10 @@ define([
 
       attack: function() {
         that._model.attack();
+      },
+
+      useTraitorPower: function() {
+        that._model.useTraitorPower();
       }
     });
 

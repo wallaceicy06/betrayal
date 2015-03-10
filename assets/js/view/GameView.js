@@ -316,7 +316,6 @@ define([
       if (!inputInFocus) {
         switch(e.key) {
           case Crafty.keys.M:
-
             if (that._mapEnabled) {
               that._gameModelAdpt.onDisableMap();
               that._player.enableControl();
@@ -327,12 +326,10 @@ define([
             break;
 
           case Crafty.keys.SPACE:
-
             that._gameModelAdpt.attack();
             break;
 
           case Crafty.keys.C:
-
             /*
              * This timeout is to prevent the letter 'c' from being typed in
              * the chat box since this event will be handled by it as soon as
@@ -342,6 +339,10 @@ define([
               that._player.disableControl();
               document.getElementById('ipt-message').focus();
             }, 10);
+            break;
+
+          case Crafty.keys.T:
+            that._gameModelAdpt.useTraitorPower();
             break;
 
           default:
@@ -634,6 +635,14 @@ define([
     }
   }
 
+  function changePlayerSprite(spriteName) {
+    this._player.sprite(this._spriteMap[spriteName].gridX,
+                        this._spriteMap[spriteName].gridY,
+                        this._spriteMap[spriteName].gridW,
+                        this._spriteMap[spriteName].gridH);
+    this._player.unbind('NewDirection');
+  }
+
   function removeItem(id) {
     if(id in this._items) {
       this._items[id].destroy();
@@ -872,6 +881,7 @@ define([
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
     this.appendEvent = appendEvent.bind(this);
+    this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.displayTextOverlay = displayTextOverlay.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);

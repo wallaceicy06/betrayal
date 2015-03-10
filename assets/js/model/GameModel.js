@@ -1,7 +1,8 @@
 define([
     'model/Player',
-    'model/MapNode'
-], function(Player, MapNode) {
+    'model/MapNode',
+    'model/HauntFactory'
+], function(Player, MapNode, HauntFactory) {
 
   'use strict';
 
@@ -363,6 +364,17 @@ define([
     }
   }
 
+  function useTraitorPower() {
+    if (this._hauntAdpt === null) {  
+      console.log("Can't use traitor power before start of haunt.");
+      return;
+    } else if (!this._player.isTraitor) {
+      console.log("Heroes can't use traitor power");
+      return;
+    }
+    this._hauntAdpt.usePower();
+  }
+
   function initSockets() {
     var that = this;
 
@@ -484,7 +496,16 @@ define([
          * An update on the game indicates that the haunt is starting
          */
         that._combatEnabled = true;
+
+        var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
+          changeSprite: function(spriteName) {
+            that._viewAdpt.changePlayerSprite(spriteName);
+          }
+        });
+        that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
+
         if (o.data.traitor.id === that._player.id) {
+          that._player.isTraitor = true;
           that._viewAdpt.displayTextOverlay(o.data.haunt, that._haunts[o.data.haunt].traitorText, 10000);
         }
         else {
@@ -506,6 +527,7 @@ define([
     this._haunts = null;
     this._lastSend = new Date().getTime();
     this._combatEnabled = false;
+    this._hauntAdpt = null;
 
     initSockets.call(this);
 
@@ -525,6 +547,7 @@ define([
     this.assembleMap = assembleMap.bind(this);
     this.performEvent = performEvent.bind(this);
     this.attack = attack.bind(this);
+    this.useTraitorPower = useTraitorPower.bind(this);
     this.start = start.bind(this);
   }
 });
