@@ -26,8 +26,8 @@ module.exports = {
                  required: true},
     items: {collection: 'item',
             via: 'room'},
-    event: {type: 'integer',
-            required: false}
+    events: {collection: 'event',
+            via: 'room'}
   },
 
   layouts: sails.config.gameconfig.rooms,
