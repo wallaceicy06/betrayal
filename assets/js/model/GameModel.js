@@ -252,6 +252,13 @@ define([
 
   }
 
+  function onFurnitureInteract(furnitureID) {
+    io.socket.post('/room/interact/' + this._currentRoom.id,
+                   {furniture: furnitureID}, function(resData) {
+      console.log(resData);
+    });
+  }
+
   function reloadRoom() {
     var that = this;
 
@@ -501,6 +508,7 @@ define([
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
+    this.onFurnitureInteract = onFurnitureInteract.bind(this);
     this.sendChatMessage = sendChatMessage.bind(this);
     this.sendEventMessage = sendEventMessage.bind(this);
     this.reloadRoom = reloadRoom.bind(this);

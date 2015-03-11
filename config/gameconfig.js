@@ -601,6 +601,16 @@ module.exports.gameconfig = {
     },
   },
 
+  cards: {
+    spiders: {
+      title: 'Spiders',
+      text: 'You feel something crawling on your arm. You brush the spider '
+            + 'away. Suddenly spiders are pouring out of the walls surrounding '
+            + 'you. As you start to scream, they vanish. Lose one health.',
+      effect: {curHealth: -1}
+    }
+  },
+
   events: {
     0: {
         title: 'Image in the Mirror',

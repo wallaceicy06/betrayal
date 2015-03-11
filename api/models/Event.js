@@ -18,6 +18,8 @@ module.exports = {
                 required: true},
     card: {type: 'string',
            required: true}
-  }
+  },
+
+  cards: sails.config.gameconfig.cards
 };
 

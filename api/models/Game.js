@@ -205,6 +205,12 @@ module.exports = {
           }
         });
 
+        /* Really simple test. */
+        Event.create({room: databaseID['entryway'], container: 'rug', card: 'spiders'})
+          .catch(function(err) {
+            console.log(err);
+          });
+
         gatewaysToCreate.forEach(function(v, i, a) {
           v.roomFrom = databaseID[v.roomFrom];
           v.roomTo = databaseID[v.roomTo];
