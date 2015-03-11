@@ -71,6 +71,7 @@ define([
           this.sprite(that._spriteMap[colorString].gridX,
                               that._spriteMap[colorString].gridY,
                               1, 1);
+          this.unbind('NewDirection');
         }
 
         return this;
@@ -652,6 +653,8 @@ define([
                         this._spriteMap[spriteName].gridY,
                         1, 1);
     this._player.unbind('NewDirection');
+    this._playerModelAdpt.setColor(spriteName);
+
   }
 
   function removeItem(id) {

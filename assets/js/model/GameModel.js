@@ -446,7 +446,7 @@ define([
           if (o.data.room !== null && o.id !== that._player.id) {
             that._otherPlayers[o.id].room = o.data.room;
           }
-        } else if (o.data.color !== undefined) {
+        } else if (o.data.color !== undefined && o.id !== that._player.id) {
           that._otherPlayers[o.id].color = o.data.color;
           that._viewAdpt.setHuskColor(o.id, o.data.color);
         } else { /* Stat update */

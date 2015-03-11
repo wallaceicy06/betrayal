@@ -70,6 +70,10 @@ define([
             return playerModel.color;
           },
 
+          setColor: function(newColor) {
+            playerModel.color = newColor;
+          },
+
           setPosition: function(x, y) {
             playerModel.setPosition(x, y);
           },
