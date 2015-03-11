@@ -45,15 +45,17 @@ module.exports = {
 
   update: function(req, res) {
 
-    Player.update(req.param('id'), {locX: req.body.locX,
-                                    locY: req.body.locY})
+    Player.update(req.param('id'), req.body)
       .then(function(players) {
         var updatedPlayer = players[0];
 
-        Room.message(updatedPlayer.room, {id: updatedPlayer.id,
-                                          verb: 'playerUpdated',
-                                          data: {locX: updatedPlayer.locX,
-                                                 locY: updatedPlayer.locY}});
+        if (req.body.locX !== undefined && req.body.locY !== undefined) {
+          Room.message(updatedPlayer.room, {id: updatedPlayer.id,
+                                            verb: 'playerUpdated',
+                                            data: req.body});
+        } else if (req.body.color !== undefined) {
+          Player.publishUpdate(updatedPlayer.id, {color: req.body.color});
+        }
 
         res.json(updatedPlayer.toJSON());
       })
