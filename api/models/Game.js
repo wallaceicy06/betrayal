@@ -48,7 +48,7 @@ module.exports = {
     /* Add 2 items per room per the abundance specifications. */
     var itemBank = [];
     for (i in Game.items) {
-      _.times(Math.ceil(Game.items[i].abundance / totalAbundance
+      _.times(Math.round(Game.items[i].abundance / totalAbundance
                          * allRooms.length * 2), function(n) {
         if (Game.items[i].stat === 'relics') {
           numRelics++;
