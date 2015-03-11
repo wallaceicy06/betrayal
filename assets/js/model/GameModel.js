@@ -1,8 +1,9 @@
 define([
+    'underscore',
     'model/Player',
     'model/MapNode',
     'model/HauntFactory'
-], function(Player, MapNode, HauntFactory) {
+], function(_, Player, MapNode, HauntFactory) {
 
   'use strict';
 
@@ -18,7 +19,6 @@ define([
     var that = this;
 
     io.socket.get('/game/' + gameID, function (game) {
-      that._events = game.events;
       that._haunts = game.haunts;
       that._viewAdpt.installSpriteMap(game.sprites);
 
@@ -255,8 +255,24 @@ define([
   }
 
   function onFurnitureInteract(furnitureID) {
+    var that = this;
+
     io.socket.post('/room/interact/' + this._currentRoom.id,
                    {furniture: furnitureID}, function(resData) {
+
+      /* Don't do anything if there was no interaction. */
+      if (_.isEmpty(resData)) {
+        return;
+      }
+
+      that._viewAdpt.displayTextOverlay(resData.title,
+                                        resData.text, 3000);
+
+      for (var stat in resData.effect) {
+        /* For right now, event effects only alter stats. */
+        that._player[stat] = that._player[stat] + resData.effect[stat];
+      }
+
       console.log(resData);
     });
   }
@@ -313,7 +329,6 @@ define([
   function performEvent(eventID) {
     io.socket.put('/room/removeEvent/' + this._currentRoom.id, {},
                   function(resData, jwr) {});
-    var event = this._events[eventID];
     for (var stat in event.effect) {
       /* For right now, event effects only alter stats. */
       this._player[stat] = this._player[stat] + event.effect[stat];
@@ -372,7 +387,7 @@ define([
   }
 
   function useTraitorPower() {
-    if (this._hauntAdpt === null) {  
+    if (this._hauntAdpt === null) {
       console.log("Can't use traitor power before start of haunt.");
       return;
     } else if (!this._player.isTraitor) {
@@ -534,7 +549,6 @@ define([
     this._gameID = null;
     this._miniMap = null;
     this._currentMiniRoom = null;
-    this._events = null;
     this._haunts = null;
     this._lastSend = new Date().getTime();
     this._combatEnabled = false;

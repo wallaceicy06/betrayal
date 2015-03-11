@@ -32,6 +32,8 @@ module.exports = {
 
   layouts: sails.config.gameconfig.rooms,
 
+  interactable: sails.config.gameconfig.interactable,
+
   dimensions: sails.config.gameconfig.dimensions
 
 };

@@ -285,10 +285,6 @@ define([
         return that._model.reloadRoom();
       },
 
-      performEvent: function(eventID) {
-        return that._model.performEvent(eventID);
-      },
-
       attack: function() {
         that._model.attack();
       },

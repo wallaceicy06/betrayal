@@ -23,11 +23,21 @@ module.exports = {
   },
 
   interact: function(req, res) {
+    /* If the object is not interactable, don't do anything. */
+    if (Room.interactable[req.body.furniture] === undefined) {
+      return res.json();
+    }
+
     Event.destroy({room: req.params.id, container: req.body.furniture})
       .then(function(events) {
+
+        var prefix = Room.interactable[req.body.furniture].prefix;
+
         if (events.length == 0) {
           console.log('No event found in ' + req.body.furniture + '.');
-          res.json({title: null, text: 'Nothing happened.', effect: {}});
+          return res.json({title: '',
+                           text: prefix + ' Nothing happened.',
+                           effect: {}});
         }
 
         /* There only should be one destroyed event at maximum. */
@@ -36,7 +46,7 @@ module.exports = {
 
         res.json({
           title: card.title,
-          text: card.text,
+          text: prefix + ' ' + card.text,
           effect: card.effect
         });
       })
