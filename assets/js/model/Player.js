@@ -29,8 +29,12 @@ define([
     });
 
     Object.defineProperty(this, 'color', {
-      value: color,
-      writable: false
+      get: function() {
+        return this._color;
+      },
+      set: function(newColor) {
+        this._color = newColor;
+      }
     });
 
     Object.defineProperty(this, 'speed', {
@@ -126,6 +130,7 @@ define([
     this.setPosition = setPosition.bind(this);
     this.destroy = destroy.bind(this);
 
+    this._color = color;
     this._speed = 5;
     this._maxHealth = 3;
     this._curHealth = 3;

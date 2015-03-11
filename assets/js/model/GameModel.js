@@ -446,8 +446,10 @@ define([
           if (o.data.room !== null && o.id !== that._player.id) {
             that._otherPlayers[o.id].room = o.data.room;
           }
-        /* Stat update */
-        } else {
+        } else if (o.data.color !== undefined) {
+          that._otherPlayers[o.id].color = o.data.color;
+          that._viewAdpt.setHuskColor(o.id, o.data.color);
+        } else { /* Stat update */
           if (o.id !== that._player.id) {
             for (var key in o.data) {
               if (key !== "updatedAt") {
@@ -500,6 +502,8 @@ define([
         var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
           changeSprite: function(spriteName) {
             that._viewAdpt.changePlayerSprite(spriteName);
+            io.socket.put('/player/' + that._player.id, {color: spriteName},
+              function(err, player) {});
           }
         });
         that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);

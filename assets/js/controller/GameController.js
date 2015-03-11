@@ -195,6 +195,10 @@ define([
         that._view.removeAllHusks();
       },
 
+      setHuskColor: function(id, colorString) {
+        that._view.setHuskColor(id, colorString);
+      },
+
       changePlayerSprite: function(spriteName) {
         that._view.changePlayerSprite(spriteName);
       },

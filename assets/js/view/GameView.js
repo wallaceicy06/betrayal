@@ -61,11 +61,17 @@ define([
 
       setColor: function(colorString) {
         var row = COLOR_TO_ROW[colorString];
-        this.sprite(0, row, 1, 1);
-        this.reel('PlayerMovingRight',600, 0, row, 1);
-        this.reel('PlayerMovingUp',   600, 1, row, 1);
-        this.reel('PlayerMovingLeft', 600, 2, row, 1);
-        this.reel('PlayerMovingDown', 600, 3, row, 1);
+        if (row !== undefined) {
+          this.sprite(0, row, 1, 1);
+          this.reel('PlayerMovingRight',600, 0, row, 1);
+          this.reel('PlayerMovingUp',   600, 1, row, 1);
+          this.reel('PlayerMovingLeft', 600, 2, row, 1);
+          this.reel('PlayerMovingDown', 600, 3, row, 1);
+        } else { /* If color is actually a sprite name (ex: plant), not a color */
+          this.sprite(that._spriteMap[colorString].gridX,
+                              that._spriteMap[colorString].gridY,
+                              1, 1);
+        }
 
         return this;
       }
@@ -635,11 +641,16 @@ define([
     }
   }
 
+  function setHuskColor(id, colorString) {
+    if (this._husks[id] !== undefined) {
+      this._husks[id].setColor(colorString);
+    }
+  }
+
   function changePlayerSprite(spriteName) {
     this._player.sprite(this._spriteMap[spriteName].gridX,
                         this._spriteMap[spriteName].gridY,
-                        this._spriteMap[spriteName].gridW,
-                        this._spriteMap[spriteName].gridH);
+                        1, 1);
     this._player.unbind('NewDirection');
   }
 
@@ -893,6 +904,7 @@ define([
     this.removeItem = removeItem.bind(this);
     this.addGameOption = addGameOption.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
+    this.setHuskColor = setHuskColor.bind(this);
     this.start = start.bind(this);
   }
 });
