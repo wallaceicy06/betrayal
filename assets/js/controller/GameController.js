@@ -215,10 +215,6 @@ define([
         that._view.setGameOptions(games);
       },
 
-      changeColor: function(color) {
-        that._view.changeColor(color);
-      },
-
       /*
        * Received a chat or event message that needs to be displayed
        */
