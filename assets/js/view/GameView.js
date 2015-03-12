@@ -40,6 +40,10 @@ define([
     'green': 3
   };
 
+  var MAX_STAT = 7;
+
+  var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
+
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
   }
@@ -114,6 +118,19 @@ define([
           this.x -= this._movement.x;
           this.y -= this._movement.y;
         }
+      },
+
+      interact: function() {
+        var player = this; /* the player */
+
+        Crafty('Furniture').each(function(f) {
+          // console.log('i am at ' + that.x + ', ' + that.y);
+          // console.log(this.interactRect());
+          if (player.within(this.interactRect())) {
+            console.log('interacting with a piece' + this.furnitureID);
+            that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
+          }
+        });
       },
 
       useDoor: function(doorParts) {
@@ -191,6 +208,15 @@ define([
     Crafty.c('Furniture', {
       init: function() {
         this.requires('2D, Canvas, RoomItem, SpriteFurniture');
+      },
+
+      interactRect: function() {
+        return {
+          _x: this.x - TILE_WIDTH,
+          _y: this.y - TILE_WIDTH,
+          _w: this.w + 2 * TILE_WIDTH,
+          _h: this.h + 2 * TILE_WIDTH
+        };
       }
     });
 
@@ -350,7 +376,13 @@ define([
             }, 10);
             break;
 
+          case Crafty.keys.I:
+
+            that._player.interact();
+            break;
+
           case Crafty.keys.T:
+
             that._gameModelAdpt.useTraitorPower();
             break;
 
@@ -431,7 +463,8 @@ define([
                          w: this._spriteMap[furniture[i].id].gridW
                             * TILE_WIDTH,
                          h: this._spriteMap[furniture[i].id].gridH
-                            * TILE_WIDTH})
+                            * TILE_WIDTH,
+                         furnitureID: furniture[i].id})
                   .sprite(this._spriteMap[furniture[i].id].gridX,
                           this._spriteMap[furniture[i].id].gridY,
                           this._spriteMap[furniture[i].id].gridW,
@@ -453,30 +486,61 @@ define([
     return {
       setRelics: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-relics')[0].innerHTML = ('relics: ' + newRelics);
+          .find('div.player-relics img').each(function(index) {
+            if (index < newRelics) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setWeapon: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-weapon')[0].innerHTML = ('weapon: ' + newWeapon);
+          .find('div.player-weapon img').each(function(index) {
+            if (index < newWeapon) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setCurHealth: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-cur-health')[0].innerHTML = ('cur health: '
-                                                        + newCurHealth);
+          .find('div.player-health img').each(function(index) {
+            if (index < newCurHealth) {
+              $(this).removeClass('empty_heart');
+              $(this).addClass('full_heart');
+            } else {
+              $(this).removeClass('full_heart');
+              $(this).addClass('empty_heart');
+            }
+          });
       },
 
       setMaxHealth: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-max-health')[0].innerHTML = ('max health: '
-                                                        + newMaxHealth);
+          .find('div.player-health img').each(function(index) {
+            if (index < newMaxHealth) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setSpeed: function(newSpeed) {
         that._player.speed({x: newSpeed, y: newSpeed});
+
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-speed')[0].innerHTML = ('speed: ' + newSpeed);
+          .find('div.player-speed img').each(function(index) {
+            if (index < newSpeed) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       fixMovement: function(increaseBy) {
@@ -488,47 +552,66 @@ define([
   function addPlayerToList(playerModelAdpt) {
     var playerList = document.getElementById('player-list');
 
-    var player = document.createElement('li');
+    var player = document.createElement('div');
     player.style.cssText = 'color: ' + playerModelAdpt.getColor() + ';';
+    player.style.border = '1px solid ' + playerModelAdpt.getColor();
     player.id = playerModelAdpt.getID();
     player.className = 'player-list-item';
     player.appendChild(document.createTextNode(playerModelAdpt.getName()));
 
-    var playerStats = document.createElement('ul');
+    var playerHealth = document.createElement('div');
+    playerHealth.className = 'player-health';
+    var html = '';
+    for (var i = 0; i < MAX_STAT; i++) {
+      if (i < playerModelAdpt.getCurHealth()) {
+        html += STAT_TEMPLATE({imgClass: 'full_heart'});
+      } else if (i < playerModelAdpt.getMaxHealth()) {
+        html += STAT_TEMPLATE({imgClass: 'empty_heart'});
+      } else {
+        html += STAT_TEMPLATE({imgClass: 'empty_heart invisible'});
+      }
+    }
+    playerHealth.innerHTML = html;
+    player.appendChild(playerHealth);
 
-    var playerSpeed = document.createElement('li');
+    var playerSpeed = document.createElement('div');
     playerSpeed.className = 'player-speed';
-    playerSpeed.appendChild(
-        document.createTextNode('speed: ' + playerModelAdpt.getSpeed()));
-    playerStats.appendChild(playerSpeed);
+    html = '';
+    for (var i = 0; i < MAX_STAT; i++) {
+      if (i < playerModelAdpt.getSpeed()) {
+        html += STAT_TEMPLATE({imgClass: 'small_lightning'});
+      } else {
+        html += STAT_TEMPLATE({imgClass: 'small_lightning invisible'});
+      }
+    }
+    playerSpeed.innerHTML = html;
+    player.appendChild(playerSpeed);
 
-    var playerMaxHealth = document.createElement('li');
-    playerMaxHealth.className = 'player-max-health';
-    playerMaxHealth.appendChild(
-        document.createTextNode('max health: '
-                                + playerModelAdpt.getMaxHealth()));
-    playerStats.appendChild(playerMaxHealth);
-
-    var playerCurHealth = document.createElement('li');
-    playerCurHealth.className = 'player-cur-health';
-    playerCurHealth.appendChild(
-        document.createTextNode('cur health: '
-                                + playerModelAdpt.getCurHealth()));
-    playerStats.appendChild(playerCurHealth);
-
-    var playerWeapon = document.createElement('li');
+    var playerWeapon = document.createElement('div');
     playerWeapon.className = 'player-weapon';
-    playerWeapon.appendChild(
-        document.createTextNode('weapon: ' + playerModelAdpt.getWeapon()));
-    playerStats.appendChild(playerWeapon);
+    html = '';
+    for (var i = 0; i < MAX_STAT; i++) {
+      if (i < playerModelAdpt.getWeapon()) {
+        html += STAT_TEMPLATE({imgClass: 'small_sword'});
+      } else {
+        html += STAT_TEMPLATE({imgClass: 'small_sword invisible'});
+      }
+    }
+    playerWeapon.innerHTML = html;
+    player.appendChild(playerWeapon);
 
-    var playerRelics = document.createElement('li');
+    var playerRelics = document.createElement('div');
     playerRelics.className = 'player-relics';
-    playerRelics.appendChild(
-        document.createTextNode('relics: ' + playerModelAdpt.getRelics()));
-    playerStats.appendChild(playerRelics);
-
-    player.appendChild(playerStats);
+    html = '';
+    for (var i = 0; i < MAX_STAT; i++) {
+      if (i < playerModelAdpt.getRelics()) {
+        html += STAT_TEMPLATE({imgClass: 'small_jewel'});
+      } else {
+        html += STAT_TEMPLATE({imgClass: 'small_jewel invisible'});
+      }
+    }
+    playerRelics.innerHTML = html;
+    player.appendChild(playerRelics);
 
     playerList.appendChild(player);
   }
@@ -555,35 +638,65 @@ define([
         appendChatMessage.call(that, playerModelAdpt.getID(), 'has died');
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
-        $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
+        $('#' + playerModelAdpt.getID() + '.player').remove();
       },
 
       onRelicsChange: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-relics')[0].innerHTML = ('relics: ' + newRelics);
+          .find('div.player-relics img').each(function(index) {
+            if (index < newRelics) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
 
       onWeaponChange: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-weapon')[0].innerHTML = ('weapon: ' + newWeapon);
+          .find('div.player-weapon img').each(function(index) {
+            if (index < newWeapon) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       onCurHealthChange: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-cur-health')[0].innerHTML = ('cur health: '
-                                                        + newCurHealth);
+          .find('div.player-health img').each(function(index) {
+            if (index < newCurHealth) {
+              $(this).removeClass('empty_heart');
+              $(this).addClass('full_heart');
+            } else {
+              $(this).removeClass('full_heart');
+              $(this).addClass('empty_heart');
+            }
+          });
       },
 
       onMaxHealthChange: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-max-health')[0].innerHTML = ('max health: '
-                                                        + newMaxHealth);
+          .find('div.player-health img').each(function(index) {
+            if (index < newMaxHealth) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       onSpeedChange: function(newSpeed) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('li.player-speed')[0].innerHTML = ('speed: ' + newSpeed);
+          .find('div.player-speed img').each(function(index) {
+            if (index < newSpeed) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setLocation: function(newX, newY) {

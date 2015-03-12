@@ -1,16 +1,50 @@
 <style>
+  body {
+    background-image: url('http://darkcreationsatx.com/wp-content/uploads/2012/10/spooky-woods.jpg');
+  }
+  .header {
+    color: #F0F0F0;
+  }
   .hidden {
     display: none;
   }
+  .invisible {
+    visibility: hidden;
+  }
+  img {
+      height: 16;
+      width: 16;
+  }
+  img.full_heart {
+    content:url("images/game/full_heart.png");
+  }
+  img.empty_heart {
+    content:url("images/game/empty_heart.png");
+  }
+  img.small_lightning {
+    content:url("images/game/small_lightning.png");
+  }
+  img.small_sword {
+    content:url("images/game/small_sword.png");
+  }
+  img.small_jewel {
+    content:url("images/game/small_jewel.png");
+  }
+  .player-list-item {
+    width: 140;
+    padding: 3px;
+    margin: 3px;
+    background-color: #F0F0F0;
+  }
 </style>
 
-<h1>Betrayal</h1>
-  <p>A RPG game based on <em>Betrayal at the House on the Hill</em>.</p>
+<div class="header"><h1>Betrayal</h1>
+  <p>A RPG game based on <em>Betrayal at the House on the Hill</em>.</p></div>
 
 <div id="game-pane" class="hidden" style="height:640px;">
   <div id="player-pane" style="display:inline-block; vertical-align: top">
-    <ul id="player-list">
-    </ul>
+    <div id="player-list">
+    </div>
   </div>
   <div id="game-stage" style="display:inline-block; vertical-align: top"></div>
   <div id="chatroom" style="display:inline-block; vertical-align: top; height: 100%">

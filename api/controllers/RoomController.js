@@ -22,6 +22,40 @@ module.exports = {
       })
   },
 
+  interact: function(req, res) {
+    /* If the object is not interactable, don't do anything. */
+    if (Room.interactable[req.body.furniture] === undefined) {
+      return res.json();
+    }
+
+    Event.destroy({room: req.params.id, container: req.body.furniture})
+      .then(function(events) {
+
+        var prefix = Room.interactable[req.body.furniture].prefix;
+
+        if (events.length == 0) {
+          console.log('No event found in ' + req.body.furniture + '.');
+          return res.json({title: '',
+                           text: prefix + ' Nothing happened.',
+                           effect: {}});
+        }
+
+        /* There only should be one destroyed event at maximum. */
+        var e = events[0];
+        var card = Event.cards[e.card];
+
+        res.json({
+          title: card.title,
+          text: prefix + ' ' + card.text,
+          effect: card.effect
+        });
+      })
+      .catch(function(err) {
+        console.log(err);
+        res.json(err);
+      })
+  },
+
   removeEvent: function(req, res) {
     Room.update(req.param('id'), {event: -1})
       .catch(function(err) {

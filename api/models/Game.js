@@ -205,18 +205,15 @@ module.exports = {
 
     Room.create(roomsToCreate)
       .then(function(rooms) {
-        var events = Object.keys(sails.config.gameconfig.events);
-
         rooms.forEach(function(v, i, a) {
           databaseID[v.name] = v.id;
-
-          /* Possibly add an event to this room */
-          if (Math.random() < .3) {
-            var index = Math.floor((Math.random() * events.length));
-            Room.update(v.id, {event: events[index]}, function(room) {});
-            events.splice(index, 1);
-          }
         });
+
+        /* Really simple test. */
+        Event.create({room: databaseID['entryway'], container: 'rug', card: 'spiders'})
+          .catch(function(err) {
+            console.log(err);
+          });
 
         gatewaysToCreate.forEach(function(v, i, a) {
           v.roomFrom = databaseID[v.roomFrom];

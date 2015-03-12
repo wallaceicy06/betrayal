@@ -269,6 +269,10 @@ define([
         return that._model.onDoorVisit(doorID);
       },
 
+      onFurnitureInteract: function(furnitureID) {
+        return that._model.onFurnitureInteract(furnitureID);
+      },
+
       onJoinClick: function(name, gameID) {
         return that._model.joinGame(name, gameID);
       },
@@ -287,10 +291,6 @@ define([
 
       onDisableMap: function() {
         return that._model.reloadRoom();
-      },
-
-      performEvent: function(eventID) {
-        return that._model.performEvent(eventID);
       },
 
       attack: function() {
