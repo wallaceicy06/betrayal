@@ -13,7 +13,7 @@ define([
     switch(hauntName) {
       case 'The Plant Haunt':
         return {
-          spriteList: ['plant', 'chair', 'sword', 'toilet'],
+          spriteList: ['plant', 'chair', 'toilet', 'key'],
           nextSprite: 0,
 
           usePower: function() {

@@ -35,7 +35,9 @@ module.exports = {
     relics: {type: 'integer',
              required: true},
     speed: {type: 'integer',
-            required: true}
+            required: true},
+    isTraitor: {type: 'boolean',
+                required: true}
   }
 };
 

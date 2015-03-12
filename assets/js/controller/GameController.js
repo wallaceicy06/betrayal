@@ -78,6 +78,10 @@ define([
             playerModel.setPosition(x, y);
           },
 
+          isTraitor: function() {
+            return playerModel.isTraitor;
+          },
+
           useItem: function(stat, amount) {
             switch(stat) {
               case "speed":
@@ -174,7 +178,11 @@ define([
 
           getColor: function() {
             return playerModel.color;
-          }
+          },
+
+          isTraitor: function() {
+            return playerModel.isTraitor;
+          },
         });
       },
 

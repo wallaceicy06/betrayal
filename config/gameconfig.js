@@ -37,7 +37,8 @@ module.exports.gameconfig = {
     'heart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
     'firstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
     'sword': {gridX: 3, gridY: 14, gridW: 1, gridH: 1},
-    'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1}
+    'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1},
+    'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1}
   },
   dimensions: {
     tileW: 32,

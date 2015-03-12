@@ -119,8 +119,15 @@ define([
     });
 
     Object.defineProperty(this, 'isTraitor', {
-      value: false,
-      writable: true
+      get: function() {
+        return this._isTraitor;
+      },
+      set: function(newVal) {
+        if (newVal !== this._isTraitor) {
+          this._isTraitor = newVal;
+          this._gameModelAdpt.onTraitorSet(newVal);
+        }
+      }
     });
 
     this._gameModelAdpt = null;
@@ -131,6 +138,7 @@ define([
     this.destroy = destroy.bind(this);
 
     this._color = color;
+    this._isTraitor = false;
     this._speed = 5;
     this._maxHealth = 3;
     this._curHealth = 3;

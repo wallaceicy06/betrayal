@@ -9,7 +9,11 @@ define([
   var COLOR_TO_ROW = {
     'red' : 15,
     'blue' : 16,
-    'green' : 17
+    'green' : 17,
+    'plant' : 21,
+    'chair' : 22,
+    'toilet' : 23,
+    'key' : 24
   };
   var TILE_WIDTH = 32;
   var ASSETS = {
@@ -64,19 +68,13 @@ define([
       },
 
       setColor: function(colorString) {
+        console.log("Setting color to " + colorString);
         var row = COLOR_TO_ROW[colorString];
-        if (row !== undefined) {
-          this.sprite(0, row, 1, 1);
-          this.reel('PlayerMovingRight',600, 0, row, 1);
-          this.reel('PlayerMovingUp',   600, 1, row, 1);
-          this.reel('PlayerMovingLeft', 600, 2, row, 1);
-          this.reel('PlayerMovingDown', 600, 3, row, 1);
-        } else { /* If color is actually a sprite name (ex: plant), not a color */
-          this.sprite(that._spriteMap[colorString].gridX,
-                              that._spriteMap[colorString].gridY,
-                              1, 1);
-          this.unbind('NewDirection');
-        }
+        this.sprite(0, row, 1, 1);
+        this.reel('PlayerMovingRight',600, 0, row, 1);
+        this.reel('PlayerMovingUp',   600, 1, row, 1);
+        this.reel('PlayerMovingLeft', 600, 2, row, 1);
+        this.reel('PlayerMovingDown', 600, 3, row, 1);
 
         return this;
       }
@@ -306,7 +304,8 @@ define([
         /* If other players in room, draw them. */
         for(var id in that._otherPlayerModelAdpts) {
           var otherPlayer = that._otherPlayerModelAdpts[id];
-          if (curNode.room.id === otherPlayer.getRoom()) {
+          if (curNode.room.id === otherPlayer.getRoom()
+            && !otherPlayer.isTraitor()) {
             Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
                                   .setColor(otherPlayer.getColor());
           }
