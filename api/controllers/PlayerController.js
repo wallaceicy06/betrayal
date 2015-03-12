@@ -21,7 +21,8 @@ module.exports = {
                    curHealth: 3,
                    speed: 5,
                    weapon: 1,
-                   relics: 0})
+                   relics: 0,
+                   isTraitor: false})
       .then(function(player) {
         newPlayer = player;
 
@@ -44,7 +45,6 @@ module.exports = {
   },
 
   update: function(req, res) {
-
     Player.update(req.param('id'), req.body)
       .then(function(players) {
         var updatedPlayer = players[0];
@@ -53,8 +53,8 @@ module.exports = {
           Room.message(updatedPlayer.room, {id: updatedPlayer.id,
                                             verb: 'playerUpdated',
                                             data: req.body});
-        } else if (req.body.color !== undefined) {
-          Player.publishUpdate(updatedPlayer.id, {color: req.body.color});
+        } else {
+          Player.publishUpdate(updatedPlayer.id, req.body);
         }
 
         res.json(updatedPlayer.toJSON());

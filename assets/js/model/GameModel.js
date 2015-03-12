@@ -100,6 +100,11 @@ define([
             /* Do nothing. */
           },
 
+          onTraitorSet: function(newVal) {
+            io.socket.put('/player/' + player.id, {isTraitor: newVal},
+              function(player) {});
+          },
+
           onDestroy: function() {
             /* Do nothing. */
           },
@@ -161,6 +166,10 @@ define([
               if (player.room === that._currentRoom.id) {
                 playerViewAdpt.setLocation(newX, newY);
               }
+            },
+ 
+            onTraitorSet: function(newVal) {
+              /* Do nothing */
             },
 
             onDestroy: function() {
@@ -420,6 +429,10 @@ define([
             if (player.room === that._currentRoom.id) {
               playerViewAdpt.setLocation(newX, newY);
             }
+          },
+
+          onTraitorSet: function(newVal) {
+            /* Do nothing */
           },
 
           onDestroy: function() {

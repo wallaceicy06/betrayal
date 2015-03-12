@@ -60,6 +60,7 @@ define([
       },
 
       setColor: function(colorString) {
+        console.log("Setting color to " + colorString);
         var row = COLOR_TO_ROW[colorString];
         if (row !== undefined) {
           this.sprite(0, row, 1, 1);
@@ -233,7 +234,7 @@ define([
                                               doorLock: false})
                                        .setColor(that._playerModelAdpt
                                                      .getColor());
-      if (oldPlayerEntity !== null) {
+      if (oldPlayerEntity !== null && that._playerModelAdpt.getColor() in COLOR_TO_ROW) {
         that._player.animate(oldPlayerEntity.getReel().id, -1);
       }
 
@@ -280,7 +281,8 @@ define([
         /* If other players in room, draw them. */
         for(var id in that._otherPlayerModelAdpts) {
           var otherPlayer = that._otherPlayerModelAdpts[id];
-          if (curNode.room.id === otherPlayer.getRoom()) {
+          if (curNode.room.id === otherPlayer.getRoom()
+            && !otherPlayer.isTraitor()) {
             Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
                                   .setColor(otherPlayer.getColor());
           }
