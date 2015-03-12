@@ -2,9 +2,6 @@
   body {
     background-image: url('http://darkcreationsatx.com/wp-content/uploads/2012/10/spooky-woods.jpg');
   }
-  .header {
-    color: #F0F0F0;
-  }
   .hidden {
     display: none;
   }
@@ -34,11 +31,12 @@
     width: 140;
     padding: 3px;
     margin: 3px;
+    opacity: 0.8;
     background-color: #F0F0F0;
   }
 </style>
 
-<div class="header"><h1>Betrayal</h1>
+<div class="header" style="color: #F0F0F0"><h1>Betrayal</h1>
   <p>A RPG game based on <em>Betrayal at the House on the Hill</em>.</p></div>
 
 <div id="game-pane" class="hidden" style="height:640px;">
@@ -48,7 +46,7 @@
   </div>
   <div id="game-stage" style="display:inline-block; vertical-align: top"></div>
   <div id="chatroom" style="display:inline-block; vertical-align: top; height: 100%">
-    <div class="messages" style="overflow-y:scroll; height: 100%;">
+    <div class="messages" style="overflow-y:scroll; height: 100%; background-color: white; opacity: 0.6; padding: 3px">
     </div>
     <div class="chatroom-controls">
       <form id="form-send-message" class="form-inline">
