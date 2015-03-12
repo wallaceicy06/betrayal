@@ -8,6 +8,10 @@
   .invisible {
     visibility: hidden;
   }
+  .center {
+    margin-left: auto;
+    margin-right: auto;
+  }
   img {
       height: 16;
       width: 16;
@@ -36,10 +40,10 @@
   }
 </style>
 
-<div id="header" class="hidden" style="color: #F0F0F0"><h1>Betrayal</h1>
+<div id="header" class="hidden" style="color: #F0F0F0;"><h1>Betrayal</h1>
   <p>A RPG game based on <em>Betrayal at the House on the Hill</em>.</p></div>
 
-<div id="splash-screen">
+<div id="splash-screen" class="center" style="width: 500px;">
   <img src="images/game/splash.png">
 </div>
 
@@ -61,7 +65,7 @@
   </div>
 </div>
 
-<div id="join-pane">
+<div id="join-pane" class="center" style="width: 580px">
   <form class="form-inline" style="display: inline-block">
     <input id="ipt-name" type="text" class="form-control" placeholder="player name">
     <select id="select-game" class="form-control"></select>
