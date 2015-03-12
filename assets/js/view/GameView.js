@@ -9,7 +9,11 @@ define([
   var COLOR_TO_ROW = {
     'red' : 15,
     'blue' : 16,
-    'green' : 17
+    'green' : 17,
+    'plant' : 21,
+    'chair' : 22,
+    'toilet' : 23,
+    'key' : 24
   };
   var TILE_WIDTH = 32;
   var ASSETS = {
@@ -66,18 +70,11 @@ define([
       setColor: function(colorString) {
         console.log("Setting color to " + colorString);
         var row = COLOR_TO_ROW[colorString];
-        if (row !== undefined) {
-          this.sprite(0, row, 1, 1);
-          this.reel('PlayerMovingRight',600, 0, row, 1);
-          this.reel('PlayerMovingUp',   600, 1, row, 1);
-          this.reel('PlayerMovingLeft', 600, 2, row, 1);
-          this.reel('PlayerMovingDown', 600, 3, row, 1);
-        } else { /* If color is actually a sprite name (ex: plant), not a color */
-          this.sprite(that._spriteMap[colorString].gridX,
-                              that._spriteMap[colorString].gridY,
-                              1, 1);
-          this.unbind('NewDirection');
-        }
+        this.sprite(0, row, 1, 1);
+        this.reel('PlayerMovingRight',600, 0, row, 1);
+        this.reel('PlayerMovingUp',   600, 1, row, 1);
+        this.reel('PlayerMovingLeft', 600, 2, row, 1);
+        this.reel('PlayerMovingDown', 600, 3, row, 1);
 
         return this;
       }
@@ -260,7 +257,7 @@ define([
                                               doorLock: false})
                                        .setColor(that._playerModelAdpt
                                                      .getColor());
-      if (oldPlayerEntity !== null && that._playerModelAdpt.getColor() in COLOR_TO_ROW) {
+      if (oldPlayerEntity !== null) {
         that._player.animate(oldPlayerEntity.getReel().id, -1);
       }
 
