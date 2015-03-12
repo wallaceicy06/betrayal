@@ -415,10 +415,14 @@ define([
   function displayGamePane(display) {
     if (display === true) {
       $('#game-pane').removeClass('hidden');
+      $('#header').removeClass('hidden');
       $('#join-pane').addClass('hidden');
+      $('#splash-screen').addClass('hidden');
     } else {
       $('#game-pane').addClass('hidden');
+      $('#header').addClass('hidden');
       $('#join-pane').removeClass('hidden');
+      $('#splash-screen').removeClass('hidden');
     }
   }
 
