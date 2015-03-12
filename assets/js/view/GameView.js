@@ -65,11 +65,18 @@ define([
 
       setColor: function(colorString) {
         var row = COLOR_TO_ROW[colorString];
-        this.sprite(0, row, 1, 1);
-        this.reel('PlayerMovingRight',600, 0, row, 1);
-        this.reel('PlayerMovingUp',   600, 1, row, 1);
-        this.reel('PlayerMovingLeft', 600, 2, row, 1);
-        this.reel('PlayerMovingDown', 600, 3, row, 1);
+        if (row !== undefined) {
+          this.sprite(0, row, 1, 1);
+          this.reel('PlayerMovingRight',600, 0, row, 1);
+          this.reel('PlayerMovingUp',   600, 1, row, 1);
+          this.reel('PlayerMovingLeft', 600, 2, row, 1);
+          this.reel('PlayerMovingDown', 600, 3, row, 1);
+        } else { /* If color is actually a sprite name (ex: plant), not a color */
+          this.sprite(that._spriteMap[colorString].gridX,
+                              that._spriteMap[colorString].gridY,
+                              1, 1);
+          this.unbind('NewDirection');
+        }
 
         return this;
       }
@@ -110,6 +117,19 @@ define([
           this.x -= this._movement.x;
           this.y -= this._movement.y;
         }
+      },
+
+      interact: function() {
+        var player = this; /* the player */
+
+        Crafty('Furniture').each(function(f) {
+          // console.log('i am at ' + that.x + ', ' + that.y);
+          // console.log(this.interactRect());
+          if (player.within(this.interactRect())) {
+            console.log('interacting with a piece' + this.furnitureID);
+            that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
+          }
+        });
       },
 
       useDoor: function(doorParts) {
@@ -187,6 +207,15 @@ define([
     Crafty.c('Furniture', {
       init: function() {
         this.requires('2D, Canvas, RoomItem, SpriteFurniture');
+      },
+
+      interactRect: function() {
+        return {
+          _x: this.x - TILE_WIDTH,
+          _y: this.y - TILE_WIDTH,
+          _w: this.w + 2 * TILE_WIDTH,
+          _h: this.h + 2 * TILE_WIDTH
+        };
       }
     });
 
@@ -249,40 +278,12 @@ define([
       that._player.enableControl();
 
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
-        that._player.disableControl();
         /*
          * performEvent does the action of the event and returns the text to
          * display.
          */
         var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);
-        var eventBackground = Crafty.e('2D, DOM, Color')
-          .color('white');
-        var eventTitle = Crafty.e('2D, DOM, Text')
-          .text(eventInfo.title)
-          .textFont({size: '20px'})
-          .css({'text-align': 'center', 'top': '15px'});
-        var eventText = Crafty.e('2D, DOM, Text')
-          .css({'text-align': 'center', 'top': '45px'})
-          .text(eventInfo.text)
-          .textFont({size: '14px'});
-        /*
-         * Attach eventTitle and eventText as children of event so that they
-         * will move together.
-         */
-        eventBackground.attach(eventTitle);
-        eventBackground.attach(eventText);
-        eventBackground.attr({x: that._gameModelAdpt.getDimensions().width/2
-                                 - 175,
-                              y: that._gameModelAdpt.getDimensions().height/2
-                                 - 175, w: 350, h: 350});
-
-        setTimeout(function() {
-          /* Remove the event text box. */
-          eventBackground.destroy();
-          eventText.destroy();
-          /* Allow player to move again. */
-          that._player.enableControl();
-        }, 3000); /* Display the event text box for 3 seconds. */
+        displayTextOverlay(eventInfo.title, eventInfo.text, 5000, that);
       }
     });
 
@@ -348,7 +349,6 @@ define([
       if (!inputInFocus) {
         switch(e.key) {
           case Crafty.keys.M:
-
             if (that._mapEnabled) {
               that._gameModelAdpt.onDisableMap();
               that._player.enableControl();
@@ -359,12 +359,10 @@ define([
             break;
 
           case Crafty.keys.SPACE:
-
             that._gameModelAdpt.attack();
             break;
 
           case Crafty.keys.C:
-
             /*
              * This timeout is to prevent the letter 'c' from being typed in
              * the chat box since this event will be handled by it as soon as
@@ -374,6 +372,16 @@ define([
               that._player.disableControl();
               document.getElementById('ipt-message').focus();
             }, 10);
+            break;
+
+          case Crafty.keys.I:
+
+            that._player.interact();
+            break;
+
+          case Crafty.keys.T:
+
+            that._gameModelAdpt.useTraitorPower();
             break;
 
           default:
@@ -453,7 +461,8 @@ define([
                          w: this._spriteMap[furniture[i].id].gridW
                             * TILE_WIDTH,
                          h: this._spriteMap[furniture[i].id].gridH
-                            * TILE_WIDTH})
+                            * TILE_WIDTH,
+                         furnitureID: furniture[i].id})
                   .sprite(this._spriteMap[furniture[i].id].gridX,
                           this._spriteMap[furniture[i].id].gridY,
                           this._spriteMap[furniture[i].id].gridW,
@@ -746,6 +755,21 @@ define([
     }
   }
 
+  function setHuskColor(id, colorString) {
+    if (this._husks[id] !== undefined) {
+      this._husks[id].setColor(colorString);
+    }
+  }
+
+  function changePlayerSprite(spriteName) {
+    this._player.sprite(this._spriteMap[spriteName].gridX,
+                        this._spriteMap[spriteName].gridY,
+                        1, 1);
+    this._player.unbind('NewDirection');
+    this._playerModelAdpt.setColor(spriteName);
+
+  }
+
   function removeItem(id) {
     if(id in this._items) {
       this._items[id].destroy();
@@ -875,6 +899,45 @@ define([
                             h: 50});
   }
 
+  /**
+   * Display a title and text for the given amount of time as an overlay
+   * Disable player movement while text is being displayed
+   * (Used for events, death, etc.)
+   * timeout must be in ms
+   * gameView is this GameView (in this function, "this" is the window)
+   */
+  function displayTextOverlay(title, text, timeout, gameView) {
+    gameView._player.disableControl();
+    var overlayBackground = Crafty.e('2D, DOM, Color')
+      .color('white');
+    var overlayTitle = Crafty.e('2D, DOM, Text')
+      .text(title)
+      .textFont({size: '20px'})
+      .css({'text-align': 'center', 'top': '15px'});
+    var overlayText = Crafty.e('2D, DOM, Text')
+      .css({'text-align': 'center', 'top': '45px'})
+      .text(text)
+      .textFont({size: '14px'});
+    /*
+      * Attach eventTitle and eventText as children of event so that they
+      * will move together.
+      */
+    overlayBackground.attach(overlayTitle);
+    overlayBackground.attach(overlayText);
+    overlayBackground.attr({x: gameView._gameModelAdpt.getDimensions().width/2
+                              - 175,
+                          y: gameView._gameModelAdpt.getDimensions().height/2
+                              - 175, w: 350, h: 350});
+
+    setTimeout(function() {
+      /* Remove the event text box. */
+      overlayBackground.destroy();
+      overlayText.destroy();
+      /* Allow player to move again. */
+      gameView._player.enableControl();
+    }, timeout); /* Display the event text box for 3 seconds. */
+  }
+
   function initGUI() {
     var that = this;
 
@@ -945,7 +1008,9 @@ define([
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
     this.appendEvent = appendEvent.bind(this);
+    this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
+    this.displayTextOverlay = displayTextOverlay.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
@@ -955,6 +1020,7 @@ define([
     this.removeItem = removeItem.bind(this);
     this.addGameOption = addGameOption.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
+    this.setHuskColor = setHuskColor.bind(this);
     this.start = start.bind(this);
   }
 });

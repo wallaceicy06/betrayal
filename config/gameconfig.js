@@ -1,4 +1,9 @@
 module.exports.gameconfig = {
+  interactable: {
+    rug: {
+      prefix: 'You lifted the rug.'
+    }
+  },
   sprites: {
     'couch': {gridX: 0, gridY: 0, gridW: 4, gridH: 2},
     'armchair': {gridX: 4, gridY: 0, gridW: 2, gridH: 2},
@@ -598,41 +603,53 @@ module.exports.gameconfig = {
     },
   },
 
-  events: {
-    0: {
-        title: 'Image in the Mirror',
-        text: 'Your reflection in the mirror moves on its own. You realize \
-              it is you from another time. It scratches into the mirror \
-              "This will help" and hands you an item. Gain one weapon \
-              strength!',
-        effect: {weapon: 1}
-       },
-    1: {
-        title: 'Smoke',
-        text: 'A strange smoke fills the room. You can feel if weakening you \
-              with each breath. Lose one speed.',
-        effect: {speed: -1}
-      },
-    2: {
-        title: 'Creepy Puppet',
-        text: 'There is a strange doll sitting on a shelf nearby. It jumps \
-              out and attacks you. Lose one health.',
-        effect: {curHealth: -1}
+  cards: {
+    spiders: {
+      title: 'Spiders',
+      text: 'You feel something crawling on your arm. You brush the spider '
+            + 'away. Suddenly spiders are pouring out of the walls surrounding '
+            + 'you. As you start to scream, they vanish. Lose one health.',
+      effect: {curHealth: -1}
     },
-    3: {
-        title: 'Image in the Mirror',
-        text: 'Your reflection in the mirror moves on its own. You realize it \
-               is you from another time. You scratch into the mirror "This \
-               will help" and hand it an item. Lose one weapon strength.',
-        effect: {weapon: -1}
+    smoke: {
+      title: 'Smoke',
+      text: 'A strange smoke fills the room. You can feel it weakening you ' +
+            'with each breath. Lose one speed.',
+      effect: {speed: -1}
     },
-    4: {
-        title: 'Spiders',
-        text: 'You feel something crawling on your arm. You brush the spider \
-              away. Suddenly spiders are pouring out of the walls, \
-              surrounding you. As you start to scream, they vanish. Lose one \
-              health.',
-        effect: {curHealth: -1}
+    puppet: {
+      title: 'Creepy Puppet',
+      text: 'There is a strange doll sitting on a shelf nearby. It jumps ' +
+            'out and attacks you. Lose one health.',
+      effect: {curHealth: -1}
+    },
+    mirrorPast: {
+      title: 'Image in the Mirror',
+      text: 'Your reflection in the mirror moves on its own. You realize '
+            + 'it is you from another time. It scratches into the mirror '
+            + '"This will help" and hands you an item. Gain one weapon '
+            + 'strength!',
+      effect: {weapon: 1}
+    },
+    mirrorFuture: {
+      title: 'Image in the Mirror',
+      text: 'Your reflection in the mirror moves on its own. You realize it '
+             + 'is you from another time. You scratch into the mirror "This '
+             + 'will help" and hand it an item. Lose one weapon strength.',
+      effect: {weapon: -1}
+    }
+  },
+
+  haunts: {
+    'The Plant Haunt': {  //TODO: Real title and flavor text
+      heroText: 'One of your comrades has turned against you. Collect all '
+                + 'the keys and get to the entryway before it\'s too late!',
+      traitorText: 'You hear a voice speaking to you. It seems to be coming '
+                   + 'from inside the walls. It promises you great power '
+                   + 'The power to transform into any shape you wish. All '
+                   + 'you must do is destroy those fools who came here with '
+                   + 'you. Press \'t\' to alter your appearance. Press space '
+                   + 'to attack.'
     }
   }
 }

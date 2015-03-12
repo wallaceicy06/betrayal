@@ -1,7 +1,9 @@
 define([
+    'underscore',
     'model/Player',
-    'model/MapNode'
-], function(Player, MapNode) {
+    'model/MapNode',
+    'model/HauntFactory'
+], function(_, Player, MapNode, HauntFactory) {
 
   'use strict';
 
@@ -17,7 +19,7 @@ define([
     var that = this;
 
     io.socket.get('/game/' + gameID, function (game) {
-      that._events = game.events;
+      that._haunts = game.haunts;
       that._viewAdpt.installSpriteMap(game.sprites);
 
       var color;
@@ -252,6 +254,29 @@ define([
 
   }
 
+  function onFurnitureInteract(furnitureID) {
+    var that = this;
+
+    io.socket.post('/room/interact/' + this._currentRoom.id,
+                   {furniture: furnitureID}, function(resData) {
+
+      /* Don't do anything if there was no interaction. */
+      if (_.isEmpty(resData)) {
+        return;
+      }
+
+      that._viewAdpt.displayTextOverlay(resData.title,
+                                        resData.text, 3000);
+
+      for (var stat in resData.effect) {
+        /* For right now, event effects only alter stats. */
+        that._player[stat] = that._player[stat] + resData.effect[stat];
+      }
+
+      console.log(resData);
+    });
+  }
+
   function reloadRoom() {
     var that = this;
 
@@ -304,7 +329,6 @@ define([
   function performEvent(eventID) {
     io.socket.put('/room/removeEvent/' + this._currentRoom.id, {},
                   function(resData, jwr) {});
-    var event = this._events[eventID];
     for (var stat in event.effect) {
       /* For right now, event effects only alter stats. */
       this._player[stat] = this._player[stat] + event.effect[stat];
@@ -314,6 +338,10 @@ define([
 
   /* This player deals damage to all other players within a certain radius */
   function attack() {
+    if (!this._combatEnabled) {
+      console.log("Combat not enabled yet!");
+      return;
+    }
     for (var id in this._otherPlayers) {
       var otherPlayer = this._otherPlayers[id];
       if (otherPlayer.room === this._player.room
@@ -356,6 +384,17 @@ define([
         }
       }
     }
+  }
+
+  function useTraitorPower() {
+    if (this._hauntAdpt === null) {
+      console.log("Can't use traitor power before start of haunt.");
+      return;
+    } else if (!this._player.isTraitor) {
+      console.log("Heroes can't use traitor power");
+      return;
+    }
+    this._hauntAdpt.usePower();
   }
 
   function initSockets() {
@@ -429,8 +468,10 @@ define([
           if (o.data.room !== null && o.id !== that._player.id) {
             that._otherPlayers[o.id].room = o.data.room;
           }
-        /* Stat update */
-        } else {
+        } else if (o.data.color !== undefined && o.id !== that._player.id) {
+          that._otherPlayers[o.id].color = o.data.color;
+          that._viewAdpt.setHuskColor(o.id, o.data.color);
+        } else { /* Stat update */
           if (o.id !== that._player.id) {
             for (var key in o.data) {
               if (key !== "updatedAt") {
@@ -474,6 +515,28 @@ define([
         that._viewAdpt.addGame(o.data);
       } else if (o.verb === 'messaged') {
         that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+      } else if (o.verb === 'updated') {
+        /*
+         * An update on the game indicates that the haunt is starting
+         */
+        that._combatEnabled = true;
+
+        var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
+          changeSprite: function(spriteName) {
+            that._viewAdpt.changePlayerSprite(spriteName);
+            io.socket.put('/player/' + that._player.id, {color: spriteName},
+              function(err, player) {});
+          }
+        });
+        that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
+
+        if (o.data.traitor.id === that._player.id) {
+          that._player.isTraitor = true;
+          that._viewAdpt.displayTextOverlay(o.data.haunt, that._haunts[o.data.haunt].traitorText, 10000);
+        }
+        else {
+          that._viewAdpt.displayTextOverlay(o.data.haunt, that._haunts[o.data.haunt].heroText, 10000);
+        }
       }
     });
   }
@@ -486,8 +549,10 @@ define([
     this._gameID = null;
     this._miniMap = null;
     this._currentMiniRoom = null;
-    this._events = null;
+    this._haunts = null;
     this._lastSend = new Date().getTime();
+    this._combatEnabled = false;
+    this._hauntAdpt = null;
 
     initSockets.call(this);
 
@@ -501,12 +566,14 @@ define([
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
+    this.onFurnitureInteract = onFurnitureInteract.bind(this);
     this.sendChatMessage = sendChatMessage.bind(this);
     this.sendEventMessage = sendEventMessage.bind(this);
     this.reloadRoom = reloadRoom.bind(this);
     this.assembleMap = assembleMap.bind(this);
     this.performEvent = performEvent.bind(this);
     this.attack = attack.bind(this);
+    this.useTraitorPower = useTraitorPower.bind(this);
     this.start = start.bind(this);
   }
 });

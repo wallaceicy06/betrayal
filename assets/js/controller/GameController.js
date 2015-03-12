@@ -70,6 +70,10 @@ define([
             return playerModel.color;
           },
 
+          setColor: function(newColor) {
+            playerModel.color = newColor;
+          },
+
           setPosition: function(x, y) {
             playerModel.setPosition(x, y);
           },
@@ -195,6 +199,14 @@ define([
         that._view.removeAllHusks();
       },
 
+      setHuskColor: function(id, colorString) {
+        that._view.setHuskColor(id, colorString);
+      },
+
+      changePlayerSprite: function(spriteName) {
+        that._view.changePlayerSprite(spriteName);
+      },
+
       removeItem: function(id) {
         that._view.removeItem(id);
       },
@@ -205,10 +217,6 @@ define([
 
       setGames: function(games) {
         that._view.setGameOptions(games);
-      },
-
-      changeColor: function(color) {
-        that._view.changeColor(color);
       },
 
       /*
@@ -231,6 +239,10 @@ define([
         setTimeout(function() {
           that._view.displayGamePane(false);
         }, 3000);
+      },
+
+      displayTextOverlay: function(title, text, timeout) {
+        that._view.displayTextOverlay(title, text, timeout, that._view);
       }
     });
 
@@ -247,6 +259,10 @@ define([
 
       onDoorVisit: function(doorID) {
         return that._model.onDoorVisit(doorID);
+      },
+
+      onFurnitureInteract: function(furnitureID) {
+        return that._model.onFurnitureInteract(furnitureID);
       },
 
       onJoinClick: function(name, gameID) {
@@ -269,12 +285,12 @@ define([
         return that._model.reloadRoom();
       },
 
-      performEvent: function(eventID) {
-        return that._model.performEvent(eventID);
-      },
-
       attack: function() {
         that._model.attack();
+      },
+
+      useTraitorPower: function() {
+        that._model.useTraitorPower();
       }
     });
 

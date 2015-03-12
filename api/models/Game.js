@@ -9,7 +9,7 @@ module.exports = {
 
   autoWatch: false,
 
-  autosubscribe: ['message'],
+  autosubscribe: ['message', 'update'],
 
   attributes: {
   	name: {type: 'string',
@@ -19,7 +19,13 @@ module.exports = {
     startingRoom: {model: 'room',
                    required: false},
     players: {collection: 'player',
-              via: 'game'}
+              via: 'game'},
+    relicsRemaining: {type: 'integer',
+                      required: false},
+    traitor: {model: 'player',
+              required: false},
+    haunt: {type: 'string',
+            required: false}
   },
 
   generateHouse: function(game, cb) {
@@ -37,15 +43,22 @@ module.exports = {
       totalAbundance += i.abundance;
     });
 
+    var numRelics = 0;
+
     /* Add 2 items per room per the abundance specifications. */
     var itemBank = [];
     for (i in Game.items) {
-      _.times(Math.ceil(Game.items[i].abundance
-                         / totalAbundance
+      _.times(Math.round(Game.items[i].abundance / totalAbundance
                          * allRooms.length * 2), function(n) {
+        if (Game.items[i].stat === 'relics') {
+          numRelics++;
+        }
         itemBank.push(i);
       });
     }
+
+    console.log("Num Relics = " + numRelics);
+    Game.update(game.id, {relicsRemaining: numRelics}, function(game){});
 
     /* Randomly order the items. */
     itemBank = _.shuffle(itemBank);
@@ -192,18 +205,15 @@ module.exports = {
 
     Room.create(roomsToCreate)
       .then(function(rooms) {
-        var events = Object.keys(sails.config.gameconfig.events);
-
         rooms.forEach(function(v, i, a) {
           databaseID[v.name] = v.id;
-
-          /* Possibly add an event to this room */
-          if (Math.random() < .3) {
-            var index = Math.floor((Math.random() * events.length));
-            Room.update(v.id, {event: events[index]}, function(room) {});
-            events.splice(index, 1);
-          }
         });
+
+        /* Really simple test. */
+        Event.create({room: databaseID['entryway'], container: 'rug', card: 'spiders'})
+          .catch(function(err) {
+            console.log(err);
+          });
 
         gatewaysToCreate.forEach(function(v, i, a) {
           v.roomFrom = databaseID[v.roomFrom];
@@ -225,5 +235,7 @@ module.exports = {
 
   items: sails.config.gameconfig.items,
 
-  sprites: sails.config.gameconfig.sprites
+  sprites: sails.config.gameconfig.sprites,
+
+  haunts: sails.config.gameconfig.haunts
 };
