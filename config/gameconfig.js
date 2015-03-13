@@ -1,7 +1,48 @@
 module.exports.gameconfig = {
   interactable: {
     rug: {
-      prefix: 'You lifted the rug.'
+      prefix: 'You pulled back a corner of the rug.'
+    },
+    couch: {
+      prefix: 'You lifted a couch cushion.'
+    },
+    armchair: {
+      prefix: 'You looked behind the armchair.'
+    },
+    woodTable: {
+      prefix: 'You peeked under the table.'
+    },
+    kitchenSink: {
+      prefix: 'There is a cupboard underneath the sink. You opened it.'
+    },
+    plant: {
+      prefix: 'You open the plant leaves.'
+    },
+    chair: {
+      prefix: 'You sit down in the chair. You feel something underneath the '
+              + 'cushion.'
+    },
+    loveseat: {
+      prefix: 'You look behind the loveseat.'
+    },
+    toilet: {
+      prefix: 'You peer into the toilet bowl.'
+    },
+    endTable: {
+      prefix: 'You open the drawer of the nightstand.'
+    },
+    bookshelf: {
+      prefix: 'You pull back a book from the shelf. Behind it is something '
+              + 'strange.'
+    },
+    sink: {
+      prefix: 'You turn on the faucet. '
+    },
+    squareTable: {
+      prefix: 'You bend over and look under the coffee table.'
+    },
+    piano: {
+      prefix: 'You begin playing chopsticks on the piano. '
     }
   },
   sprites: {
