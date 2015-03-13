@@ -66,6 +66,36 @@ module.exports = {
       });
   },
 
+  destroy: function(req, res) {
+    Player.findOne(req.param('id'))
+      .then(function(player) {
+        if (player.keys > 0) {
+          for (var i = 0; i < player.keys; i++) {
+            var tileW = Room.dimensions.tileW;
+            Item.create({type: 'key',
+                         stat: 'keys',
+                         amount: 1,
+                         room: player.room,
+                         gridX: Math.ceil(player.locX/tileW) + 1,
+                         gridY: Math.ceil(player.locY/tileW) + 1})
+              .then(function(item) {
+                Room.message(item.room, {verb: 'itemCreated', item: item});
+              })
+              .catch(function(err) {
+                console.log(err);
+                res.json(err);
+                return;
+              });
+          }
+        }
+        Player.destroy(req.param('id'))
+          .then(function(player) {
+            Player.publishDestroy(req.param('id'));
+            res.json(player);
+          })
+      })
+  },
+
   changeRoom: function(req, res) {
     var oldRoom;
     var player;

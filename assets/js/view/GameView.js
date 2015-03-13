@@ -661,6 +661,9 @@ define([
           });
       },
 
+      onKeysChange: function(newKeys) {
+        // TODO: Keys on sidebar
+      },
 
       onWeaponChange: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
