@@ -96,6 +96,13 @@ define([
                           function (player) {});
           },
 
+          onKeysChange: function(newKeys) {
+            playerViewAdpt.onKeysChange(newKeys);
+            io.socket.put('/player/adjustStat/' + player.id,
+                          {stat: 'keys', newValue: newKeys},
+                          function (player) {});
+          },
+
           onRoomChange: function(newRoom) {
             /* Do nothing. */
           },
@@ -160,6 +167,10 @@ define([
 
             onRelicsChange: function(newRelics) {
               playerViewAdpt.onRelicsChange(newRelics);
+            },
+
+            onKeysChange: function(newKeys) {
+              playerViewAdpt.onKeysChange(newKeys);
             },
 
             onPositionChange: function(newX, newY) {
@@ -445,6 +456,10 @@ define([
 
           onRelicsChange: function(newRelics) {
             playerViewAdpt.onRelicsChange(newRelics);
+          },
+
+          onKeysChange: function(newKeys) {
+            playerViewAdpt.onKeysChange(newKeys);
           },
 
           onPositionChange: function(newX, newY) {

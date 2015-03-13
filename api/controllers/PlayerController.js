@@ -22,6 +22,7 @@ module.exports = {
                    speed: 5,
                    weapon: 1,
                    relics: 0,
+                   keys: 0,
                    isTraitor: false})
       .then(function(player) {
         newPlayer = player;

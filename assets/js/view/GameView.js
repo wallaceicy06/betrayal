@@ -153,6 +153,11 @@ define([
           return;
         }
 
+        /* Don't allow the traitor to pick up keys */
+        if (that._playerModelAdpt.isTraitor() && item[0].obj.type === 'key') {
+          return;
+        }
+
         this.attr({'itemLock' : true});
         var thisPlayer = this;
 
@@ -493,6 +498,10 @@ define([
               $(this).addClass('invisible');
             }
           });
+      },
+
+      setKeys: function(newKeys) {
+        /* TODO: Make keys appear in side bar */
       },
 
       setWeapon: function(newWeapon) {

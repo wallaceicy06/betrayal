@@ -99,6 +99,9 @@ define([
               case "relics":
                 playerModel.relics = playerModel.relics + amount;
                 break;
+              case "keys":
+                playerModel.keys = playerModel.keys + amount;
+                break;
               default:
                 console.log("Unknown stat: " + stat);
                 break;
@@ -116,6 +119,10 @@ define([
 
           onRelicsChange: function(newRelics) {
             playerView.setRelics(newRelics);
+          },
+
+          onKeysChange: function(newKeys) {
+            playerView.setKeys(newKeys);
           },
 
           onWeaponChange: function(newWeapon) {
