@@ -43,21 +43,18 @@
   }
 </style>
 
-<div id="header" class="hidden" style="color: #F0F0F0;"><h1>Betrayal</h1>
-  <p>A RPG game based on <em>Betrayal at the House on the Hill</em>.</p></div>
+<div id="header" class="hidden" style="color: #F0F0F0;" align="center">
+  <h1>Betrayal</h1>
+</div><br/>
 
-<div id="splash-screen" class="center" style="width: 500px;">
-  <img src="images/game/splash.png">
-</div>
-
-<div id="game-pane" class="hidden" style="height:640px;">
+<div id="game-pane" class="hidden" style="height:512px;" align="center">
   <div id="player-pane" style="display:inline-block; vertical-align: top">
     <div id="player-list">
     </div>
   </div>
   <div id="game-stage" style="display:inline-block; vertical-align: top"></div>
   <div id="chatroom" style="display:inline-block; vertical-align: top; height: 100%">
-    <div class="messages" style="overflow-y:scroll; height: 100%; background-color: white; opacity: 0.6; padding: 3px">
+    <div class="messages" style="overflow-y:scroll; height: 93%; background-color: white; opacity: 0.6; padding: 3px" align="left">
     </div>
     <div class="chatroom-controls">
       <form id="form-send-message" class="form-inline">
@@ -68,10 +65,14 @@
   </div>
 </div>
 
-<div id="join-pane" class="center" style="width: 580px">
+<div id="splash-screen" class="center" style="width: 500px;">
+  <img src="images/game/splash.png">
+</div>
+
+<div id="join-pane" class="center" style="width: 675px">
   <form class="form-inline" style="display: inline-block">
     <input id="ipt-name" type="text" class="form-control" placeholder="player name">
-    <select id="select-game" class="form-control"></select>
+    <select id="select-game" class="form-control" style="width: 150px"></select>
     <button id="btn-join" type="submit" class="btn btn-primary" disabled="disabled">Join</button>
   </form>
   <form class= "form-inline" style="display: inline-block">

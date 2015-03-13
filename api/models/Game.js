@@ -151,6 +151,7 @@ module.exports = {
       }
     }
 
+    var interactableObjects = [];
 
     for (var i = 0; i < houseGrid.length; i++) {
       for (var j = 0; j < houseGrid[0].length; j++) {
@@ -160,7 +161,14 @@ module.exports = {
           continue;
         }
 
-        var thisRoom = Room.layouts[thisRoomID]
+        var thisRoom = Room.layouts[thisRoomID];
+
+        _.each(thisRoom.objects, function(o) {
+          if (_.has(Room.interactable, o.id)) {
+            interactableObjects.push({room: thisRoomID,
+                                      container: o.id});
+          }
+        });
 
         var roomNorthID = (i == 0 ? null : houseGrid[i - 1][j]);
         var roomEastID = (j == houseGrid[0].length - 1
@@ -201,6 +209,8 @@ module.exports = {
       }
     }
 
+    var eventsToCreate = [];
+
     var databaseID = {};
 
     Room.create(roomsToCreate)
@@ -208,12 +218,6 @@ module.exports = {
         rooms.forEach(function(v, i, a) {
           databaseID[v.name] = v.id;
         });
-
-        /* Really simple test. */
-        Event.create({room: databaseID['entryway'], container: 'rug', card: 'spiders'})
-          .catch(function(err) {
-            console.log(err);
-          });
 
         gatewaysToCreate.forEach(function(v, i, a) {
           v.roomFrom = databaseID[v.roomFrom];
@@ -223,7 +227,25 @@ module.exports = {
         return Gateway.create(gatewaysToCreate);
       })
       .then(function(gateways) {
-        /* Gateways created. */
+        /* Shuffle the interactable objects. */
+        interactableObjects = _.shuffle(interactableObjects);
+
+        /* Randomly select objects to put events in. */
+        _.each(_.keys(Game.cards), function(c) {
+          var object = interactableObjects.pop();
+
+          var event = {
+            room: databaseID[object.room],
+            container: object.container,
+            card: c
+          };
+
+          eventsToCreate.push(event);
+        });
+
+        console.log(eventsToCreate);
+
+        return Event.create(eventsToCreate)
       })
       .catch(function(err) {
         console.log(err);
@@ -236,6 +258,8 @@ module.exports = {
   items: sails.config.gameconfig.items,
 
   sprites: sails.config.gameconfig.sprites,
+
+  cards: sails.config.gameconfig.cards,
 
   haunts: sails.config.gameconfig.haunts
 };
