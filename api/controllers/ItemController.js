@@ -89,6 +89,7 @@ module.exports = {
                           res.json(err);
                         });
                     }
+                    Game.update(game.id, {keysRemaining: game.players.length-1}, function(err, game) {});
                   });
                 }
                 Game.update(game.id, {relicsRemaining: (game.relicsRemaining - 1)}, function(err, game) {});
@@ -98,6 +99,19 @@ module.exports = {
                 res.json(err);
               });
           });
+        } else if (item.stat === 'keys') { /* Keep track of number of keys remaining */
+          Room.findOne(item.room)
+            .then(function(room) {
+              Game.findOne(room.game)
+                .then(function(game) {
+                  Game.update(game.id, {keysRemaining: game.keysRemaining-1}, function(err, game) {});
+                })
+            })
+            .catch(function(err) {
+              console.log(err);
+              res.json(err);
+              return;
+            });
         }
 
         Item.destroy({id: req.param('id')}, function(err, items) {

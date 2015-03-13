@@ -87,6 +87,7 @@ module.exports = {
                 return;
               });
           }
+          Game.update(player.game, {keysRemaining: player.keys});
         }
         Player.destroy(req.param('id'))
           .then(function(player) {
@@ -122,6 +123,25 @@ module.exports = {
         Room.subscribe(req, room.id, ['message']);
 
         Player.publishUpdate(player.id, {room: player.room});
+
+        /* If we entered the entryway, see if the heroes have won */
+        if (room.name === 'entryway' && !player.isTraitor) {
+          Game.findOne(room.game).populate('players')
+            .then(function(game) {
+              if (game.keysRemaining === 0) {
+                var won = true;
+                for (var i = 0; i < game.players.length; i++) {
+                  var p = game.players[i];
+                  if (!p.isTraitor && p.room !== room.id) {
+                    won = false;
+                  }
+                }
+                if (won) {
+                  Game.message(game.id, {verb: 'heroesWon'});
+                }
+              }
+            })
+        }
 
         res.json(room.players);
       })

@@ -555,7 +555,18 @@ define([
       if (o.verb === 'created') {
         that._viewAdpt.addGame(o.data);
       } else if (o.verb === 'messaged') {
-        that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+        if (o.data.verb === 'heroesWon') {
+          var message;
+          if (that._player.isTraitor) {
+            that._viewAdpt.displayTextOverlay("Game Over", "You have failed your mission. The heroes have escaped", 10000);
+          }
+          else {
+            that._viewAdpt.displayTextOverlay("You Won!", "You have escaped the house! Congratulations!", 10000);
+          }
+        } else {
+          that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+        }
+
       } else if (o.verb === 'updated') {
         /*
          * An update on the game indicates that the haunt is starting
