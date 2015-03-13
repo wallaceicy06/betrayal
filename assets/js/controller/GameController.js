@@ -54,6 +54,10 @@ define([
             return playerModel.relics;
           },
 
+          getKeys: function() {
+            return playerModel.keys;
+          },
+
           getX: function() {
             return playerModel.x;
           },
@@ -169,6 +173,10 @@ define([
 
           getRelics: function() {
             return playerModel.relics;
+          },
+
+          getKeys: function() {
+            return playerModel.keys;
           },
 
           getX: function() {
