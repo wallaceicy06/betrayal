@@ -6,6 +6,7 @@
  */
 
 module.exports = {
+
 	destroy: function(req, res) {
     Item.findOne(req.param('id'), function (err, item) {
       if (err) {
@@ -25,7 +26,7 @@ module.exports = {
             }
 
             //TODO: Find a cleaner way to do this
-            Game.findOne(room.game).populate('players')
+            Game.findOne(room.game).populate('players').populate('rooms')
               .then(function (game) {
                 if (game.relicsRemaining - 1 == 0) {
                   var traitor = game.players[Math.floor(Math.random() * game.players.length)];
@@ -38,6 +39,57 @@ module.exports = {
                     }
 
                     Game.publishUpdate(game.id, {traitor: traitor, haunt: haunt});
+
+                    /* Create keys for heroes to pick up */
+                    for (var x = 0; x < game.players.length - 1; x++) {
+                      var room = game.rooms[Math.floor(Math.random() * game.rooms.length)];
+
+                      /* TODO: Move this stuff to a function, like getValidRandomLoc */
+                      var excludePts = [];
+                      var i, j;
+
+                      /* Exclude walls. */
+                      for (i = 0; i < Room.dimensions.gridW; i++) {
+                        for (j = 0; j < Room.dimensions.gridH; j++) {
+                          if (i == 0 || i == Room.dimensions.gridW - 1) {
+                            excludePts.push([i, j]);
+                          } else if (j == 0 || j == Room.dimensions.gridH - 1) {
+                            excludePts.push([i, j]);
+                          }
+                        }
+                      }
+
+                      /* Exclude objects. */
+                      _.each(Room.layouts[room.name].objects, function(o) {
+                        var x = o.gridX;
+                        var y = o.gridY;
+
+                        for (i = o.gridX; i < o.gridX + Game.sprites[o.id].gridW; i++) {
+                          for (j = o.gridY; j < o.gridY + Game.sprites[o.id].gridH; j++) {
+                            excludePts.push([i, j]);
+                          }
+                        }
+                      });
+
+                      var loc = RandomService.randomGridLoc(Room.dimensions.gridW,
+                                                            Room.dimensions.gridH,
+                                                            excludePts);
+                      
+                      Item.create({type: 'key',
+                                   stat: 'keys',
+                                   amount: 1,
+                                   gridX: loc.x,
+                                   gridY: loc.y,
+                                   room: room})
+                        .then(function(item) {
+                          Room.message(item.room, {verb: 'itemCreated', item: item});
+                        })
+                        .catch(function(err) {
+                          console.log(err);
+                          res.json(err);
+                        });
+                    }
+                    Game.update(game.id, {keysRemaining: game.players.length-1}, function(err, game) {});
                   });
                 }
                 Game.update(game.id, {relicsRemaining: (game.relicsRemaining - 1)}, function(err, game) {});
@@ -47,6 +99,19 @@ module.exports = {
                 res.json(err);
               });
           });
+        } else if (item.stat === 'keys') { /* Keep track of number of keys remaining */
+          Room.findOne(item.room)
+            .then(function(room) {
+              Game.findOne(room.game)
+                .then(function(game) {
+                  Game.update(game.id, {keysRemaining: game.keysRemaining-1}, function(err, game) {});
+                })
+            })
+            .catch(function(err) {
+              console.log(err);
+              res.json(err);
+              return;
+            });
         }
 
         Item.destroy({id: req.param('id')}, function(err, items) {

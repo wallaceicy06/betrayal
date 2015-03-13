@@ -96,6 +96,13 @@ define([
                           function (player) {});
           },
 
+          onKeysChange: function(newKeys) {
+            playerViewAdpt.onKeysChange(newKeys);
+            io.socket.put('/player/adjustStat/' + player.id,
+                          {stat: 'keys', newValue: newKeys},
+                          function (player) {});
+          },
+
           onRoomChange: function(newRoom) {
             /* Do nothing. */
           },
@@ -162,6 +169,10 @@ define([
               playerViewAdpt.onRelicsChange(newRelics);
             },
 
+            onKeysChange: function(newKeys) {
+              playerViewAdpt.onKeysChange(newKeys);
+            },
+
             onPositionChange: function(newX, newY) {
               if (player.room === that._currentRoom.id) {
                 playerViewAdpt.setLocation(newX, newY);
@@ -175,6 +186,11 @@ define([
             onDestroy: function() {
               playerViewAdpt.destroy();
               delete that._otherPlayers[v.id];
+              if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
+                that._viewAdpt.displayTextOverlay("You Won!", "You have "
+                  + "successfully murdered all your friends. Congratulations!",
+                  10000);
+              }
             }
           });
 
@@ -447,6 +463,10 @@ define([
             playerViewAdpt.onRelicsChange(newRelics);
           },
 
+          onKeysChange: function(newKeys) {
+            playerViewAdpt.onKeysChange(newKeys);
+          },
+
           onPositionChange: function(newX, newY) {
             if (player.room === that._currentRoom.id) {
               playerViewAdpt.setLocation(newX, newY);
@@ -459,7 +479,13 @@ define([
 
           onDestroy: function() {
             playerViewAdpt.destroy();
-            delete that._otherPlayers[v.id];
+            delete that._otherPlayers[player.id];
+            if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
+              that._viewAdpt.displayTextOverlay("You Won!", "You have "
+                + "successfully murdered all your friends. Congratulations!",
+                10000);
+            }
+
           }
         });
 
@@ -520,6 +546,8 @@ define([
 
         that._viewAdpt.removeItem(o.data.id);
 
+      } else if (o.verb === 'messaged' && o.data.verb === 'itemCreated') {
+        that._viewAdpt.addItem(o.data.item);
       }
     });
 
@@ -527,7 +555,18 @@ define([
       if (o.verb === 'created') {
         that._viewAdpt.addGame(o.data);
       } else if (o.verb === 'messaged') {
-        that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+        if (o.data.verb === 'heroesWon') {
+          var message;
+          if (that._player.isTraitor) {
+            that._viewAdpt.displayTextOverlay("Game Over", "You have failed your mission. The heroes have escaped", 10000);
+          }
+          else {
+            that._viewAdpt.displayTextOverlay("You Won!", "You have escaped the house! Congratulations!", 10000);
+          }
+        } else {
+          that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+        }
+
       } else if (o.verb === 'updated') {
         /*
          * An update on the game indicates that the haunt is starting
