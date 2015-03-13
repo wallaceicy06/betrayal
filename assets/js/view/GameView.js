@@ -501,7 +501,14 @@ define([
       },
 
       setKeys: function(newKeys) {
-        /* TODO: Make keys appear in side bar */
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('div.player-keys img').each(function(index) {
+            if (index < newKeys) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       setWeapon: function(newWeapon) {
@@ -622,6 +629,19 @@ define([
     playerRelics.innerHTML = html;
     player.appendChild(playerRelics);
 
+    var playerKeys = document.createElement('div');
+    playerKeys.className = 'player-keys';
+    html = '';
+    for (var i = 0; i < MAX_STAT; i++) {
+      if (i < playerModelAdpt.getKeys()) {
+        html += STAT_TEMPLATE({imgClass: 'small_key'});
+      } else {
+        html += STAT_TEMPLATE({imgClass: 'small_key invisible'});
+      }
+    }
+    playerKeys.innerHTML = html;
+    player.appendChild(playerKeys);
+
     playerList.appendChild(player);
   }
 
@@ -662,7 +682,14 @@ define([
       },
 
       onKeysChange: function(newKeys) {
-        // TODO: Keys on sidebar
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('div.player-keys img').each(function(index) {
+            if (index < newKeys) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
       },
 
       onWeaponChange: function(newWeapon) {
