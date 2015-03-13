@@ -186,6 +186,11 @@ define([
             onDestroy: function() {
               playerViewAdpt.destroy();
               delete that._otherPlayers[v.id];
+              if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
+                that._viewAdpt.displayTextOverlay("You Won!", "You have "
+                  + "successfully murdered all your friends. Congratulations!",
+                  10000);
+              }
             }
           });
 
@@ -474,7 +479,13 @@ define([
 
           onDestroy: function() {
             playerViewAdpt.destroy();
-            delete that._otherPlayers[v.id];
+            delete that._otherPlayers[player.id];
+            if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
+              that._viewAdpt.displayTextOverlay("You Won!", "You have "
+                + "successfully murdered all your friends. Congratulations!",
+                10000);
+            }
+
           }
         });
 
