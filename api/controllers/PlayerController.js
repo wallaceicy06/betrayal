@@ -76,8 +76,8 @@ module.exports = {
                          stat: 'keys',
                          amount: 1,
                          room: player.room,
-                         gridX: Math.ceil(player.locX/tileW),
-                         gridY: Math.ceil(player.locY/tileW)})
+                         gridX: Math.round(player.locX/tileW),
+                         gridY: Math.round(player.locY/tileW)})
               .then(function(item) {
                 Room.message(item.room, {verb: 'itemCreated', item: item});
               })
