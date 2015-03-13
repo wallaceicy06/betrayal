@@ -55,6 +55,8 @@ define([
   function initCrafty() {
     var that = this;
 
+    Crafty.audio.add('itemSound', 'sounds/powerup.wav');
+
     Crafty.c('PlayerHusk', {
       init: function() {
         this.requires('2D, Canvas, SpritePlayerRed, SpriteAnimation');
@@ -161,6 +163,8 @@ define([
         io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
           thisPlayer.attr({'itemLock': false});
         });
+
+        Crafty.audio.play('itemSound');
       },
 
       fixMovement: function(increaseBy) {
