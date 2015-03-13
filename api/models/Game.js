@@ -57,7 +57,6 @@ module.exports = {
       });
     }
 
-    console.log("Num Relics = " + numRelics);
     Game.update(game.id, {relicsRemaining: numRelics}, function(game){});
 
     /* Randomly order the items. */
@@ -124,7 +123,6 @@ module.exports = {
         var loc = RandomService.randomGridLoc(Room.dimensions.gridW,
                                               Room.dimensions.gridH,
                                               excludePts);
-
         itemsToCreate.push({type: item,
                             stat: Game.items[item].stat,
                             amount: Game.items[item].amount,
