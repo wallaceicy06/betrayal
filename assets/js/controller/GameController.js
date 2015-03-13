@@ -219,6 +219,10 @@ define([
         that._view.removeItem(id);
       },
 
+      addItem: function(item) {
+        that._view.placeItems([item]);
+      },
+
       addGame: function(game) {
         that._view.addGameOption(game);
       },

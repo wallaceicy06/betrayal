@@ -1018,6 +1018,7 @@ define([
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
     this.notifyDead = notifyDead.bind(this);
+    this.placeItems = placeItems.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
     this.addGameOption = addGameOption.bind(this);

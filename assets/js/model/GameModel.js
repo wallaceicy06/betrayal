@@ -520,6 +520,8 @@ define([
 
         that._viewAdpt.removeItem(o.data.id);
 
+      } else if (o.verb === 'messaged' && o.data.verb === 'itemCreated') {
+        that._viewAdpt.addItem(o.data.item);
       }
     });
 
