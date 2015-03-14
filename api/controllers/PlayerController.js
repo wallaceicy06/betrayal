@@ -76,8 +76,8 @@ module.exports = {
                          stat: 'keys',
                          amount: 1,
                          room: player.room,
-                         gridX: Math.ceil(player.locX/tileW) + 1,
-                         gridY: Math.ceil(player.locY/tileW) + 1})
+                         gridX: Math.round(player.locX/tileW),
+                         gridY: Math.round(player.locY/tileW)})
               .then(function(item) {
                 Room.message(item.room, {verb: 'itemCreated', item: item});
               })
@@ -87,7 +87,14 @@ module.exports = {
                 return;
               });
           }
-          Game.update(player.game, {keysRemaining: player.keys});
+          Game.findOne(player.game)
+            .then(function(game) {
+              Game.update(game.id, {keysRemaining: game.keysRemaining + player.keys}, function(err, game) {});
+            })
+            .catch(function (err) {
+              console.log(err);
+              res.json(err);
+            });
         }
         Player.destroy(req.param('id'))
           .then(function(player) {
