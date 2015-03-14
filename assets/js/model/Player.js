@@ -98,6 +98,18 @@ define([
       }
     });
 
+    Object.defineProperty(this, 'keys', {
+      get: function() {
+        return this._keys;
+      },
+      set: function(newVal) {
+        if (newVal !== this._keys) {
+          this._keys = newVal;
+          this._gameModelAdpt.onKeysChange(newVal);
+        }
+      }
+    })
+
     Object.defineProperty(this, 'x', {
       value: initPos.x,
       writable: true
@@ -144,5 +156,6 @@ define([
     this._curHealth = 3;
     this._weapon = 1;
     this._relics = 0;
+    this._keys = 0;
   }
 });

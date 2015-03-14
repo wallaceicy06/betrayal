@@ -155,6 +155,11 @@ define([
           return;
         }
 
+        /* Don't allow the traitor to pick up keys */
+        if (that._playerModelAdpt.isTraitor() && item[0].obj.type === 'key') {
+          return;
+        }
+
         this.attr({'itemLock' : true});
         var thisPlayer = this;
 
@@ -499,6 +504,17 @@ define([
           });
       },
 
+      setKeys: function(newKeys) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('div.player-keys img').each(function(index) {
+            if (index < newKeys) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
+      },
+
       setWeapon: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-weapon img').each(function(index) {
@@ -617,6 +633,19 @@ define([
     playerRelics.innerHTML = html;
     player.appendChild(playerRelics);
 
+    var playerKeys = document.createElement('div');
+    playerKeys.className = 'player-keys';
+    html = '';
+    for (var i = 0; i < MAX_STAT; i++) {
+      if (i < playerModelAdpt.getKeys()) {
+        html += STAT_TEMPLATE({imgClass: 'small_key'});
+      } else {
+        html += STAT_TEMPLATE({imgClass: 'small_key invisible'});
+      }
+    }
+    playerKeys.innerHTML = html;
+    player.appendChild(playerKeys);
+
     playerList.appendChild(player);
   }
 
@@ -656,6 +685,16 @@ define([
           });
       },
 
+      onKeysChange: function(newKeys) {
+        $('#' + playerModelAdpt.getID() + '.player-list-item')
+          .find('div.player-keys img').each(function(index) {
+            if (index < newKeys) {
+              $(this).removeClass('invisible');
+            } else {
+              $(this).addClass('invisible');
+            }
+          });
+      },
 
       onWeaponChange: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
@@ -1022,6 +1061,7 @@ define([
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
     this.notifyDead = notifyDead.bind(this);
+    this.placeItems = placeItems.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
     this.addGameOption = addGameOption.bind(this);

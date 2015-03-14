@@ -25,7 +25,9 @@ module.exports = {
     traitor: {model: 'player',
               required: false},
     haunt: {type: 'string',
-            required: false}
+            required: false},
+    keysRemaining: {type: 'integer',
+                    required: false}
   },
 
   generateHouse: function(game, cb) {

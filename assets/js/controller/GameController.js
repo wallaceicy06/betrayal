@@ -54,6 +54,10 @@ define([
             return playerModel.relics;
           },
 
+          getKeys: function() {
+            return playerModel.keys;
+          },
+
           getX: function() {
             return playerModel.x;
           },
@@ -99,6 +103,9 @@ define([
               case "relics":
                 playerModel.relics = playerModel.relics + amount;
                 break;
+              case "keys":
+                playerModel.keys = playerModel.keys + amount;
+                break;
               default:
                 console.log("Unknown stat: " + stat);
                 break;
@@ -116,6 +123,10 @@ define([
 
           onRelicsChange: function(newRelics) {
             playerView.setRelics(newRelics);
+          },
+
+          onKeysChange: function(newKeys) {
+            playerView.setKeys(newKeys);
           },
 
           onWeaponChange: function(newWeapon) {
@@ -162,6 +173,10 @@ define([
 
           getRelics: function() {
             return playerModel.relics;
+          },
+
+          getKeys: function() {
+            return playerModel.keys;
           },
 
           getX: function() {
@@ -217,6 +232,10 @@ define([
 
       removeItem: function(id) {
         that._view.removeItem(id);
+      },
+
+      addItem: function(item) {
+        that._view.placeItems([item]);
       },
 
       addGame: function(game) {

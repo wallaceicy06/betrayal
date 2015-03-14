@@ -22,6 +22,7 @@ module.exports = {
                    speed: 5,
                    weapon: 1,
                    relics: 0,
+                   keys: 0,
                    isTraitor: false})
       .then(function(player) {
         newPlayer = player;
@@ -65,6 +66,44 @@ module.exports = {
       });
   },
 
+  destroy: function(req, res) {
+    Player.findOne(req.param('id'))
+      .then(function(player) {
+        if (player.keys > 0) {
+          for (var i = 0; i < player.keys; i++) {
+            var tileW = Room.dimensions.tileW;
+            Item.create({type: 'key',
+                         stat: 'keys',
+                         amount: 1,
+                         room: player.room,
+                         gridX: Math.round(player.locX/tileW),
+                         gridY: Math.round(player.locY/tileW)})
+              .then(function(item) {
+                Room.message(item.room, {verb: 'itemCreated', item: item});
+              })
+              .catch(function(err) {
+                console.log(err);
+                res.json(err);
+                return;
+              });
+          }
+          Game.findOne(player.game)
+            .then(function(game) {
+              Game.update(game.id, {keysRemaining: game.keysRemaining + player.keys}, function(err, game) {});
+            })
+            .catch(function (err) {
+              console.log(err);
+              res.json(err);
+            });
+        }
+        Player.destroy(req.param('id'))
+          .then(function(player) {
+            Player.publishDestroy(req.param('id'));
+            res.json(player);
+          })
+      })
+  },
+
   changeRoom: function(req, res) {
     var oldRoom;
     var player;
@@ -91,6 +130,25 @@ module.exports = {
         Room.subscribe(req, room.id, ['message']);
 
         Player.publishUpdate(player.id, {room: player.room});
+
+        /* If we entered the entryway, see if the heroes have won */
+        if (room.name === 'entryway' && !player.isTraitor) {
+          Game.findOne(room.game).populate('players')
+            .then(function(game) {
+              if (game.keysRemaining === 0) {
+                var won = true;
+                for (var i = 0; i < game.players.length; i++) {
+                  var p = game.players[i];
+                  if (!p.isTraitor && p.room !== room.id) {
+                    won = false;
+                  }
+                }
+                if (won) {
+                  Game.message(game.id, {verb: 'heroesWon'});
+                }
+              }
+            })
+        }
 
         res.json(room.players);
       })
