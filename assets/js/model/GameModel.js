@@ -178,7 +178,7 @@ define([
                 playerViewAdpt.setLocation(newX, newY);
               }
             },
- 
+
             onTraitorSet: function(newVal) {
               /* Do nothing */
             },
@@ -212,11 +212,12 @@ define([
     });
   };
 
-  function createGame(name) {
+  function createGame(playerName, gameName) {
     var that = this;
 
-    io.socket.post('/game', {name: name}, function(game) {
-      that.fetchGames();
+    io.socket.post('/game', {name: gameName}, function(game, jwres) {
+      that.fetchGames()
+      that.joinGame(playerName, game.id);
     });
   }
 

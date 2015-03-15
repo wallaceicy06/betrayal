@@ -296,8 +296,8 @@ define([
         return that._model.joinGame(name, gameID);
       },
 
-      onCreateGameClick: function(name) {
-        return that._model.createGame(name);
+      onCreateGameClick: function(playerName, gameName) {
+        that._model.createGame(playerName, gameName);
       },
 
       onSendChatMessage: function(message) {
