@@ -585,10 +585,14 @@ define([
 
         if (o.data.traitor.id === that._player.id) {
           that._player.isTraitor = true;
-          that._viewAdpt.displayTextOverlay(o.data.haunt, that._haunts[o.data.haunt].traitorText, 10000);
+          that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
+                                            that._haunts[o.data.haunt].traitorText,
+                                            10000);
         }
         else {
-          that._viewAdpt.displayTextOverlay(o.data.haunt, that._haunts[o.data.haunt].heroText, 10000);
+          that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
+                                            that._haunts[o.data.haunt].heroText,
+                                            10000);
         }
       }
     });
