@@ -7,11 +7,13 @@
 module.exports = {
 
   findOne: function(req, res) {
+    console.log(req.params);
     Game.findOne(req.params.id)
         .populate('rooms')
         .populate('players')
         .populate('startingRoom')
       .then(function(game) {
+        console.log(game);
         game.sprites = sails.config.gameconfig.sprites;
         game.haunts = sails.config.gameconfig.haunts;
         res.json(game);

@@ -32,6 +32,7 @@ module.exports = {
         return Player.find({game: newPlayer.game});
       })
       .then(function(players) {
+        Player.watch(req);
         Player.subscribe(req, players, ['update', 'destroy']);
 
         /* Publish player creation */
