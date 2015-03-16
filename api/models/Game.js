@@ -94,37 +94,13 @@ module.exports = {
         return !(_.isEqual(loc, [x, y]));
       });
 
-      var excludePts = [];
-      var i, j;
-
-      /* Exclude walls. */
-      for (i = 0; i < Room.dimensions.gridW; i++) {
-        for (j = 0; j < Room.dimensions.gridH; j++) {
-          if (i == 0 || i == Room.dimensions.gridW - 1) {
-            excludePts.push([i, j]);
-          } else if (j == 0 || j == Room.dimensions.gridH - 1) {
-            excludePts.push([i, j]);
-          }
-        }
-      }
-
-      /* Exclude objects. */
-      _.each(Room.layouts[roomID].objects, function(o) {
-        var x = o.gridX;
-        var y = o.gridY;
-
-        for (i = o.gridX; i < o.gridX + Game.sprites[o.id].gridW; i++) {
-          for (j = o.gridY; j < o.gridY + Game.sprites[o.id].gridH; j++) {
-            excludePts.push([i, j]);
-          }
-        }
-      });
-
+      var possibleLocs = Room.layouts[roomID].itemLocs.slice(0);
       _.times(2, function(n) {
         var item = itemBank.pop();
-        var loc = RandomService.randomGridLoc(Room.dimensions.gridW,
-                                              Room.dimensions.gridH,
-                                              excludePts);
+
+        var index = Math.floor(Math.random() * possibleLocs.length);
+        var loc = possibleLocs[index];
+        possibleLocs.splice(index, 1);
         itemsToCreate.push({type: item,
                             stat: Game.items[item].stat,
                             amount: Game.items[item].amount,

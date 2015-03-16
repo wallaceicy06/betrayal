@@ -42,38 +42,11 @@ module.exports = {
 
                     /* Create keys for heroes to pick up */
                     for (var x = 0; x < game.players.length - 1; x++) {
-                      var room = game.rooms[Math.floor(Math.random() * game.rooms.length)];
+                      var allRooms = game.rooms.splice(1); //Rooms, excluding entryway
+                      var room = allRooms[Math.floor(Math.random() * allRooms.length)];
 
-                      /* TODO: Move this stuff to a function, like getValidRandomLoc */
-                      var excludePts = [];
-                      var i, j;
-
-                      /* Exclude walls. */
-                      for (i = 0; i < Room.dimensions.gridW; i++) {
-                        for (j = 0; j < Room.dimensions.gridH; j++) {
-                          if (i == 0 || i == Room.dimensions.gridW - 1) {
-                            excludePts.push([i, j]);
-                          } else if (j == 0 || j == Room.dimensions.gridH - 1) {
-                            excludePts.push([i, j]);
-                          }
-                        }
-                      }
-
-                      /* Exclude objects. */
-                      _.each(Room.layouts[room.name].objects, function(o) {
-                        var x = o.gridX;
-                        var y = o.gridY;
-
-                        for (i = o.gridX; i < o.gridX + Game.sprites[o.id].gridW; i++) {
-                          for (j = o.gridY; j < o.gridY + Game.sprites[o.id].gridH; j++) {
-                            excludePts.push([i, j]);
-                          }
-                        }
-                      });
-
-                      var loc = RandomService.randomGridLoc(Room.dimensions.gridW,
-                                                            Room.dimensions.gridH,
-                                                            excludePts);
+                      var possibleLocs = Room.layouts[room.name].itemLocs;
+                      var loc = possibleLocs[Math.floor(Math.random() * possibleLocs.length)];
                       
                       Item.create({type: 'key',
                                    stat: 'keys',

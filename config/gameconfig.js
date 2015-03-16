@@ -122,6 +122,7 @@ module.exports.gameconfig = {
         south: false,
         west: true
       },
+      itemLocs: [],
       objects: [
         {
           id: 'plant',
@@ -154,6 +155,12 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      itemLocs: [
+        {x: 15, y: 13},
+        {x: 10, y: 8},
+        {x: 3, y: 11},
+        {x: 1, y: 14}
+      ],
       objects: [
         {
           id: 'armchair',
@@ -193,6 +200,12 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      itemLocs: [
+        {x: 4, y: 13},
+        {x: 15, y: 2},
+        {x: 5, y: 6},
+        {x: 14, y: 14}
+      ],
       objects: [
         {
           id: 'poolTable',
@@ -218,6 +231,12 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      itemLocs: [
+        {x: 6, y: 6},
+        {x: 14, y: 2},
+        {x: 3, y: 12},
+        {x: 12, y: 12}
+      ],
       objects: [
         {
           id: 'piano',
@@ -250,6 +269,12 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      itemLocs: [
+        {x: 2, y: 14},
+        {x: 4, y: 7},
+        {x: 9, y: 3},
+        {x: 16, y: 10}
+      ],
       objects: [
         {
           id: 'woodTable',
@@ -324,6 +349,12 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      itemLocs: [
+        {x: 3, y: 9},
+        {x: 5, y: 1},
+        {x: 15, y: 5},
+        {x: 12, y: 13}
+      ],
       objects: [
         {
           id: 'diningTable',
@@ -398,6 +429,12 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      itemLocs: [
+        {x: 1, y: 10},
+        {x: 2, y: 3},
+        {x: 10, y: 6},
+        {x: 15, y: 12}
+      ],
       objects: [
         {
           id: 'blueBed',
@@ -521,6 +558,12 @@ module.exports.gameconfig = {
         south: true,
         west: true
       },
+      itemLocs: [
+        {x: 10, y: 10},
+        {x: 15, y: 2},
+        {x: 6, y: 6},
+        {x: 3, y: 11}
+      ],
       objects: [
         {
           id: 'redBed',
@@ -683,7 +726,7 @@ module.exports.gameconfig = {
   },
 
   haunts: {
-    'plant': {  //TODO: Real title and flavor text
+    'plant': {
       title: 'Shapeshifter',
       heroText: 'One of your comrades has turned against you. Collect all '
                 + 'the keys and get to the entryway before it\'s too late! And'
