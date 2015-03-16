@@ -42,18 +42,18 @@ module.exports = {
 
                     /* Create keys for heroes to pick up */
                     for (var x = 0; x < game.players.length - 1; x++) {
-                      var allRooms = game.rooms.splice(1); //Rooms, excluding entryway
-                      var room = allRooms[Math.floor(Math.random() * allRooms.length)];
+                      var allRooms = game.rooms.slice(1); //Rooms, excluding entryway
+                      var chosenRoom = allRooms[Math.floor(Math.random() * allRooms.length)];
 
-                      var possibleLocs = Room.layouts[room.name].itemLocs;
+                      var possibleLocs = Room.layouts[chosenRoom.name].itemLocs;
                       var loc = possibleLocs[Math.floor(Math.random() * possibleLocs.length)];
-                      
+
                       Item.create({type: 'key',
                                    stat: 'keys',
                                    amount: 1,
                                    gridX: loc.x,
                                    gridY: loc.y,
-                                   room: room})
+                                   room: chosenRoom})
                         .then(function(item) {
                           Room.message(item.room, {verb: 'itemCreated', item: item});
                         })

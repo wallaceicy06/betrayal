@@ -429,7 +429,7 @@ define([
     var that = this;
 
     io.socket.on('player', function(o) {
-      if (o.verb === 'created' && o.data.game === that._gameID
+      if (o.verb === 'created' && o.data.game == that._gameID
           && o.id !== that._player.id) {
 
         var player =  new Player(o.id,
