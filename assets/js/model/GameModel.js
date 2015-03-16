@@ -485,6 +485,9 @@ define([
               that._viewAdpt.displayTextOverlay("You Won!", "You have "
                 + "successfully murdered all your friends. Congratulations!",
                 10000);
+              setTimeout(function() {
+                that._viewAdpt.displayGamePane(false);
+                }, 10000);
             }
 
           }
@@ -564,6 +567,9 @@ define([
           else {
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped the house! Congratulations!", 10000);
           }
+          setTimeout(function() {
+              that._viewAdpt.returnToHomepage();
+            }, 10000);
         } else {
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
