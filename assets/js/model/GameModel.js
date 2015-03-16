@@ -201,7 +201,7 @@ define([
           playerViewAdpt.setVisibility(player.room === roomID);
         });
 
-        that._gameID = parseInt(gameID);
+        that._gameID = gameID;
       });
     });
   }
