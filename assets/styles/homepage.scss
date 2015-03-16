@@ -27,6 +27,15 @@ body {
   visibility: hidden;
 }
 
+.player-pane {
+  height: 100%;
+  width: 170px;
+  overflow-y: scroll;
+  display: inline-block;
+  vertical-align: top;
+  background: rgba(255, 255, 255, 0.4);
+}
+
 .center {
   margin-left: auto;
   margin-right: auto;
