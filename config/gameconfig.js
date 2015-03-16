@@ -683,9 +683,11 @@ module.exports.gameconfig = {
   },
 
   haunts: {
-    'The Plant Haunt': {  //TODO: Real title and flavor text
+    'plant': {  //TODO: Real title and flavor text
+      title: 'Shapeshifter',
       heroText: 'One of your comrades has turned against you. Collect all '
-                + 'the keys and get to the entryway before it\'s too late!',
+                + 'the keys and get to the entryway before it\'s too late! And'
+                + ' watch out - the traitor could be anyone. Or anything. . .',
       traitorText: 'You hear a voice speaking to you. It seems to be coming '
                    + 'from inside the walls. It promises you great power '
                    + 'The power to transform into any shape you wish. All '

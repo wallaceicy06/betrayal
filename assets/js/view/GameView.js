@@ -419,6 +419,36 @@ define([
     this._gameModelAdpt.fetchGames();
   }
 
+  function goToBeginningOptions() {
+    displayJoinExisting.call(this, false);
+    displayJoinNew.call(this, false);
+    displayJoinOptions.call(this, true);
+  }
+
+  function displayJoinOptions(display) {
+    if (display === true) {
+      $('#join-options').removeClass('hidden');
+    } else {
+      $('#join-options').addClass('hidden');
+    }
+  }
+
+  function displayJoinExisting(display) {
+    if (display === true) {
+      $('#form-join-existing').removeClass('hidden');
+    } else {
+      $('#form-join-existing').addClass('hidden');
+    }
+  }
+
+  function displayJoinNew(display) {
+    if (display === true) {
+      $('#form-join-new').removeClass('hidden');
+    } else {
+      $('#form-join-new').addClass('hidden');
+    }
+  }
+
   function displayGamePane(display) {
     if (display === true) {
       $('#game-pane').removeClass('hidden');
@@ -426,6 +456,7 @@ define([
       $('#join-pane').addClass('hidden');
       $('#splash-screen').addClass('hidden');
     } else {
+      goToBeginningOptions.call(this);
       $('#game-pane').addClass('hidden');
       $('#header').addClass('hidden');
       $('#join-pane').removeClass('hidden');
@@ -983,40 +1014,55 @@ define([
     }, timeout); /* Display the event text box for 3 seconds. */
   }
 
+  function formToJSON(inputArray) {
+    var formData = {};
+    _.map(inputArray, function(i) {
+      formData[i.name] = i.value;
+    });
+
+    return formData;
+  }
+
   function initGUI() {
     var that = this;
 
-    document.getElementById('btn-join').addEventListener('click', function() {
-      var select = document.getElementById('select-game');
-      var name = document.getElementById('ipt-name');
-
-      if (name.value.length === 0) {
-        alert('Please enter a non-empty name.');
-        return
-      }
-
-      /* Disable join button. */
-      this.disabled = true;
-
-      that._gameModelAdpt.onJoinClick(name.value,
-                                      select[select.selectedIndex].value);
+    document.getElementById('btn-goto-new').addEventListener('click', function() {
+      console.log('new game');
+      displayJoinOptions.call(that, false);
+      displayJoinNew.call(that, true);
     });
 
-    document.getElementById('btn-create-game')
-            .addEventListener('click', function() {
+    document.getElementById('btn-goto-existing').addEventListener('click', function() {
+      console.log('existing game');
+      displayJoinOptions.call(that, false);
+      displayJoinExisting.call(that, true);
+    });
 
-      that._gameModelAdpt.onCreateGameClick(
-        document.getElementById('ipt-game-name').value);
+    $('#form-join-new').submit(function(e) {
+      event.preventDefault();
+
+      var formData = formToJSON($(this).serializeArray());
+
+      that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
+    });
+
+    $('#form-join-existing').submit(function(e) {
+      event.preventDefault();
+
+      var formData = formToJSON($(this).serializeArray());
+
+      that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
+
     });
 
     $('#form-send-message').submit(function(e) {
       event.preventDefault();
 
-      var inputField = document.getElementById('ipt-message');
+      var formData = formToJSON($(this).serializeArray());
+      $(this)[0].reset();
 
-      that._gameModelAdpt.onSendChatMessage(inputField.value);
+      that._gameModelAdpt.onSendChatMessage(formData.message);
 
-      inputField.value = '';
     });
 
     /* Prevent default actions for arrow keys. */

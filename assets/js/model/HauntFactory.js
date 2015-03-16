@@ -11,7 +11,7 @@ define([
     //var hauntAdpt;
 
     switch(hauntName) {
-      case 'The Plant Haunt':
+      case 'plant':
         return {
           spriteList: ['plant', 'chair', 'toilet', 'key'],
           nextSprite: 0,
