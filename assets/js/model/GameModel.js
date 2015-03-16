@@ -193,6 +193,9 @@ define([
                   + "successfully murdered all your friends. Congratulations!",
                   10000);
               }
+              setTimeout(function() {
+                that._viewAdpt.returnToHomepage();
+                }, 10000);
             }
           });
 
