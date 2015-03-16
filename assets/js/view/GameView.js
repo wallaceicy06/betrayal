@@ -1032,13 +1032,11 @@ define([
     var that = this;
 
     document.getElementById('btn-goto-new').addEventListener('click', function() {
-      console.log('new game');
       displayJoinOptions.call(that, false);
       displayJoinNew.call(that, true);
     });
 
     document.getElementById('btn-goto-existing').addEventListener('click', function() {
-      console.log('existing game');
       displayJoinOptions.call(that, false);
       displayJoinExisting.call(that, true);
     });
@@ -1057,7 +1055,6 @@ define([
       var formData = formToJSON($(this).serializeArray());
 
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
-
     });
 
     $('#form-send-message').submit(function(e) {
@@ -1076,6 +1073,10 @@ define([
             e.preventDefault();
         }
     }, false);
+
+    $('button.cancel').each(function(index, value) {
+      value.onclick = goToBeginningOptions.bind(this);
+    });
 
     $('#ipt-message').each(function(index, value) {
       value.onfocus = function() {
