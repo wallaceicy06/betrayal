@@ -42,7 +42,7 @@ define([
         return this._speed;
       },
       set: function(newSpeed) {
-        if (newSpeed !== this._speed) {
+        if (newSpeed !== this._speed && newSpeed <= this._MAX_STAT) {
           var oldSpeed = this._speed;
           this._speed = newSpeed;
           this._gameModelAdpt.onSpeedChange(this._speed, oldSpeed);
@@ -55,7 +55,7 @@ define([
         return this._maxHealth;
       },
       set: function(newVal) {
-        if (newVal !== this._maxHealth) {
+        if (newVal !== this._maxHealth && newVal <= this._MAX_STAT) {
           this._maxHealth = newVal;
           this._gameModelAdpt.onMaxHealthChange(newVal);
         }
@@ -79,7 +79,7 @@ define([
         return this._weapon;
       },
       set: function(newVal) {
-        if (newVal !== this._weapon) {
+        if (newVal !== this._weapon && newVal <= this._MAX_STAT) {
           this._weapon = newVal;
           this._gameModelAdpt.onWeaponChange(newVal);
         }
@@ -157,5 +157,6 @@ define([
     this._weapon = 1;
     this._relics = 0;
     this._keys = 0;
+    this._MAX_STAT = 7; // maximum for each stat (limited by image size in side panel)
   }
 });

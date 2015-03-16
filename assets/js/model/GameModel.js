@@ -580,6 +580,8 @@ define([
          */
         that._combatEnabled = true;
 
+        that._viewAdpt.hideRelicsShowKeys();
+
         var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
           changeSprite: function(spriteName) {
             that._viewAdpt.changePlayerSprite(spriteName);

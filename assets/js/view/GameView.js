@@ -665,7 +665,7 @@ define([
     player.appendChild(playerRelics);
 
     var playerKeys = document.createElement('div');
-    playerKeys.className = 'player-keys';
+    playerKeys.className = 'player-keys hidden';
     html = '';
     for (var i = 0; i < MAX_STAT; i++) {
       if (i < playerModelAdpt.getKeys()) {
@@ -1014,6 +1014,11 @@ define([
     }, timeout); /* Display the event text box for 3 seconds. */
   }
 
+  function hideRelicsShowKeys() {
+    $('.player-relics').addClass('hidden');
+    $('.player-keys').removeClass('hidden');
+  }
+
   function formToJSON(inputArray) {
     var formData = {};
     _.map(inputArray, function(i) {
@@ -1102,6 +1107,7 @@ define([
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.displayTextOverlay = displayTextOverlay.bind(this);
+    this.hideRelicsShowKeys = hideRelicsShowKeys.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
