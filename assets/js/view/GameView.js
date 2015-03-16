@@ -10,6 +10,7 @@ define([
     'red' : 15,
     'blue' : 16,
     'green' : 17,
+    'purple' : 18,
     'plant' : 21,
     'chair' : 22,
     'toilet' : 23,
@@ -32,7 +33,8 @@ define([
                 'SpriteRelic': [4, 14],
                 'SpritePlayerRed': [0, COLOR_TO_ROW['red']],
                 'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],
-                'SpritePlayerGreen': [0, COLOR_TO_ROW['green']]},
+                'SpritePlayerGreen': [0, COLOR_TO_ROW['green']],
+                'SpritePlayerPurple': [0, COLOR_TO_ROW['purple']]},
       }
     }
   }

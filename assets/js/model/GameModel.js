@@ -34,8 +34,10 @@ define([
             color = 'green';
             break;
           case 'green':
-            color = 'blue';
+            color = 'purple';
             break;
+          case 'purple':
+            color = 'blue';
           default:
             color = 'green';
         }
