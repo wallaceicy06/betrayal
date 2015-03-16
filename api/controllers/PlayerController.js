@@ -168,8 +168,11 @@ module.exports = {
         res.json(err);
         return;
       }
-
-      Player.publishUpdate(updatedPlayers[0].id, updateObj);
+      if (updatedPlayers.length > 0) {
+        Player.publishUpdate(updatedPlayers[0].id, updateObj);
+      } else {
+        console.log("Tried to update a player that doesn't exist");
+      }
     });
   },
 

@@ -704,7 +704,7 @@ define([
         appendChatMessage.call(that, playerModelAdpt.getID(), 'has died');
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
-        $('#' + playerModelAdpt.getID() + '.player').remove();
+        $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
       },
 
       onRelicsChange: function(newRelics) {
