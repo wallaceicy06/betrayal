@@ -268,6 +268,10 @@ define([
         }, 3000);
       },
 
+      returnToHomepage: function() {
+        that._view.displayGamePane(false);
+      },
+
       displayTextOverlay: function(title, text, timeout) {
         that._view.displayTextOverlay(title, text, timeout, that._view);
       }
