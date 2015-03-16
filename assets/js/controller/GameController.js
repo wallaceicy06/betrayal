@@ -274,6 +274,10 @@ define([
 
       displayTextOverlay: function(title, text, timeout) {
         that._view.displayTextOverlay(title, text, timeout, that._view);
+      },
+
+      hideRelicsShowKeys: function() {
+        that._view.hideRelicsShowKeys();
       }
     });
 

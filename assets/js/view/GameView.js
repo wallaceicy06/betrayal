@@ -10,6 +10,7 @@ define([
     'red' : 15,
     'blue' : 16,
     'green' : 17,
+    'purple' : 18,
     'plant' : 21,
     'chair' : 22,
     'toilet' : 23,
@@ -32,7 +33,8 @@ define([
                 'SpriteRelic': [4, 14],
                 'SpritePlayerRed': [0, COLOR_TO_ROW['red']],
                 'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],
-                'SpritePlayerGreen': [0, COLOR_TO_ROW['green']]},
+                'SpritePlayerGreen': [0, COLOR_TO_ROW['green']],
+                'SpritePlayerPurple': [0, COLOR_TO_ROW['purple']]},
       }
     }
   }
@@ -665,7 +667,7 @@ define([
     player.appendChild(playerRelics);
 
     var playerKeys = document.createElement('div');
-    playerKeys.className = 'player-keys';
+    playerKeys.className = 'player-keys hidden';
     html = '';
     for (var i = 0; i < MAX_STAT; i++) {
       if (i < playerModelAdpt.getKeys()) {
@@ -1014,6 +1016,11 @@ define([
     }, timeout); /* Display the event text box for 3 seconds. */
   }
 
+  function hideRelicsShowKeys() {
+    $('.player-relics').addClass('hidden');
+    $('.player-keys').removeClass('hidden');
+  }
+
   function formToJSON(inputArray) {
     var formData = {};
     _.map(inputArray, function(i) {
@@ -1027,13 +1034,11 @@ define([
     var that = this;
 
     document.getElementById('btn-goto-new').addEventListener('click', function() {
-      console.log('new game');
       displayJoinOptions.call(that, false);
       displayJoinNew.call(that, true);
     });
 
     document.getElementById('btn-goto-existing').addEventListener('click', function() {
-      console.log('existing game');
       displayJoinOptions.call(that, false);
       displayJoinExisting.call(that, true);
     });
@@ -1052,7 +1057,6 @@ define([
       var formData = formToJSON($(this).serializeArray());
 
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
-
     });
 
     $('#form-send-message').submit(function(e) {
@@ -1071,6 +1075,10 @@ define([
             e.preventDefault();
         }
     }, false);
+
+    $('button.cancel').each(function(index, value) {
+      value.onclick = goToBeginningOptions.bind(this);
+    });
 
     $('#ipt-message').each(function(index, value) {
       value.onfocus = function() {
@@ -1102,6 +1110,7 @@ define([
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.displayTextOverlay = displayTextOverlay.bind(this);
+    this.hideRelicsShowKeys = hideRelicsShowKeys.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);

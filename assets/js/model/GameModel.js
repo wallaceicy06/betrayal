@@ -34,8 +34,10 @@ define([
             color = 'green';
             break;
           case 'green':
-            color = 'blue';
+            color = 'purple';
             break;
+          case 'purple':
+            color = 'blue';
           default:
             color = 'green';
         }
@@ -579,6 +581,8 @@ define([
          * An update on the game indicates that the haunt is starting
          */
         that._combatEnabled = true;
+
+        that._viewAdpt.hideRelicsShowKeys();
 
         var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
           changeSprite: function(spriteName) {
