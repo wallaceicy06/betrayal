@@ -192,10 +192,10 @@ define([
                 that._viewAdpt.displayTextOverlay("You Won!", "You have "
                   + "successfully murdered all your friends. Congratulations!",
                   10000);
-              }
-              setTimeout(function() {
-                that._viewAdpt.returnToHomepage();
+                setTimeout(function() {
+                  that._viewAdpt.returnToHomepage();
                 }, 10000);
+              }
             }
           });
 
@@ -573,7 +573,7 @@ define([
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped the house! Congratulations!", 10000);
           }
           setTimeout(function() {
-              that._viewAdpt.returnToHomepage();
+            that._viewAdpt.returnToHomepage();
             }, 10000);
         } else {
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
