@@ -524,6 +524,7 @@ define([
     this._player.setColor(this._playerModelAdpt.getColor());
 
     addPlayerToList.call(this, playerModelAdpt);
+    $('#' + playerModelAdpt.getID() + '.player-list-item').addClass('my-stats');
 
     return {
       setRelics: function(newRelics) {
