@@ -451,6 +451,12 @@ define([
     }
   }
 
+  function reset() {
+    $('#player-list').empty();
+    $('#message-list').empty();
+    displayGamePane.call(this, false);
+  }
+
   function displayGamePane(display) {
     if (display === true) {
       $('#game-pane').removeClass('hidden');
@@ -959,25 +965,6 @@ define([
     $('#chatroom').find('div.messages').append(messageElement);
   }
 
-  function notifyDead() {
-    this._player.disableControl();
-    var messageBackground = Crafty.e('2D, DOM, Color')
-      .color('white');
-    var messageText = Crafty.e('2D, DOM, Text')
-      .css({'text-align': 'center', 'top': '15px'})
-      .text("You Died - Game Over")
-      .textFont({size: '20px'});
-
-    /* Attach text as child of background so that they will move together. */
-    messageBackground.attach(messageText);
-    messageBackground.attr({x: this._gameModelAdpt.getDimensions().width/2
-                               - 125,
-                            y: this._gameModelAdpt.getDimensions().height/2
-                               - 25,
-                            w: 250,
-                            h: 50});
-  }
-
   /**
    * Display a title and text for the given amount of time as an overlay
    * Disable player movement while text is being displayed
@@ -985,7 +972,10 @@ define([
    * timeout must be in ms
    * gameView is this GameView (in this function, "this" is the window)
    */
-  function displayTextOverlay(title, text, timeout, gameView) {
+  function displayTextOverlay(title, text, timeout, gameView, cb) {
+    /*
+     * TODO why is the view variable necessary?
+     */
     gameView._player.disableControl();
     var overlayBackground = Crafty.e('2D, DOM, Color')
       .color('white');
@@ -1014,7 +1004,8 @@ define([
       overlayText.destroy();
       /* Allow player to move again. */
       gameView._player.enableControl();
-    }, timeout); /* Display the event text box for 3 seconds. */
+      cb();
+    }, timeout); /* Display the event text box for timeout ms. */
   }
 
   function hideRelicsShowKeys() {
@@ -1116,10 +1107,10 @@ define([
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
-    this.notifyDead = notifyDead.bind(this);
     this.placeItems = placeItems.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
+    this.reset = reset.bind(this);
     this.addGameOption = addGameOption.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
     this.setHuskColor = setHuskColor.bind(this);

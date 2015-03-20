@@ -218,6 +218,10 @@ define([
         that._view.loadMap(mapConfig);
       },
 
+      reset: function() {
+        that._view.reset();
+      },
+
       removeAllHusks: function() {
         that._view.removeAllHusks();
       },
@@ -258,22 +262,8 @@ define([
         }
       },
 
-      /*
-       * Notify our player that they have died
-       */
-      notifyDead: function() {
-        that._view.notifyDead();
-        setTimeout(function() {
-          that._view.displayGamePane(false);
-        }, 3000);
-      },
-
-      returnToHomepage: function() {
-        that._view.displayGamePane(false);
-      },
-
-      displayTextOverlay: function(title, text, timeout) {
-        that._view.displayTextOverlay(title, text, timeout, that._view);
+      displayTextOverlay: function(title, text, timeout, cb) {
+        that._view.displayTextOverlay(title, text, timeout, that._view, cb);
       },
 
       hideRelicsShowKeys: function() {
