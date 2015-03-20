@@ -263,7 +263,7 @@ define([
       },
 
       displayTextOverlay: function(title, text, timeout, cb) {
-        that._view.displayTextOverlay(title, text, timeout, that._view, cb);
+        that._view.displayTextOverlay(title, text, timeout, cb);
       },
 
       hideRelicsShowKeys: function() {

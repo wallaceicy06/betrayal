@@ -291,7 +291,7 @@ define([
          * display.
          */
         var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);
-        displayTextOverlay(eventInfo.title, eventInfo.text, 5000, that);
+        displayTextOverlay.call(that, eventInfo.title, eventInfo.text, 5000);
       }
     });
 
@@ -970,13 +970,13 @@ define([
    * Disable player movement while text is being displayed
    * (Used for events, death, etc.)
    * timeout must be in ms
-   * gameView is this GameView (in this function, "this" is the window)
    */
-  function displayTextOverlay(title, text, timeout, gameView, cb) {
+  function displayTextOverlay(title, text, timeout, cb) {
+    var that = this;
     /*
      * TODO why is the view variable necessary?
      */
-    gameView._player.disableControl();
+    this._player.disableControl();
     var overlayBackground = Crafty.e('2D, DOM, Color')
       .color('white');
     var overlayTitle = Crafty.e('2D, DOM, Text')
@@ -993,9 +993,9 @@ define([
       */
     overlayBackground.attach(overlayTitle);
     overlayBackground.attach(overlayText);
-    overlayBackground.attr({x: gameView._gameModelAdpt.getDimensions().width/2
+    overlayBackground.attr({x: this._gameModelAdpt.getDimensions().width/2
                               - 175,
-                          y: gameView._gameModelAdpt.getDimensions().height/2
+                          y: this._gameModelAdpt.getDimensions().height/2
                               - 175, w: 350, h: 350});
 
     setTimeout(function() {
@@ -1003,7 +1003,7 @@ define([
       overlayBackground.destroy();
       overlayText.destroy();
       /* Allow player to move again. */
-      gameView._player.enableControl();
+      that._player.enableControl();
       cb();
     }, timeout); /* Display the event text box for timeout ms. */
   }

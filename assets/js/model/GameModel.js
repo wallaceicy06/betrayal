@@ -572,7 +572,12 @@ define([
         if (o.data.verb === 'heroesWon') {
           var message;
           if (that._player.isTraitor) {
-            that._viewAdpt.displayTextOverlay("Game Over", "You have failed your mission. The heroes have escaped", 10000);
+            that._viewAdpt.displayTextOverlay("Game Over", "You have failed " +
+                                              "your mission. The heroes have " +
+                                              "escaped", 10000, function() {
+              reset.call(that);
+              that._viewAdpt.reset();
+            });
           }
           else {
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped " +
