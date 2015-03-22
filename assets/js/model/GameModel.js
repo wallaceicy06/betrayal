@@ -12,7 +12,6 @@ define([
     height: 512
   }
 
-  var ATTACK_RADIUS = 64;
   var ATTACK_COOLDOWN = 2000;
   var MIN_SEND_WAIT = 20;
 
@@ -373,7 +372,7 @@ define([
     return {title: event.title, text: event.text};
   }
 
-  /* This player deals damage to all other players within a certain radius */
+  /* Checks if this player can attack, and tells server this player is attacking */
   function attack() {
     if (!this._combatEnabled) {
       console.log("Combat not enabled yet!");
@@ -382,48 +381,8 @@ define([
     var curTime = new Date().getTime();
     if (curTime - this._lastAttack > ATTACK_COOLDOWN) {
       this._lastAttack = curTime;
-      for (var id in this._otherPlayers) {
-        var otherPlayer = this._otherPlayers[id];
-        if (otherPlayer.room === this._player.room
-          && otherPlayer.x < this._player.x + ATTACK_RADIUS + 32
-          && otherPlayer.x > this._player.x - ATTACK_RADIUS
-          && otherPlayer.y < this._player.y + ATTACK_RADIUS + 32
-          && otherPlayer.y > this._player.y - ATTACK_RADIUS) {
-          /* Roll dice for combat based on weapon strength - same as board game */
-          var playerDamaged;
-          var damage;
-          var myRoll = 0;
-          for (var i = 0; i < this._player.weapon; i++) {
-            myRoll += Math.floor(Math.random() * 2);
-          }
-          var otherRoll = 0;
-          for (var i = 0; i < otherPlayer.weapon; i++) {
-            otherRoll += Math.floor(Math.random() * 2);
-          }
-          if (myRoll > otherRoll) {
-            playerDamaged = otherPlayer;
-            damage = myRoll - otherRoll;
-          }
-          else if (myRoll < otherRoll) {
-            playerDamaged = this._player;
-            damage = otherRoll - myRoll;
-          }
-
-          if (playerDamaged == undefined) {
-            this.sendEventMessage(this._player.name + " attacked " +
-              otherPlayer.name + "! No one was hurt.");
-          }
-          else {
-            playerDamaged.curHealth -= damage;
-            this.sendEventMessage(this._player.name + " attacked " +
-              otherPlayer.name + "! " + playerDamaged.name + " took " + damage
-              + " damage.");
-            io.socket.put('/player/adjustStat/' + id,
-                          {stat: 'curHealth', newValue: otherPlayer.curHealth},
-                          function (player) {});
-          }
-        }
-      }
+      io.socket.put('/player/attack/' + this._player.id, {},
+                    function(redData, jwr) {});
     }
   }
 

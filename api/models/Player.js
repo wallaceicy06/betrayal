@@ -40,6 +40,8 @@ module.exports = {
             required: true},
     isTraitor: {type: 'boolean',
                 required: true}
-  }
+  },
+
+  ATTACK_RADIUS: 64
 };
 

@@ -177,6 +177,50 @@ module.exports = {
     });
   },
 
+  attack: function(req, res) {
+    Player.findOne(req.params.id)
+      .then(function(player) {
+        Room.findOne(player.room).populate('players')
+          .then(function(room) {
+            for (var i = 0; i < room.players.length; i++) {
+              var otherPlayer = room.players[i];
+              if (otherPlayer.id !== player.id
+                  && otherPlayer.locX < player.locX + Player.ATTACK_RADIUS
+                  && otherPlayer.locX > player.locX - Player.ATTACK_RADIUS
+                  && otherPlayer.locY < player.locY + Player.ATTACK_RADIUS
+                  && otherPlayer.locY > player.locY - Player.ATTACK_RADIUS) {
+                /* Roll dice for combat based on weapon strength */
+                var myRoll = 0;
+                for (var j = 0; j < player.weapon; j++) {
+                  myRoll += Math.floor(Math.random() * 3); //0, 1, or 2
+                }
+                var otherRoll = 0;
+                for (var j = 0; j < otherPlayer.weapon; j++) {
+                  otherRoll += Math.floor(Math.random() * 3);
+                }
+                var damage = myRoll - otherRoll;
+                if (damage <= 0) {
+                  Game.message(player.game, {message: player.name +
+                    " attacked " + otherPlayer.name + "! They were unharmed."});
+                }
+                else {
+                  Game.message(player.game, {message: player.name +
+                    " attacked " + otherPlayer.name + "! " + otherPlayer.name +
+                    " took " + damage + " damage."});
+                  var updateObj = {curHealth: otherPlayer.curHealth - damage};
+                  Player.update(otherPlayer.id, updateObj);
+                  Player.publishUpdate(otherPlayer.id, updateObj);
+                }
+              }
+            }
+          });
+      })
+      .catch(function(err) {
+        console.log(err);
+        res.json(err);
+      });
+  },
+
   subscribe: function(req, res) {
     Player.findOne(req.params.id)
       .then(function(player) {
