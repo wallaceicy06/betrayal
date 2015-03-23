@@ -141,10 +141,6 @@ define([
           that._currentRoom = room;
           that._miniMap = new MapNode(room.id, room.name);
           that._currentMiniRoom = that._miniMap;
-
-          var roomConfig = prepareRoomConfig.call(that, room);
-
-          that._viewAdpt.startGame(roomConfig);
         });
 
         /* Populate other players object when join game */
@@ -218,6 +214,8 @@ define([
           playerViewAdpt.setVisibility(player.room === roomID);
         });
 
+        that._viewAdpt.loadGame();
+
         that._gameID = gameID;
       });
     });
@@ -241,6 +239,16 @@ define([
   }
 
   function start() {
+  }
+
+  function startGame() {
+    var that = this;
+
+    io.socket.put('/game/' + this._gameID, {active: true}, function(res) {
+      var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
+
+      that._viewAdpt.startGame(roomConfig);
+    });
   }
 
   function onDoorVisit(doorID) {
@@ -545,7 +553,7 @@ define([
     io.socket.on('game', function(o) {
       if (o.verb === 'created') {
         that._viewAdpt.addGame(o.data);
-      } else if (o.verb === 'messaged') {
+      } else if (o.id == that._gameID && o.verb === 'messaged') {
         if (o.data.verb === 'heroesWon') {
           var message;
           if (that._player.isTraitor) {
@@ -568,32 +576,39 @@ define([
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
 
-      } else if (o.verb === 'updated') {
-        /*
-         * An update on the game indicates that the haunt is starting
-         */
-        that._combatEnabled = true;
+      } else if (o.id == that._gameID && o.verb === 'updated') {
+        if (o.data.active !== undefined) {
+          var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
-        that._viewAdpt.hideRelicsShowKeys();
+          that._viewAdpt.startGame(roomConfig);
 
-        var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
-          changeSprite: function(spriteName) {
-            that._viewAdpt.changePlayerSprite(spriteName);
-            io.socket.put('/player/' + that._player.id, {color: spriteName},
-              function(err, player) {});
+        } else if (o.data.haunt !== undefined) {
+          /*
+           * An update on the game indicates that the haunt is starting
+           */
+          that._combatEnabled = true;
+
+          that._viewAdpt.hideRelicsShowKeys();
+
+          var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
+            changeSprite: function(spriteName) {
+              that._viewAdpt.changePlayerSprite(spriteName);
+              io.socket.put('/player/' + that._player.id, {color: spriteName},
+                function(err, player) {});
+            }
+          });
+          that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
+
+          if (o.data.traitor.id === that._player.id) {
+            that._player.isTraitor = true;
+            that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
+                                              that._haunts[o.data.haunt].traitorText,
+                                              10000, function() {});
+          } else {
+            that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
+                                              that._haunts[o.data.haunt].heroText,
+                                              10000, function() {});
           }
-        });
-        that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
-
-        if (o.data.traitor.id === that._player.id) {
-          that._player.isTraitor = true;
-          that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
-                                            that._haunts[o.data.haunt].traitorText,
-                                            10000, function() {});
-        } else {
-          that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
-                                            that._haunts[o.data.haunt].heroText,
-                                            10000, function() {});
         }
       } else if (o.verb === 'destroyed') {
           console.log('destroy message');
@@ -657,6 +672,7 @@ define([
     this.attack = attack.bind(this);
     this.useTraitorPower = useTraitorPower.bind(this);
     this.start = start.bind(this);
+    this.startGame = startGame.bind(this);
   }
 });
 

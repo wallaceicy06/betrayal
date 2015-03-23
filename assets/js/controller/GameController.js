@@ -209,9 +209,14 @@ define([
         that._view.installSpriteMap(sprites);
       },
 
-      startGame: function(roomConfig) {
-        that._view.loadRoom(roomConfig);
+      loadGame: function() {
+        that._view.loadPurgatory();
         that._view.displayGamePane(true);
+      },
+
+      startGame: function(roomConfig) {
+        that._view.enableGame(true);
+        that._view.loadRoom(roomConfig);
       },
 
       loadRoom: function(roomConfig) {
@@ -258,12 +263,7 @@ define([
        * Received a chat or event message that needs to be displayed
        */
       messageReceived: function(playerID, message) {
-        if (playerID == undefined) {
-          that._view.appendEvent(message);
-        }
-        else {
-          that._view.appendChatMessage(playerID, message);
-        }
+        that._view.appendChatMessage(playerID, message);
       },
 
       displayTextOverlay: function(title, text, timeout, cb) {
@@ -300,6 +300,10 @@ define([
 
       onCreateGameClick: function(playerName, gameName) {
         that._model.createGame(playerName, gameName);
+      },
+
+      onStartGameClick: function() {
+        that._model.startGame();
       },
 
       onSendChatMessage: function(message) {

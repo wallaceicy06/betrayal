@@ -36,6 +36,10 @@ body {
   background: rgba(255, 255, 255, 0.4);
 }
 
+.game-start button {
+  width: 100%;
+}
+
 .center {
   margin-left: auto;
   margin-right: auto;
@@ -62,7 +66,7 @@ body {
   width: 270px;
 }
 
-.messages {
+.chatroom div {
   margin-bottom: 3px;
 }
 
