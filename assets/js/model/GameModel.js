@@ -75,7 +75,7 @@ define([
             if (newCurHealth < 1) {
               io.socket.delete('/player/' + player.id, {}, function(data) {
                 that._viewAdpt.displayTextOverlay("You died", "Game over", 3000,
-                                                  function() {
+                                                  false, function() {
                   reset.call(that);
                   that._viewAdpt.reset();
                 });
@@ -191,7 +191,7 @@ define([
               if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
                 that._viewAdpt.displayTextOverlay("You Won!", "You have "
                   + "successfully murdered all your friends. Congratulations!",
-                  10000, function() {
+                  10000, false, function() {
 
                   reset.call(that);
                   that._viewAdpt.reset();
@@ -310,7 +310,7 @@ define([
       }
 
       that._viewAdpt.displayTextOverlay(resData.title,
-                                        resData.text, 3000, function() {
+                                        resData.text, 3000, true, function() {
         for (var stat in resData.effect) {
           /* For right now, event effects only alter stats. */
           that._player[stat] = that._player[stat] + resData.effect[stat];
@@ -466,7 +466,7 @@ define([
             if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
               that._viewAdpt.displayTextOverlay("You Won!", "You have "
                 + "successfully murdered all your friends. Congratulations!",
-                10000, function() {
+                10000, false, function() {
                 reset.call(that);
                 that._viewAdpt.reset();
               });
@@ -546,7 +546,7 @@ define([
           if (that._player.isTraitor) {
             that._viewAdpt.displayTextOverlay("Game Over", "You have failed " +
                                               "your mission. The heroes have " +
-                                              "escaped", 10000, function() {
+                                              "escaped", 10000, false, function() {
               reset.call(that);
               that._viewAdpt.reset();
             });
@@ -554,7 +554,7 @@ define([
           else {
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped " +
                                               "the house! Congratulations!",
-                                              10000, function() {
+                                              10000, false, function() {
               reset.call(that);
               that._viewAdpt.reset();
             });
@@ -590,11 +590,11 @@ define([
             that._player.isTraitor = true;
             that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
                                               that._haunts[o.data.haunt].traitorText,
-                                              10000, function() {});
+                                              10000, false, function() {});
           } else {
             that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
                                               that._haunts[o.data.haunt].heroText,
-                                              10000, function() {});
+                                              10000, false, function() {});
           }
         }
       } else if (o.verb === 'destroyed') {

@@ -735,7 +735,7 @@ module.exports.gameconfig = {
                    + 'from inside the walls. It promises you great power '
                    + 'The power to transform into any shape you wish. All '
                    + 'you must do is destroy those fools who came here with '
-                   + 'you. Press \'t\' to alter your appearance. Press space '
+                   + 'you. Press \'e\' to alter your appearance. Press space '
                    + 'to attack.'
     }
   }

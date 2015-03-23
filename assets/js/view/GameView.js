@@ -247,6 +247,48 @@ define([
       },
     });
 
+    Crafty.c('Overlay', {
+      init: function() {
+        this.requires('2D, DOM, Color');
+        this.color('white');
+        this.attr({dismissable: true});
+      },
+
+      dismiss: function() {
+        if (this.dismissable) {
+          this.destroy();
+        }
+
+        that._player.enableControl();
+      },
+
+      preventDismiss: function() {
+        this.attr({dismissable: false});
+        return this;
+      },
+
+      setText: function(title, text) {
+        var overlayTitle = Crafty.e('2D, DOM, Text')
+          .text(title)
+          .textFont({size: '20px'})
+          .css({'text-align': 'center', 'top': '15px'})
+
+        var overlayText = Crafty.e('2D, DOM, Text')
+          .css({'text-align': 'center', 'top': '45px'})
+          .text(text)
+          .textFont({size: '14px'});
+
+        this.attach(overlayTitle);
+        this.attach(overlayText);
+        this.attr({x: that._gameModelAdpt.getDimensions().width/2 - 175,
+                   y: that._gameModelAdpt.getDimensions().height/2 - 175,
+                   w: 350,
+                   h: 350});
+
+        return this;
+      }
+    });
+
     Crafty.init(that._gameModelAdpt.getDimensions().width,
                 that._gameModelAdpt.getDimensions().height,
                 document.getElementById('game-stage'));
@@ -384,7 +426,7 @@ define([
 
       if (!inputInFocus) {
         switch(e.key) {
-          case Crafty.keys.M:
+          case Crafty.keys.Q:
             if (that._mapEnabled) {
               that._gameModelAdpt.onDisableMap();
               that._player.enableControl();
@@ -410,23 +452,25 @@ define([
             }, 10);
             break;
 
-          case Crafty.keys.I:
+          case Crafty.keys.F:
 
             that._player.interact();
             break;
 
-          case Crafty.keys.T:
+          case Crafty.keys.E:
 
             that._gameModelAdpt.useTraitorPower();
             break;
 
           default:
 
+            Crafty('Overlay').dismiss();
             break;
         }
       } else {
         switch(e.key) {
           case Crafty.keys.ESC:
+
 
             /* Focuses the game div. */
             window.location.hash = '#game-stage';
@@ -1020,37 +1064,22 @@ define([
    * (Used for events, death, etc.)
    * timeout must be in ms
    */
-  function displayTextOverlay(title, text, timeout, cb) {
+  function displayTextOverlay(title, text, timeout, dismissable, cb) {
     var that = this;
     /*
      * TODO why is the view variable necessary?
      */
     this._player.disableControl();
-    var overlayBackground = Crafty.e('2D, DOM, Color')
-      .color('white');
-    var overlayTitle = Crafty.e('2D, DOM, Text')
-      .text(title)
-      .textFont({size: '20px'})
-      .css({'text-align': 'center', 'top': '15px'});
-    var overlayText = Crafty.e('2D, DOM, Text')
-      .css({'text-align': 'center', 'top': '45px'})
-      .text(text)
-      .textFont({size: '14px'});
-    /*
-      * Attach eventTitle and eventText as children of event so that they
-      * will move together.
-      */
-    overlayBackground.attach(overlayTitle);
-    overlayBackground.attach(overlayText);
-    overlayBackground.attr({x: this._gameModelAdpt.getDimensions().width/2
-                              - 175,
-                          y: this._gameModelAdpt.getDimensions().height/2
-                              - 175, w: 350, h: 350});
+
+    var overlay = Crafty.e('Overlay').setText(title, text);
+
+    if (!dismissable) {
+      overlay.preventDismiss();
+    }
 
     setTimeout(function() {
       /* Remove the event text box. */
-      overlayBackground.destroy();
-      overlayText.destroy();
+      overlay.destroy();
       /* Allow player to move again. */
       that._player.enableControl();
       cb();
