@@ -35,6 +35,13 @@ define([
                 'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],
                 'SpritePlayerGreen': [0, COLOR_TO_ROW['green']],
                 'SpritePlayerPurple': [0, COLOR_TO_ROW['purple']]},
+      },
+      'images/game/attack_up.png': {
+        'tile': TILE_WIDTH*3,
+        'tileh': TILE_WIDTH*2,
+        'map': {
+          'AttackUp': [0, 25]
+        }
       }
     }
   }
@@ -47,7 +54,7 @@ define([
   };
 
   var MAX_STAT = 7;
-
+  var ATTACK_DUR = 300; // in milliseconds
   var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
 
   function installSpriteMap(sprites) {
@@ -192,6 +199,13 @@ define([
         }
       }
 
+    });
+
+    Crafty.c('Attack', {
+      init: function() {
+        this.requires('2D, Canvas, AttackUp, SpriteAnimation');
+        this.reel('AttackUp', ATTACK_DUR, 0, 0, 5);
+      },
     });
 
     Crafty.c('Item', {
@@ -369,6 +383,12 @@ define([
 
           case Crafty.keys.SPACE:
             that._gameModelAdpt.attack();
+            var attack = Crafty.e('Attack')
+              .attr({x: that._playerModelAdpt.getX() - TILE_WIDTH, y: that._playerModelAdpt.getY() - TILE_WIDTH});
+            attack.animate('AttackUp', 1);
+            setTimeout(function() {
+              attack.destroy();
+            }, ATTACK_DUR);
             break;
 
           case Crafty.keys.C:
