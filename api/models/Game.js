@@ -12,6 +12,9 @@ module.exports = {
   autosubscribe: ['message', 'update', 'destroy'],
 
   attributes: {
+    active: {type: 'boolean',
+             required: true,
+             defaultsTo: false},
   	name: {type: 'string',
   		     required: true},
   	rooms: {collection: 'room',

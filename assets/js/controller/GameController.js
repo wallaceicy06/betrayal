@@ -205,9 +205,14 @@ define([
         that._view.installSpriteMap(sprites);
       },
 
-      startGame: function(roomConfig) {
-        that._view.loadRoom(roomConfig);
+      loadGame: function() {
+        that._view.loadPurgatory();
         that._view.displayGamePane(true);
+      },
+
+      startGame: function(roomConfig) {
+        that._view.enableGame(true);
+        that._view.loadRoom(roomConfig);
       },
 
       loadRoom: function(roomConfig) {
@@ -296,6 +301,10 @@ define([
 
       onCreateGameClick: function(playerName, gameName) {
         that._model.createGame(playerName, gameName);
+      },
+
+      onStartGameClick: function() {
+        that._model.startGame();
       },
 
       onSendChatMessage: function(message) {

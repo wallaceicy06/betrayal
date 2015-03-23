@@ -18,6 +18,10 @@ define([
   };
   var TILE_WIDTH = 32;
   var ASSETS = {
+    "audio": {
+        "powerup": ["sounds/powerup.wav"],
+        "game_start": ["sounds/game_start.mp3"]
+    },
     'sprites': {
       'images/game/sprites.png': {
         'tile': TILE_WIDTH,
@@ -56,8 +60,6 @@ define([
 
   function initCrafty() {
     var that = this;
-
-    Crafty.audio.add('itemSound', 'sounds/powerup.wav');
 
     Crafty.c('PlayerHusk', {
       init: function() {
@@ -171,7 +173,7 @@ define([
           thisPlayer.attr({'itemLock': false});
         });
 
-        Crafty.audio.play('itemSound');
+        Crafty.audio.play('powerup');
       },
 
       fixMovement: function(increaseBy) {
@@ -252,6 +254,33 @@ define([
     Crafty.load(ASSETS, function() {
     });
 
+    Crafty.defineScene('purgatory', function() {
+      Crafty.background('black');
+
+      /* TODO: Hard coded. Will remove later. */
+      var overlayBackground = Crafty.e('2D, DOM, Color')
+        .color('black');
+      var overlayTitle = Crafty.e('2D, DOM, Text')
+        .text("Welcome to purgatory!")
+        .textFont({size: '20px'})
+        .textColor('white')
+        .css({'text-align': 'center', 'top': '15px'});
+      var overlayText = Crafty.e('2D, DOM, Text')
+        .css({'text-align': 'center', 'top': '45px'})
+        .text("Waiting for the creator to start the game...")
+        .textColor('white')
+        .textFont({size: '14px'});
+
+      overlayBackground.attach(overlayTitle);
+      overlayBackground.attach(overlayText);
+      overlayBackground.attr({x: 576/2
+                                - 175,
+                            y: 512/2
+                                - 175, w: 350, h: 350});
+
+
+    });
+
     Crafty.defineScene('room', function(roomConfig) {
       Crafty.background(roomConfig.background);
 
@@ -282,8 +311,6 @@ define([
       }
 
       that._mapEnabled = false;
-
-      that._player.enableControl();
 
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
         /*
@@ -427,6 +454,14 @@ define([
     displayJoinOptions.call(this, true);
   }
 
+  function displayStartGameButton(display) {
+    if (display == true) {
+      $('#game-start').removeClass('hidden');
+    } else {
+      $('#game-start').addClass('hidden');
+    }
+  }
+
   function displayJoinOptions(display) {
     if (display === true) {
       $('#join-options').removeClass('hidden');
@@ -470,6 +505,16 @@ define([
       $('#join-pane').removeClass('hidden');
       $('#splash-screen').removeClass('hidden');
     }
+  }
+
+  function enableGame(enable) {
+    displayStartGameButton.call(this, false);
+    Crafty.audio.play('game_start');
+  }
+
+  function loadPurgatory() {
+    Crafty.enterScene('purgatory');
+
   }
 
   function loadRoom(roomConfig) {
@@ -690,9 +735,11 @@ define([
   }
 
   function makePlayerHusk(id, x, y, color) {
-     var husk = Crafty.e('PlayerHusk').attr({x: x, y: y});
-     husk.setColor(color);
-     this._husks[id] = husk;
+     if (Crafty._current === 'room') {
+       var husk = Crafty.e('PlayerHusk').attr({x: x, y: y});
+       husk.setColor(color);
+       this._husks[id] = husk;
+     }
    }
 
   function addOtherPlayer(playerModelAdpt) {
@@ -1041,6 +1088,8 @@ define([
       var formData = formToJSON($(this).serializeArray());
 
       that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
+
+      displayStartGameButton.call(this, true);
     });
 
     $('#form-join-existing').submit(function(e) {
@@ -1059,6 +1108,10 @@ define([
 
       that._gameModelAdpt.onSendChatMessage(formData.message);
 
+    });
+
+    document.getElementById('btn-game-start').addEventListener('click', function() {
+      that._gameModelAdpt.onStartGameClick();
     });
 
     /* Prevent default actions for arrow keys. */
@@ -1101,9 +1154,11 @@ define([
     this.appendEvent = appendEvent.bind(this);
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
+    this.enableGame = enableGame.bind(this);
     this.displayTextOverlay = displayTextOverlay.bind(this);
     this.hideRelicsShowKeys = hideRelicsShowKeys.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);
+    this.loadPurgatory = loadPurgatory.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
