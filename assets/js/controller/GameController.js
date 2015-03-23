@@ -254,12 +254,7 @@ define([
        * Received a chat or event message that needs to be displayed
        */
       messageReceived: function(playerID, message) {
-        if (playerID == undefined) {
-          that._view.appendEvent(message);
-        }
-        else {
-          that._view.appendChatMessage(playerID, message);
-        }
+        that._view.appendChatMessage(playerID, message);
       },
 
       displayTextOverlay: function(title, text, timeout, cb) {
