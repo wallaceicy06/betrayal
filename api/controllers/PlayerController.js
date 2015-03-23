@@ -15,6 +15,7 @@ module.exports = {
                    room: req.body.room,
                    locX: 64,
                    locY: 64,
+                   direction: 'east',
                    socket: req.socket.id,
                    color: req.body.color,
                    maxHealth: 3,

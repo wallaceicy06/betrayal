@@ -82,6 +82,10 @@ define([
             playerModel.setPosition(x, y);
           },
 
+          setDirection: function(newDir) {
+            playerModel.direction = newDir;
+          },
+
           isTraitor: function() {
             return playerModel.isTraitor;
           },
