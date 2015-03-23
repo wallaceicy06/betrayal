@@ -387,12 +387,6 @@ define([
 
           case Crafty.keys.SPACE:
             that._gameModelAdpt.attack();
-            var attack = Crafty.e('Attack')
-              .attr({x: that._playerModelAdpt.getX() - TILE_WIDTH, y: that._playerModelAdpt.getY() - TILE_WIDTH});
-            attack.animate('AttackUp', 1);
-            setTimeout(function() {
-              attack.destroy();
-            }, ATTACK_DUR);
             break;
 
           case Crafty.keys.C:
@@ -879,6 +873,15 @@ define([
 
   }
 
+  function attackAnimation() {
+    var attack = Crafty.e('Attack')
+      .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH, y: this._playerModelAdpt.getY() - TILE_WIDTH});
+    attack.animate('AttackUp', 1);
+    setTimeout(function() {
+      attack.destroy();
+    }, ATTACK_DUR);
+  }
+
   function removeItem(id) {
     if(id in this._items) {
       this._items[id].destroy();
@@ -1123,6 +1126,7 @@ define([
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
     this.appendEvent = appendEvent.bind(this);
+    this.attackAnimation = attackAnimation.bind(this);
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.displayTextOverlay = displayTextOverlay.bind(this);

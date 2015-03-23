@@ -390,6 +390,7 @@ define([
     var curTime = new Date().getTime();
     if (curTime - this._lastAttack > ATTACK_COOLDOWN) {
       this._lastAttack = curTime;
+      this._viewAdpt.attackAnimation();
       io.socket.put('/player/attack/' + this._player.id, {},
                     function(redData, jwr) {});
     }
