@@ -874,12 +874,16 @@ define([
   }
 
   function attackAnimation() {
+    this._player.disableControl();
+
     var attack = Crafty.e('Attack')
       .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH, y: this._playerModelAdpt.getY() - TILE_WIDTH});
     attack.animate('AttackUp', 1);
+    var that = this;
     setTimeout(function() {
       attack.destroy();
-    }, ATTACK_DUR);
+      that._player.enableControl();
+    }, ATTACK_DUR); 
   }
 
   function removeItem(id) {
