@@ -183,13 +183,14 @@ module.exports = {
       .then(function(player) {
         Room.findOne(player.room).populate('players')
           .then(function(room) {
+            var attackRegion = Player.getAttackRegion(player.direction, player.locX, player.locY);
             for (var i = 0; i < room.players.length; i++) {
               var otherPlayer = room.players[i];
               if (otherPlayer.id !== player.id
-                  && otherPlayer.locX < player.locX + Player.ATTACK_RADIUS
-                  && otherPlayer.locX > player.locX - Player.ATTACK_RADIUS
-                  && otherPlayer.locY < player.locY + Player.ATTACK_RADIUS
-                  && otherPlayer.locY > player.locY - Player.ATTACK_RADIUS) {
+                  && otherPlayer.locX < attackRegion.maxX
+                  && otherPlayer.locX > attackRegion.minX
+                  && otherPlayer.locY < attackRegion.maxY
+                  && otherPlayer.locY > attackRegion.minY) {
                 /* Roll dice for combat based on weapon strength */
                 var myRoll = 0;
                 for (var j = 0; j < player.weapon; j++) {
