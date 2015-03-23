@@ -986,8 +986,9 @@ define([
 
   function appendChatMessage(playerID, message) {
     var sender;
-
-    if (playerID === this._playerModelAdpt.getID()) {
+    if (playerID == undefined) {
+      sender = null;
+    } else if (playerID === this._playerModelAdpt.getID()) {
       sender = this._playerModelAdpt;
     } else {
       for (var id in this._otherPlayerModelAdpts) {
@@ -999,17 +1000,18 @@ define([
     }
 
     var messageElement = document.createElement('p');
-    messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
-    messageElement.appendChild(
+    if (sender !== null) {
+      messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
+      messageElement.appendChild(
         document.createTextNode(sender.getName() + ': ' + message));
+    } else {
+      messageElement.appendChild(document.createTextNode(message));
+    }
 
     $('#chatroom').find('div.messages').append(messageElement);
-  }
-
-  function appendEvent(message) {
-    var messageElement = document.createElement('p');
-    messageElement.appendChild(document.createTextNode(message));
-    $('#chatroom').find('div.messages').append(messageElement);
+    // Auto scroll to bottom
+    var messages = document.getElementById("message-list");
+    messages.scrollTop = messages.scrollHeight;
   }
 
   /**
@@ -1151,7 +1153,6 @@ define([
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
-    this.appendEvent = appendEvent.bind(this);
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.enableGame = enableGame.bind(this);
