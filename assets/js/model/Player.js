@@ -120,6 +120,18 @@ define([
       writable: true
     });
 
+    Object.defineProperty(this, 'direction', {
+      get: function() {
+        return this._direction;
+      },
+      set: function(newDirection) {
+        if (newDirection !== this._direction) {
+          this._direction = newDirection;
+          this._gameModelAdpt.onDirectionChange(newDirection);
+        }
+      }
+    });
+
     Object.defineProperty(this, 'room', {
       get: function(room) {
         return this._room;
