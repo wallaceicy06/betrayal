@@ -957,6 +957,9 @@ define([
         document.createTextNode(sender.getName() + ': ' + message));
 
     $('#chatroom').find('div.messages').append(messageElement);
+    // Auto scroll to bottom
+    var messages = document.getElementById("message-list");
+    messages.scrollTop = messages.scrollHeight;
   }
 
   function appendEvent(message) {
