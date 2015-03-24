@@ -462,9 +462,19 @@ define([
             that._gameModelAdpt.useTraitorPower();
             break;
 
-          default:
+          // case Crafty.keys.W:
+          // case Crafty.keys.A:
+          // case Crafty.keys.S:
+          // case Crafty.keys.D:
+          // case Crafty.keys.LEFT_ARROW:
+          // case Crafty.keys.RIGHT_ARROW:
+          // case Crafty.keys.UP_ARROW:
+          // case Crafty.keys.DOWN_ARROW:
+          // case Crafty.keys.ESC:
+            // Crafty('Overlay').dismiss();
+            // break;
 
-            Crafty('Overlay').dismiss();
+          default:
             break;
         }
       } else {
@@ -1070,6 +1080,7 @@ define([
      * TODO why is the view variable necessary?
      */
     this._player.disableControl();
+    console.log('disabling player control');
 
     var overlay = Crafty.e('Overlay').setText(title, text);
 

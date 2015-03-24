@@ -216,7 +216,15 @@ define([
     var that = this;
 
     io.socket.get('/game', function(games) {
-      that._viewAdpt.setGames(games);
+      var validGames = [];
+
+      _.each(games, function(g) {
+        if (!g.active) {
+          validGames.push(g);
+        }
+      });
+
+      that._viewAdpt.setGames(validGames);
     });
   };
 
@@ -563,7 +571,13 @@ define([
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
 
-      } else if (o.id == that._gameID && o.verb === 'updated') {
+      } else if (o.verb === 'updated') {
+        fetchGames();
+
+        if (o.id != that._gameID) {
+          return;
+        }
+
         if (o.data.active !== undefined) {
           var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
