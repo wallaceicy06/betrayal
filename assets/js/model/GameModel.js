@@ -572,7 +572,7 @@ define([
         }
 
       } else if (o.verb === 'updated') {
-        fetchGames();
+        fetchGames.call(that);
 
         if (o.id != that._gameID) {
           return;
@@ -615,7 +615,7 @@ define([
           console.log('destroy message');
           console.log(o);
 
-          that.fetchGames();
+          fetchGames.call(that);
 
           if (o.id == that._gameID) {
             reset.call(that);
