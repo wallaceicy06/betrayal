@@ -234,16 +234,15 @@ module.exports.gameconfig = {
       itemLocs: [
         {x: 6, y: 6},
         {x: 14, y: 2},
-        {x: 3, y: 12},
         {x: 12, y: 12}
       ],
       objects: [
         {
           id: 'piano',
           solid: true,
-          rotation: 0,
-          gridX: 3,
-          gridY: 10
+          rotation: 180,
+          gridX: 7,
+          gridY: 15
         },
         {
           id: 'loveseat',
@@ -253,11 +252,56 @@ module.exports.gameconfig = {
           gridY: 4
         },
         {
-          id: 'plant',
+          id: 'endTable',
           solid: true,
           rotation: 0,
           gridX: 14,
           gridY: 4
+        },
+      ]
+    },
+    'office': {
+      floor: '#EBACA4',
+      gateways: {
+        north: false,
+        east: true,
+        south: true,
+        west: true
+      },
+      itemLocs: [
+        {x: 2, y: 6},
+        {x: 14, y: 2},
+        {x: 3, y: 12},
+        {x: 12, y: 12}
+      ],
+      objects: [
+        {
+          id: 'woodTable',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 6
+        },
+        {
+          id: 'armchair',
+          solid: true,
+          rotation: 0,
+          gridX: 8,
+          gridY: 4
+        },
+        {
+          id: 'bookshelf',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 1
+        },
+        {
+          id: 'bookshelf',
+          solid: true,
+          rotation: 0,
+          gridX: 11,
+          gridY: 1
         },
       ]
     },

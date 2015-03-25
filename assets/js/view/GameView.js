@@ -99,12 +99,16 @@ define([
         this.bind('NewDirection', function(data) {
           if (data.x > 0) {
             this.animate('PlayerMovingRight', -1);
+            that._playerModelAdpt.setDirection('east');
           } else if (data.x < 0) {
             this.animate('PlayerMovingLeft', -1);
+            that._playerModelAdpt.setDirection('west');
           } else if (data.y > 0) {
             this.animate('PlayerMovingDown', -1);
+            that._playerModelAdpt.setDirection('south');
           } else if (data.y < 0) {
             this.animate('PlayerMovingUp', -1);
+            that._playerModelAdpt.setDirection('north');
           } else {
             this.pauseAnimation();
           }

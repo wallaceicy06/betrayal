@@ -129,6 +129,11 @@ define([
                             function (player) {});
               that._lastSend = curTime;
             }
+          },
+
+          onDirectionChange: function(newDirection) {
+            io.socket.put('/player/adjustStat/' + player.id,
+              {stat: 'direction', newValue: newDirection}, function(player) {});
           }
         });
 
@@ -179,6 +184,10 @@ define([
               if (player.room === that._currentRoom.id) {
                 playerViewAdpt.setLocation(newX, newY);
               }
+            },
+
+            onDirectionChange: function(newDirection) {
+              /* Do nothing */
             },
 
             onTraitorSet: function(newVal) {
@@ -465,6 +474,10 @@ define([
             if (player.room === that._currentRoom.id) {
               playerViewAdpt.setLocation(newX, newY);
             }
+          },
+
+          onDirectionChange: function(newDirection) {
+            /* Do nothing */
           },
 
           onTraitorSet: function(newVal) {
