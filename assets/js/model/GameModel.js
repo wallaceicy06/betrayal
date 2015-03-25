@@ -193,6 +193,7 @@ define([
                   + "successfully murdered all your friends. Congratulations!",
                   10000, false, function() {
 
+                  destroyGame.call(that);
                   reset.call(that);
                   that._viewAdpt.reset();
                 });
