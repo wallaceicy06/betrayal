@@ -309,6 +309,8 @@ define([
   function onFurnitureInteract(furnitureID) {
     var that = this;
 
+    console.log('attempting to interact with ' + furnitureID);
+
     io.socket.post('/room/interact/' + this._currentRoom.id,
                    {furniture: furnitureID}, function(resData) {
 
@@ -551,23 +553,26 @@ define([
       } else if (o.id == that._gameID && o.verb === 'messaged') {
         if (o.data.verb === 'heroesWon') {
           var message;
+
           if (that._player.isTraitor) {
             that._viewAdpt.displayTextOverlay("Game Over", "You have failed " +
                                               "your mission. The heroes have " +
                                               "escaped", 10000, false, function() {
+              destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
-          }
-          else {
+          } else {
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped " +
                                               "the house! Congratulations!",
                                               10000, false, function() {
+              destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
           }
-        } else {
+        } else if (o.data.verb === 'chat') {
+          console.log(o.data.verb);
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
 
@@ -622,6 +627,11 @@ define([
             that._viewAdpt.reset();
           }
       }
+    });
+  }
+
+  function destroyGame() {
+    io.socket.post('/game/destroy/' + this._gameID, {}, function(res) {
     });
   }
 
