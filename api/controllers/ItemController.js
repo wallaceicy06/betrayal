@@ -41,7 +41,7 @@ module.exports = {
                     Game.publishUpdate(game.id, {traitor: traitor, haunt: haunt});
 
                     /* Create keys for heroes to pick up */
-                    for (var x = 0; x < game.players.length - 1; x++) {
+                    for (var x = 0; x < (game.players.length - 1)*2; x++) {
                       var allRooms = game.rooms.slice(1); //Rooms, excluding entryway
                       var chosenRoom = allRooms[Math.floor(Math.random() * allRooms.length)];
 
@@ -62,7 +62,7 @@ module.exports = {
                           res.json(err);
                         });
                     }
-                    Game.update(game.id, {keysRemaining: game.players.length-1}, function(err, game) {});
+                    Game.update(game.id, {keysRemaining: (game.players.length-1)*2}, function(err, game) {});
                   });
                 }
                 Game.update(game.id, {relicsRemaining: (game.relicsRemaining - 1)}, function(err, game) {});

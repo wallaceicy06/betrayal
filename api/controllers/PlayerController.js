@@ -71,7 +71,7 @@ module.exports = {
   destroy: function(req, res) {
     Player.findOne(req.param('id'))
       .then(function(player) {
-        if (player.keys > 0) {
+        /*if (player.keys > 0) {
           for (var i = 0; i < player.keys; i++) {
             var tileW = Room.dimensions.tileW;
             Item.create({type: 'key',
@@ -103,7 +103,14 @@ module.exports = {
             Player.publishDestroy(req.param('id'));
             res.json(player);
           })
-      })
+      })*/
+      if (!player.isTraitor) {
+        Game.message(player.game, {verb: 'traitorWon'});
+      } else {
+        Game.message(player.game, {verb: 'heroesWon'});
+      }
+
+    });
   },
 
   changeRoom: function(req, res) {
@@ -191,16 +198,23 @@ module.exports = {
                   && otherPlayer.locX > attackRegion.minX
                   && otherPlayer.locY < attackRegion.maxY
                   && otherPlayer.locY > attackRegion.minY) {
-                /* Roll dice for combat based on weapon strength */
-                var myRoll = 0;
-                for (var j = 0; j < player.weapon; j++) {
-                  myRoll += Math.floor(Math.random() * 3); //0, 1, or 2
+                var damage;
+                if (!player.isTraitor) {
+                  /* Roll dice for combat based on weapon strength */
+                  var myRoll = 0;
+                  for (var j = 0; j < player.weapon; j++) {
+                    myRoll += Math.floor(Math.random() * 3); //0, 1, or 2
+                  }
+                  var otherRoll = 0;
+                  for (var j = 0; j < otherPlayer.weapon; j++) {
+                    otherRoll += Math.floor(Math.random() * 3);
+                  }
+                  damage = myRoll - otherRoll;
+                } else {
+                  /* One-hit kills for traitor */
+                  damage = 7;
                 }
-                var otherRoll = 0;
-                for (var j = 0; j < otherPlayer.weapon; j++) {
-                  otherRoll += Math.floor(Math.random() * 3);
-                }
-                var damage = myRoll - otherRoll;
+
                 if (damage <= 0) {
                   Game.message(player.game, {message: player.name +
                     " attacked " + otherPlayer.name + "! They were unharmed."});

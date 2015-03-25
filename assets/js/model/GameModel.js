@@ -572,6 +572,23 @@ define([
               that._viewAdpt.reset();
             });
           }
+        } else if (o.data.verb === 'traitorWon') {
+          if (that._player.isTraitor) {
+            that._viewAdpt.displayTextOverlay("You Won!", "You have successfully " +
+                                              "kept the heroes from escaping. " +
+                                              "Congratulations!", 10000, function() {
+              reset.call(that);
+              that._viewAdpt.reset();
+            });
+          }
+          else {
+            that._viewAdpt.displayTextOverlay("Game Over!", "You and your " +
+                                              "friends have failed to all " +
+                                              "escape the house.", 10000, function() {
+              reset.call(that);
+              that._viewAdpt.reset();
+            });
+          }
         } else {
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
