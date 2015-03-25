@@ -126,10 +126,7 @@ define([
         var player = this; /* the player */
 
         Crafty('Furniture').each(function(f) {
-          // console.log('i am at ' + that.x + ', ' + that.y);
-          // console.log(this.interactRect());
-          if (player.within(this.interactRect())) {
-            console.log('interacting with a piece' + this.furnitureID);
+          if (player.intersect(this.interactRect())) {
             that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
           }
         });
@@ -220,11 +217,13 @@ define([
       },
 
       interactRect: function() {
+        var mbr = this.mbr();
+
         return {
-          _x: this.x - TILE_WIDTH,
-          _y: this.y - TILE_WIDTH,
-          _w: this.w + 2 * TILE_WIDTH,
-          _h: this.h + 2 * TILE_WIDTH
+          x: mbr._x - 1 * TILE_WIDTH,
+          y: mbr._y - 1 * TILE_WIDTH,
+          w: mbr._w + 2 * TILE_WIDTH,
+          h: mbr._h + 2 * TILE_WIDTH
         };
       }
     });
@@ -436,7 +435,9 @@ define([
             }
             break;
 
+          case Crafty.keys.ESC:
           case Crafty.keys.SPACE:
+            Crafty('Overlay').dismiss();
             that._gameModelAdpt.attack();
             break;
 
@@ -453,7 +454,6 @@ define([
             break;
 
           case Crafty.keys.F:
-
             that._player.interact();
             break;
 
@@ -461,18 +461,6 @@ define([
 
             that._gameModelAdpt.useTraitorPower();
             break;
-
-          // case Crafty.keys.W:
-          // case Crafty.keys.A:
-          // case Crafty.keys.S:
-          // case Crafty.keys.D:
-          // case Crafty.keys.LEFT_ARROW:
-          // case Crafty.keys.RIGHT_ARROW:
-          // case Crafty.keys.UP_ARROW:
-          // case Crafty.keys.DOWN_ARROW:
-          // case Crafty.keys.ESC:
-            // Crafty('Overlay').dismiss();
-            // break;
 
           default:
             break;
