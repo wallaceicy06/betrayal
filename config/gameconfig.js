@@ -735,36 +735,41 @@ module.exports.gameconfig = {
   cards: {
     spiders: {
       title: 'Spiders',
-      text: 'You feel something crawling on your arm. You brush the spider '
-            + 'away. Suddenly spiders are pouring out of the walls surrounding '
-            + 'you. As you start to scream, they vanish. Lose one health.',
+      flavorText: 'You feel something crawling on your arm. You brush the '
+                  + 'spider away. Suddenly spiders are pouring out of the '
+                  + 'walls surrounding you. As you start to scream, they '
+                  + 'vanish.',
+      text: 'Lose one health.',
       effect: {curHealth: -1}
     },
     smoke: {
       title: 'Smoke',
-      text: 'A strange smoke fills the room. You can feel it weakening you ' +
-            'with each breath. Lose one speed.',
+      flavorText: 'A strange smoke fills the room. You can feel it weakening '
+                  + 'you with each breath.',
+      text: 'Lose one speed.',
       effect: {speed: -1}
     },
     puppet: {
       title: 'Creepy Puppet',
-      text: 'There is a strange doll sitting on a shelf nearby. It jumps ' +
-            'out and attacks you. Lose one health.',
+      flavorText: 'You see a strange doll. Suddenly, it jumps out and attacks '
+                  + 'you.',
+      text: 'Lose one health.',
       effect: {curHealth: -1}
     },
     mirrorPast: {
       title: 'Image in the Mirror',
-      text: 'Your reflection in the mirror moves on its own. You realize '
-            + 'it is you from another time. It scratches into the mirror '
-            + '"This will help" and hands you an item. Gain one weapon '
-            + 'strength!',
+      flavorText: 'Your reflection in the mirror moves on its own. You '
+                  + 'realize it is you from another time. It scratches into '
+                  + 'the mirror "This will help" and hands you an item.',
+      text: 'Gain one weapon strength!',
       effect: {weapon: 1}
     },
     mirrorFuture: {
       title: 'Image in the Mirror',
-      text: 'Your reflection in the mirror moves on its own. You realize it '
-             + 'is you from another time. You scratch into the mirror "This '
-             + 'will help" and hand it an item. Lose one weapon strength.',
+      flavorText: 'Your reflection in the mirror moves on its own. You '
+                  + 'realize it is you from another time. You scratch into '
+                  + 'the mirror "This will help" and hand it an item.',
+      text: 'Lose one weapon strength.',
       effect: {weapon: -1}
     }
   },
@@ -772,15 +777,16 @@ module.exports.gameconfig = {
   haunts: {
     'plant': {
       title: 'Shapeshifter',
-      heroText: 'One of your comrades has turned against you. Collect all '
-                + 'the keys and get to the entryway before it\'s too late! And'
-                + ' watch out - the traitor could be anyone. Or anything. . .',
-      traitorText: 'You hear a voice speaking to you. It seems to be coming '
+      heroFlavor: 'One of your comrades has turned against you.',
+      heroText: 'Collect all the keys and get to the entryway before it\'s '
+                + 'too late!',
+      traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
                    + 'from inside the walls. It promises you great power '
                    + 'The power to transform into any shape you wish. All '
                    + 'you must do is destroy those fools who came here with '
-                   + 'you. Press \'t\' to alter your appearance. Press space '
-                   + 'to attack.'
+                   + 'you.',
+      traitorText: 'Press \'t\' to alter your appearance. Press space '
+                   + 'to attack. Kill one of the heroes to win.'
     }
   }
 }

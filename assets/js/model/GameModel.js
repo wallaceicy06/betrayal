@@ -318,7 +318,7 @@ define([
         return;
       }
 
-      that._viewAdpt.displayTextOverlay(resData.title,
+      that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
                                         resData.text, 3000, function() {
         for (var stat in resData.effect) {
           /* For right now, event effects only alter stats. */
@@ -386,7 +386,7 @@ define([
       /* For right now, event effects only alter stats. */
       this._player[stat] = this._player[stat] + event.effect[stat];
     }
-    return {title: event.title, text: event.text};
+    return {title: event.title, flavorText: event.flavorText, text: event.text};
   }
 
   /* Checks if this player can attack, and tells server this player is attacking */
@@ -601,11 +601,13 @@ define([
 
           if (o.data.traitor.id === that._player.id) {
             that._player.isTraitor = true;
-            that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
+            that._viewAdpt.displayTextOverlay('Traitor',
+                                              that._haunts[o.data.haunt].traitorFlavor,
                                               that._haunts[o.data.haunt].traitorText,
                                               10000, function() {});
           } else {
-            that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
+            that._viewAdpt.displayTextOverlay('Hero',
+                                              that._haunts[o.data.haunt].heroFlavor,
                                               that._haunts[o.data.haunt].heroText,
                                               10000, function() {});
           }

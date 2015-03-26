@@ -322,7 +322,7 @@ define([
          * display.
          */
         var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);
-        displayTextOverlay.call(that, eventInfo.title, eventInfo.text, 5000);
+        displayTextOverlay.call(that, eventInfo.title, eventInfo.flavorText, eventInfo.text, 5000);
       }
     });
 
@@ -1024,22 +1024,18 @@ define([
    * (Used for events, death, etc.)
    * timeout must be in ms
    */
-  function displayTextOverlay(title, text, timeout, cb) {
+  function displayTextOverlay(title, flavorText, text, timeout, cb) {
     var that = this;
-    /*
-     * TODO why is the view variable necessary?
-     */
     this._player.disableControl();
     var overlayBackground = Crafty.e('2D, DOM, Color')
       .color('white');
-    var overlayTitle = Crafty.e('2D, DOM, Text')
-      .text(title)
-      .textFont({size: '20px'})
-      .css({'text-align': 'center', 'top': '15px'});
-    var overlayText = Crafty.e('2D, DOM, Text')
-      .css({'text-align': 'center', 'top': '45px'})
-      .text(text)
-      .textFont({size: '14px'});
+
+    var overlayTitle = Crafty.e('HTML')
+      .replace('<p>' + title + '</p>')
+      .css({'font-size': '20px', 'text-align': 'center', 'top': '15px'});
+    var overlayText = Crafty.e('HTML')
+      .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
+      .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
     /*
       * Attach eventTitle and eventText as children of event so that they
       * will move together.
