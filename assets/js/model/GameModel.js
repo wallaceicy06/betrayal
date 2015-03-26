@@ -322,7 +322,7 @@ define([
     console.log('attempting to interact with ' + furnitureID);
 
     io.socket.post('/room/interact/' + this._currentRoom.id,
-                   {furniture: furnitureID}, function(resData) {
+                   {furnitureID: furnitureID}, function(resData) {
 
       /* Don't do anything if there was no interaction. */
       if (_.isEmpty(resData)) {

@@ -142,10 +142,13 @@ module.exports = {
 
         var thisRoom = Room.layouts[thisRoomID];
 
-        _.each(thisRoom.objects, function(o) {
-          if (_.has(Room.interactable, o.id)) {
+        _.each(_.keys(thisRoom.objects), function(k) {
+          var id = k;
+          var o = thisRoom.objects[k];
+
+          if (_.has(Room.interactable, o.type)) {
             interactableObjects.push({room: thisRoomID,
-                                      container: o.id});
+                                      container: id});
           }
         });
 
