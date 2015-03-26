@@ -300,27 +300,9 @@ define([
     Crafty.defineScene('purgatory', function() {
       Crafty.background('black');
 
-      /* TODO: Hard coded. Will remove later. */
-      var overlayBackground = Crafty.e('2D, DOM, Color')
-        .color('black');
-      var overlayTitle = Crafty.e('2D, DOM, Text')
-        .text("Welcome to purgatory!")
-        .textFont({size: '20px'})
-        .textColor('white')
-        .css({'text-align': 'center', 'top': '15px'});
-      var overlayText = Crafty.e('2D, DOM, Text')
-        .css({'text-align': 'center', 'top': '45px'})
-        .text("Waiting for the creator to start the game...")
-        .textColor('white')
-        .textFont({size: '14px'});
-
-      overlayBackground.attach(overlayTitle);
-      overlayBackground.attach(overlayText);
-      overlayBackground.attr({x: 576/2
-                                - 175,
-                            y: 512/2
-                                - 175, w: 350, h: 350});
-
+      var waitImage = Crafty.e('2D, DOM, Image')
+        .image("images/game/wait_screen.png")
+        .attr({x: 576/2 - 200, y: 512/2 - 200, w: 400, h: 400});
 
     });
 
