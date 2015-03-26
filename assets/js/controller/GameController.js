@@ -266,8 +266,8 @@ define([
         that._view.appendChatMessage(playerID, message);
       },
 
-      displayTextOverlay: function(title, flavorText, text, timeout, cb) {
-        that._view.displayTextOverlay(title, flavorText, text, timeout, cb);
+      displayTextOverlay: function(title, flavorText, text, timeout, dismissable, cb) {
+        that._view.displayTextOverlay(title, flavorText, text, timeout, dismissable, cb);
       },
 
       hideRelicsShowKeys: function() {

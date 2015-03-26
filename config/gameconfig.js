@@ -785,7 +785,7 @@ module.exports.gameconfig = {
                    + 'The power to transform into any shape you wish. All '
                    + 'you must do is destroy those fools who came here with '
                    + 'you.',
-      traitorText: 'Press \'t\' to alter your appearance. Press space '
+      traitorText: 'Press \'e\' to alter your appearance. Press space '
                    + 'to attack. Kill one of the heroes to win.'
     }
   }
