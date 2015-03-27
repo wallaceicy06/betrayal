@@ -263,10 +263,13 @@ define([
         }
 
         that._player.enableControl();
+
+        return this;
       },
 
-      preventDismiss: function() {
-        this.attr({dismissable: false});
+      setDismiss: function(canDismiss, cb) {
+        this.attr({dismissable: canDismiss});
+        this.bind('Remove', cb);
         return this;
       },
 
@@ -420,8 +423,10 @@ define([
             break;
 
           case Crafty.keys.ESC:
-          case Crafty.keys.SPACE:
             Crafty('Overlay').dismiss();
+            break;
+
+          case Crafty.keys.SPACE:
             that._gameModelAdpt.attack();
             break;
 
@@ -569,27 +574,31 @@ define([
   }
 
   function placeFurniture(furniture) {
-    for (var i = 0; i < furniture.length; i++) {
+    var that = this;
+
+    _.each(_.keys(furniture), function(k) {
+      var furnConfig = furniture[k];
+
       var newFurniture;
-      if (furniture[i].solid) {
+      if (furnConfig.solid) {
         newFurniture = Crafty.e('SolidFurniture');
       } else {
         newFurniture = Crafty.e('Furniture');
       }
 
-      newFurniture.attr({x: furniture[i].gridX * TILE_WIDTH,
-                         y: furniture[i].gridY * TILE_WIDTH,
-                         w: this._spriteMap[furniture[i].id].gridW
+      newFurniture.attr({x: furnConfig.gridX * TILE_WIDTH,
+                         y: furnConfig.gridY * TILE_WIDTH,
+                         w: that._spriteMap[furnConfig.type].gridW
                             * TILE_WIDTH,
-                         h: this._spriteMap[furniture[i].id].gridH
+                         h: that._spriteMap[furnConfig.type].gridH
                             * TILE_WIDTH,
-                         furnitureID: furniture[i].id})
-                  .sprite(this._spriteMap[furniture[i].id].gridX,
-                          this._spriteMap[furniture[i].id].gridY,
-                          this._spriteMap[furniture[i].id].gridW,
-                          this._spriteMap[furniture[i].id].gridH)
-      newFurniture.rotation = furniture[i].rotation;
-    }
+                         furnitureID: k})
+                  .sprite(that._spriteMap[furnConfig.type].gridX,
+                          that._spriteMap[furnConfig.type].gridY,
+                          that._spriteMap[furnConfig.type].gridW,
+                          that._spriteMap[furnConfig.type].gridH)
+      newFurniture.rotation = furnConfig.rotation;
+    });
   }
 
   function makePlayerView(playerModelAdpt) {
@@ -1048,21 +1057,22 @@ define([
    */
   function displayTextOverlay(title, flavorText, text, timeout, dismissable, cb) {
     var that = this;
+
     this._player.disableControl();
     console.log('disabling player control');
 
-    var overlay = Crafty.e('Overlay').setText(title, flavorText, text);
+    var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
+                                     .setDismiss(dismissable, function() {
+      /* Allow player to move again. */
+      that._player.enableControl();
 
-    if (!dismissable) {
-      overlay.preventDismiss();
-    }
+      /* Call the provided callback. */
+      cb();
+    });
 
     setTimeout(function() {
       /* Remove the event text box. */
       overlay.destroy();
-      /* Allow player to move again. */
-      that._player.enableControl();
-      cb();
     }, timeout); /* Display the event text box for timeout ms. */
   }
 

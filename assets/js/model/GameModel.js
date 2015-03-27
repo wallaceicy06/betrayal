@@ -74,7 +74,7 @@ define([
           onCurHealthChange: function(newCurHealth) {
             if (newCurHealth < 1) {
               io.socket.delete('/player/' + player.id, {}, function(data) {
-                that._viewAdpt.displayTextOverlay("You died", "Game over", 3000,
+                that._viewAdpt.displayTextOverlay("You died", "Game over", "", 3000,
                                                   false, function() {
                   reset.call(that);
                   that._viewAdpt.reset();
@@ -199,7 +199,7 @@ define([
               delete that._otherPlayers[v.id];
               if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
                 that._viewAdpt.displayTextOverlay("You Won!", "You have "
-                  + "successfully murdered all your friends. Congratulations!",
+                  + "successfully murdered all your friends. Congratulations!", "",
                   10000, false, function() {
 
                   destroyGame.call(that);
@@ -322,7 +322,7 @@ define([
     console.log('attempting to interact with ' + furnitureID);
 
     io.socket.post('/room/interact/' + this._currentRoom.id,
-                   {furniture: furnitureID}, function(resData) {
+                   {furnitureID: furnitureID}, function(resData) {
 
       /* Don't do anything if there was no interaction. */
       if (_.isEmpty(resData)) {
@@ -489,7 +489,7 @@ define([
             delete that._otherPlayers[player.id];
             if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
               that._viewAdpt.displayTextOverlay("You Won!", "You have "
-                + "successfully murdered all your friends. Congratulations!",
+                + "successfully murdered all your friends. Congratulations!", "",
                 10000, false, function() {
                 reset.call(that);
                 that._viewAdpt.reset();
@@ -571,14 +571,14 @@ define([
           if (that._player.isTraitor) {
             that._viewAdpt.displayTextOverlay("Game Over", "You have failed " +
                                               "your mission. The heroes have " +
-                                              "escaped", 10000, false, function() {
+                                              "escaped", "", 10000, false, function() {
               destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
           } else {
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped " +
-                                              "the house! Congratulations!",
+                                              "the house! Congratulations!", "",
                                               10000, false, function() {
               destroyGame.call(that);
               reset.call(that);

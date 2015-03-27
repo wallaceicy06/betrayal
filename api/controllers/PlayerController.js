@@ -186,50 +186,60 @@ module.exports = {
   },
 
   attack: function(req, res) {
-    Player.findOne(req.params.id)
-      .then(function(player) {
-        Room.findOne(player.room).populate('players')
-          .then(function(room) {
-            var attackRegion = Player.getAttackRegion(player.direction, player.locX, player.locY);
-            for (var i = 0; i < room.players.length; i++) {
-              var otherPlayer = room.players[i];
-              if (otherPlayer.id !== player.id
-                  && otherPlayer.locX < attackRegion.maxX
-                  && otherPlayer.locX > attackRegion.minX
-                  && otherPlayer.locY < attackRegion.maxY
-                  && otherPlayer.locY > attackRegion.minY) {
-                var damage;
-                if (!player.isTraitor) {
-                  /* Roll dice for combat based on weapon strength */
-                  var myRoll = 0;
-                  for (var j = 0; j < player.weapon; j++) {
-                    myRoll += Math.floor(Math.random() * 3); //0, 1, or 2
-                  }
-                  var otherRoll = 0;
-                  for (var j = 0; j < otherPlayer.weapon; j++) {
-                    otherRoll += Math.floor(Math.random() * 3);
-                  }
-                  damage = myRoll - otherRoll;
-                } else {
-                  /* One-hit kills for traitor */
-                  damage = 7;
-                }
+    var player;
 
-                if (damage <= 0) {
-                  Game.message(player.game, {message: player.name +
-                    " attacked " + otherPlayer.name + "! They were unharmed."});
-                }
-                else {
-                  Game.message(player.game, {message: player.name +
-                    " attacked " + otherPlayer.name + "! " + otherPlayer.name +
-                    " took " + damage + " damage."});
-                  var updateObj = {curHealth: otherPlayer.curHealth - damage};
-                  Player.update(otherPlayer.id, updateObj);
-                  Player.publishUpdate(otherPlayer.id, updateObj);
-                }
+    Player.findOne(req.params.id)
+      .then(function(p) {
+        player = p;
+
+        return Room.findOne(player.room).populate('players');
+      })
+      .then(function(room) {
+        var attackRegion = Player.getAttackRegion(player.direction, player.locX, player.locY);
+        for (var i = 0; i < room.players.length; i++) {
+          var otherPlayer = room.players[i];
+          if (otherPlayer.id !== player.id
+              && otherPlayer.locX < attackRegion.maxX
+              && otherPlayer.locX > attackRegion.minX
+              && otherPlayer.locY < attackRegion.maxY
+              && otherPlayer.locY > attackRegion.minY) {
+            var damage;
+            if (!player.isTraitor) {
+              /* Roll dice for combat based on weapon strength */
+              var myRoll = 0;
+              for (var j = 0; j < player.weapon; j++) {
+                myRoll += Math.floor(Math.random() * 3); //0, 1, or 2
               }
+              var otherRoll = 0;
+              for (var j = 0; j < otherPlayer.weapon; j++) {
+                otherRoll += Math.floor(Math.random() * 3);
+              }
+              damage = myRoll - otherRoll;
+            } else {
+              /* One-hit kills for traitor */
+              damage = 7;
             }
-          });
+
+            if (damage <= 0) {
+              Game.message(player.game,
+                           {message: player.name + " attacked "
+                                     + otherPlayer.name
+                                     + "! They were unharmed.",
+                            verb: 'chat'});
+            }
+            else {
+              Game.message(player.game, {message: player.name + " attacked "
+                                                  + otherPlayer.name + "! "
+                                                  + otherPlayer.name + " took "
+                                                  + damage + " damage.",
+                                         verb: 'chat'});
+              var updateObj = {curHealth: otherPlayer.curHealth - damage};
+              Player.update(otherPlayer.id, updateObj);
+              Player.publishUpdate(otherPlayer.id, updateObj);
+            }
+          }
+        }
+        res.json();
       })
       .catch(function(err) {
         console.log(err);

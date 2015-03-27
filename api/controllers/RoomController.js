@@ -23,18 +23,23 @@ module.exports = {
   },
 
   interact: function(req, res) {
-    /* If the object is not interactable, don't do anything. */
-    if (Room.interactable[req.body.furniture] === undefined) {
-      return res.json();
-    }
+    var furnitureType;
 
-    Event.destroy({room: req.params.id, container: req.body.furniture})
+    Room.findOne(req.params.id)
+      .then(function(room) {
+        /* If the object is not interactable, don't do anything. */
+        furnitureType = Room.layouts[room.name].objects[req.body.furnitureID].type;
+          if (furnitureType === undefined) {
+            return res.json();
+          }
+
+        return Event.destroy({room: req.params.id, container: req.body.furnitureID})
+      })
       .then(function(events) {
 
-        var prefix = Room.interactable[req.body.furniture].prefix;
+        var prefix = Room.interactable[furnitureType].prefix;
 
         if (events.length == 0) {
-          console.log('No event found in ' + req.body.furniture + '.');
           return res.json({title: '',
                            flavorText: prefix,
                            text: 'Nothing happened.',

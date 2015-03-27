@@ -123,29 +123,29 @@ module.exports.gameconfig = {
         west: true
       },
       itemLocs: [],
-      objects: [
-        {
-          id: 'plant',
+      objects: {
+        plant1: {
+          type: 'plant',
           solid: true,
           rotation: 0,
           gridX: 1,
           gridY: 1
         },
-        {
-          id: 'plant',
+        plant2: {
+          type: 'plant',
           solid: true,
           rotation: 0,
           gridX: 16,
           gridY: 1
         },
-        {
-          id: 'rug',
+        rug1: {
+          type: 'rug',
           solid: false,
           rotation: 0,
           gridX: 7,
           gridY: 7
         }
-      ]
+      }
     },
     'livingRoom': {
       floor: '#EBACA4',
@@ -161,36 +161,36 @@ module.exports.gameconfig = {
         {x: 3, y: 11},
         {x: 1, y: 14}
       ],
-      objects: [
-        {
-          id: 'armchair',
+      objects: {
+        armchair1: {
+          type: 'armchair',
           solid: true,
           rotation: 270,
           gridX: 3,
           gridY: 10
         },
-        {
-          id: 'armchair',
+        armchair2: {
+          type: 'armchair',
           solid: true,
           rotation: 90,
           gridX: 14,
           gridY: 8
         },
-        {
-          id: 'couch',
+        couch1: {
+          type: 'couch',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 4
         },
-        {
-          id: 'squareTable',
+        squareTable1: {
+          type: 'squareTable',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 8
         }
-      ]
+      }
     },
     'gameRoom': {
       floor: '#A3CBCC',
@@ -206,22 +206,22 @@ module.exports.gameconfig = {
         {x: 5, y: 6},
         {x: 14, y: 14}
       ],
-      objects: [
-        {
-          id: 'poolTable',
+      objects: {
+        poolTable1: {
+          type: 'poolTable',
           solid: true,
           rotation: 0,
           gridX: 6,
           gridY: 7
         },
-        {
-          id: 'couch',
+      couch1: {
+          type: 'couch',
           solid: true,
           rotation: 0,
           gridX: 11,
           gridY: 1
         }
-      ]
+      }
     },
     'pianoRoom': {
       floor: '#A3CBCC',
@@ -236,29 +236,29 @@ module.exports.gameconfig = {
         {x: 14, y: 2},
         {x: 12, y: 12}
       ],
-      objects: [
-        {
-          id: 'piano',
+      objects: {
+        piano1: {
+          type: 'piano',
           solid: true,
           rotation: 180,
           gridX: 7,
           gridY: 15
         },
-        {
-          id: 'loveseat',
+        loveseat1: {
+          type: 'loveseat',
           solid: true,
           rotation: 0,
           gridX: 12,
           gridY: 4
         },
-        {
-          id: 'endTable',
+        endTable1: {
+          type: 'endTable',
           solid: true,
           rotation: 0,
           gridX: 14,
           gridY: 4
         },
-      ]
+      }
     },
     'office': {
       floor: '#EBACA4',
@@ -274,36 +274,36 @@ module.exports.gameconfig = {
         {x: 3, y: 12},
         {x: 12, y: 12}
       ],
-      objects: [
-        {
-          id: 'woodTable',
+      objects: {
+        woodTable1: {
+          type: 'woodTable',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 6
         },
-        {
-          id: 'armchair',
+        armchair1: {
+          type: 'armchair',
           solid: true,
           rotation: 0,
           gridX: 8,
           gridY: 4
         },
-        {
-          id: 'bookshelf',
+        bookshelf1: {
+          type: 'bookshelf',
           solid: true,
           rotation: 0,
           gridX: 3,
           gridY: 1
         },
-        {
-          id: 'bookshelf',
+        bookshelf2: {
+          type: 'bookshelf',
           solid: true,
           rotation: 0,
           gridX: 11,
           gridY: 1
         },
-      ]
+      }
     },
     'kitchen': {
       floor: '#F0DEC7',
@@ -319,71 +319,71 @@ module.exports.gameconfig = {
         {x: 9, y: 3},
         {x: 16, y: 10}
       ],
-      objects: [
-        {
-          id: 'woodTable',
+      objects: {
+        woodTable1: {
+          type: 'woodTable',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 4
         },
-        {
-          id: 'chair',
+        chair1: {
+          type: 'chair',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 3
         },
-        {
-          id: 'chair',
+        chair2: {
+          type: 'chair',
           solid: true,
           rotation: 0,
           gridX: 10,
           gridY: 3
         },
-        {
-          id: 'chair',
+        chair3: {
+          type: 'chair',
           solid: true,
           rotation: 180,
           gridX: 8,
           gridY: 7
         },
-        {
-          id: 'chair',
+        chair4: {
+          type: 'chair',
           solid: true,
           rotation: 180,
           gridX: 11,
           gridY: 7
         },
-        {
-          id: 'graniteCounter',
+        graniteCounter1: {
+          type: 'graniteCounter',
           solid: true,
           rotation: 0,
           gridX: 1,
           gridY: 9
         },
-        {
-          id: 'kitchenSink',
+        kitchenSink1: {
+          type: 'kitchenSink',
           solid: true,
           rotation: 0,
           gridX: 5,
           gridY: 9
         },
-        {
-          id: 'graniteCounter',
+        graniteCounter2: {
+          type: 'graniteCounter',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 9
         },
-        {
-          id: 'stove',
+        stove1: {
+          type: 'stove',
           solid: true,
           rotation: 270,
           gridX: 1,
           gridY: 13
         },
-      ]
+      }
     },
     'dining room': {
       floor: '#E3CD86',
@@ -399,71 +399,71 @@ module.exports.gameconfig = {
         {x: 15, y: 5},
         {x: 12, y: 13}
       ],
-      objects: [
-        {
-          id: 'diningTable',
+      objects: {
+        diningTable1: {
+          type: 'diningTable',
           solid: true,
           rotation: 0,
           gridX: 5,
           gridY: 7
         },
-        {
-          id: 'chair',
+        chair1: {
+          type: 'chair',
           solid: true,
           rotation: 0,
           gridX: 6,
           gridY: 6
         },
-        {
-          id: 'chair',
+        chair2: {
+          type: 'chair',
           solid: true,
           rotation: 0,
           gridX: 9,
           gridY: 6
         },
-        {
-          id: 'chair',
+        chair3: {
+          type: 'chair',
           solid: true,
           rotation: 0,
           gridX: 12,
           gridY: 6
         },
-        {
-          id: 'chair',
+        chair4: {
+          type: 'chair',
           solid: true,
           rotation: 180,
           gridX: 6,
           gridY: 11
         },
-        {
-          id: 'chair',
+        chair5: {
+          type: 'chair',
           solid: true,
           rotation: 180,
           gridX: 9,
           gridY: 11
         },
-        {
-          id: 'chair',
+        chair6: {
+          type: 'chair',
           solid: true,
           rotation: 180,
           gridX: 12,
           gridY: 11
         },
-        {
-          id: 'chair',
+        chair7: {
+          type: 'chair',
           solid: true,
           rotation: 270,
           gridX: 4,
           gridY: 9
         },
-        {
-          id: 'chair',
+        chair8: {
+          type: 'chair',
           solid: true,
           rotation: 90,
           gridX: 14,
           gridY: 8
         },
-      ]
+      }
     },
     'bedroom': {
       floor: '#A3CBCC',
@@ -479,120 +479,120 @@ module.exports.gameconfig = {
         {x: 10, y: 6},
         {x: 15, y: 12}
       ],
-      objects: [
-        {
-          id: 'blueBed',
+      objects: {
+        blueBed1: {
+          type: 'blueBed',
           solid: true,
           rotation: 0,
           gridX: 3,
           gridY: 1
         },
-        {
-          id: 'woodTable',
+        woodTable1: {
+          type: 'woodTable',
           solid: true,
           rotation: 0,
           gridX: 11,
           gridY: 1
         },
-        {
-          id: 'chair',
+        chair1: {
+          type: 'chair',
           solid: true,
           rotation: 180,
           gridX: 14,
           gridY: 4
         },
-        {
-          id: 'wall',
+        wall1: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 14
         },
-        {
-          id: 'wall',
+        wall2: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 13
         },
-        {
-          id: 'wall',
+        wall3: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 12
         },
-        {
-          id: 'wall',
+        wall4: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 11
         },
-        {
-          id: 'wall',
+        wall5: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 10
         },
-        {
-          id: 'wall',
+        wall6: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 9
         },
-        {
-          id: 'wall',
+        wall7: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 1,
           gridY: 9
         },
-        {
-          id: 'wall',
+        wall8: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 2,
           gridY: 9
         },
-        {
-          id: 'wall',
+        wall9: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 3,
           gridY: 9
         },
-        {
-          id: 'wall',
+        wall10: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 4,
           gridY: 9
         },
-        {
-          id: 'toilet',
+        wall11: {
+          type: 'toilet',
           solid: true,
           rotation: 0,
           gridX: 3,
           gridY: 10
         },
-        {
-          id: 'sink',
+        sink1: {
+          type: 'sink',
           solid: true,
           rotation: 180,
           gridX: 4,
           gridY: 15
         },
-        {
-          id: 'bookshelf',
+        sink2: {
+          type: 'bookshelf',
           solid: true,
           rotation: 0,
           gridX: 13,
           gridY: 14
         },
-      ]
+      }
     },
     'bedroom2': {
       floor: '#E3CD86',
@@ -608,127 +608,127 @@ module.exports.gameconfig = {
         {x: 6, y: 6},
         {x: 3, y: 11}
       ],
-      objects: [
-        {
-          id: 'redBed',
+      objects: {
+        redBed1: {
+          type: 'redBed',
           solid: true,
           rotation: 0,
           gridX: 3,
           gridY: 1
         },
-        {
-          id: 'plant',
+        plant1: {
+          type: 'plant',
           solid: true,
           rotation: 0,
           gridX: 12,
           gridY: 1
         },
-        {
-          id: 'woodTable',
+        woodTable1: {
+          type: 'woodTable',
           solid: true,
           rotation: 0,
           gridX: 11,
           gridY: 13
         },
-        {
-          id: 'chair',
+        chair1: {
+          type: 'chair',
           solid: true,
           rotation: 0,
           gridX: 12,
           gridY: 12
         },
-        {
-          id: 'wall',
+        wall1: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 14
         },
-        {
-          id: 'wall',
+        wall2: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 13
         },
-        {
-          id: 'wall',
+        wall3: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 12
         },
-        {
-          id: 'wall',
+        wall4: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 11
         },
-        {
-          id: 'wall',
+        wall5: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 10
         },
-        {
-          id: 'wall',
+        wall6: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 7,
           gridY: 9
         },
-        {
-          id: 'wall',
+        wall7: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 1,
           gridY: 9
         },
-        {
-          id: 'wall',
+        wall8: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 2,
           gridY: 9
         },
-        {
-          id: 'wall',
+        wall9: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 3,
           gridY: 9
         },
-        {
-          id: 'wall',
+        wall10: {
+          type: 'wall',
           solid: true,
           rotation: 0,
           gridX: 4,
           gridY: 9
         },
-        {
-          id: 'toilet',
+        toilet1: {
+          type: 'toilet',
           solid: true,
           rotation: 0,
           gridX: 3,
           gridY: 10
         },
-        {
-          id: 'sink',
+        sink1: {
+          type: 'sink',
           solid: true,
           rotation: 180,
           gridX: 4,
           gridY: 15
         },
-        {
-          id: 'bookshelf',
+        bookshelf1: {
+          type: 'bookshelf',
           solid: true,
           rotation: 0,
           gridX: 13,
           gridY: 1
         },
-      ]
+      }
     },
   },
 
