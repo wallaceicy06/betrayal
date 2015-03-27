@@ -41,7 +41,8 @@ module.exports = {
 
         if (events.length == 0) {
           return res.json({title: '',
-                           text: prefix + ' Nothing happened.',
+                           flavorText: prefix,
+                           text: 'Nothing happened.',
                            effect: {}});
         }
 
@@ -51,7 +52,8 @@ module.exports = {
 
         res.json({
           title: card.title,
-          text: prefix + ' ' + card.text,
+          flavorText: prefix + ' ' + card.flavorText,
+          text: card.text,
           effect: card.effect
         });
       })

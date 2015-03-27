@@ -273,16 +273,14 @@ define([
         return this;
       },
 
-      setText: function(title, text) {
-        var overlayTitle = Crafty.e('2D, DOM, Text')
-          .text(title)
-          .textFont({size: '20px'})
-          .css({'text-align': 'center', 'top': '15px'})
+      setText: function(title, flavorText, text) {
+        var overlayTitle = Crafty.e('HTML')
+          .replace('<p>' + title + '</p>')
+          .css({'font-size': '20px', 'text-align': 'center', 'top': '15px'});
 
-        var overlayText = Crafty.e('2D, DOM, Text')
-          .css({'text-align': 'center', 'top': '45px'})
-          .text(text)
-          .textFont({size: '14px'});
+        var overlayText = Crafty.e('HTML')
+          .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
+          .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
 
         this.attach(overlayTitle);
         this.attach(overlayText);
@@ -305,27 +303,9 @@ define([
     Crafty.defineScene('purgatory', function() {
       Crafty.background('black');
 
-      /* TODO: Hard coded. Will remove later. */
-      var overlayBackground = Crafty.e('2D, DOM, Color')
-        .color('black');
-      var overlayTitle = Crafty.e('2D, DOM, Text')
-        .text("Welcome to purgatory!")
-        .textFont({size: '20px'})
-        .textColor('white')
-        .css({'text-align': 'center', 'top': '15px'});
-      var overlayText = Crafty.e('2D, DOM, Text')
-        .css({'text-align': 'center', 'top': '45px'})
-        .text("Waiting for the creator to start the game...")
-        .textColor('white')
-        .textFont({size: '14px'});
-
-      overlayBackground.attach(overlayTitle);
-      overlayBackground.attach(overlayText);
-      overlayBackground.attr({x: 576/2
-                                - 175,
-                            y: 512/2
-                                - 175, w: 350, h: 350});
-
+      var waitImage = Crafty.e('2D, DOM, Image')
+        .image("images/game/wait_screen.png")
+        .attr({x: 576/2 - 200, y: 512/2 - 200, w: 400, h: 400});
 
     });
 
@@ -366,7 +346,7 @@ define([
          * display.
          */
         var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);
-        displayTextOverlay.call(that, eventInfo.title, eventInfo.text, 5000);
+        displayTextOverlay.call(that, eventInfo.title, eventInfo.flavorText, eventInfo.text, 5000);
       }
     });
 
@@ -1075,13 +1055,13 @@ define([
    * (Used for events, death, etc.)
    * timeout must be in ms
    */
-  function displayTextOverlay(title, text, timeout, dismissable, cb) {
+  function displayTextOverlay(title, flavorText, text, timeout, dismissable, cb) {
     var that = this;
 
     this._player.disableControl();
     console.log('disabling player control');
 
-    var overlay = Crafty.e('Overlay').setText(title, text)
+    var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
                                      .setDismiss(dismissable, function() {
       /* Allow player to move again. */
       that._player.enableControl();
