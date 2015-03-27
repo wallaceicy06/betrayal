@@ -24,6 +24,7 @@ module.exports = {
 
   sendChatMessage: function(req, res) {
     Game.message(req.params.id, {message: req.body.message,
+                                 verb: 'chat',
                                  playerID: req.body.playerID});
     res.json();
   },

@@ -4,11 +4,11 @@ a web game spinoff of "Betrayal of the House on the Hill"
 
 Game Creation
 -------------
-To create a game, enter the name of the game in the text filed and click the
-**Create Game** button.
+To create a new game, click **Create Game** and enter the name of your player
+and the game of the new game.
 
-To join a game, enter your name, select an existing game from the drop down
-list, and click **Join**.
+To join a game, click **Join Existing Game**, enter your name, select an
+existing game from the drop down list, and click **Join**.
 
 Game Controls
 -------------
@@ -16,7 +16,10 @@ Move using the **W**, **A**, **S**, **D** or arrow keys.
 
 Use the **space bar** to attack another player.
 
-Press **M** to toggle the map view.
+Press **Q** to toggle the map view.
+
+After the haunt begins (if you are the traitor), use **E** to toggle your
+traitor ability.
 
 Installation
 ------------

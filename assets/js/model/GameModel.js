@@ -75,7 +75,7 @@ define([
             if (newCurHealth < 1) {
               io.socket.delete('/player/' + player.id, {}, function(data) {
                 that._viewAdpt.displayTextOverlay("You died", "Game over", 3000,
-                                                  function() {
+                                                  false, function() {
                   reset.call(that);
                   that._viewAdpt.reset();
                 });
@@ -200,8 +200,9 @@ define([
               if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
                 that._viewAdpt.displayTextOverlay("You Won!", "You have "
                   + "successfully murdered all your friends. Congratulations!",
-                  10000, function() {
+                  10000, false, function() {
 
+                  destroyGame.call(that);
                   reset.call(that);
                   that._viewAdpt.reset();
                 });
@@ -225,7 +226,15 @@ define([
     var that = this;
 
     io.socket.get('/game', function(games) {
-      that._viewAdpt.setGames(games);
+      var validGames = [];
+
+      _.each(games, function(g) {
+        if (!g.active) {
+          validGames.push(g);
+        }
+      });
+
+      that._viewAdpt.setGames(validGames);
     });
   };
 
@@ -310,6 +319,8 @@ define([
   function onFurnitureInteract(furnitureID) {
     var that = this;
 
+    console.log('attempting to interact with ' + furnitureID);
+
     io.socket.post('/room/interact/' + this._currentRoom.id,
                    {furniture: furnitureID}, function(resData) {
 
@@ -318,8 +329,8 @@ define([
         return;
       }
 
-      that._viewAdpt.displayTextOverlay(resData.title,
-                                        resData.text, 3000, function() {
+      that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
+                                        resData.text, 3000, true, function() {
         for (var stat in resData.effect) {
           /* For right now, event effects only alter stats. */
           that._player[stat] = that._player[stat] + resData.effect[stat];
@@ -386,7 +397,7 @@ define([
       /* For right now, event effects only alter stats. */
       this._player[stat] = this._player[stat] + event.effect[stat];
     }
-    return {title: event.title, text: event.text};
+    return {title: event.title, flavorText: event.flavorText, text: event.text};
   }
 
   /* Checks if this player can attack, and tells server this player is attacking */
@@ -479,7 +490,7 @@ define([
             if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
               that._viewAdpt.displayTextOverlay("You Won!", "You have "
                 + "successfully murdered all your friends. Congratulations!",
-                10000, function() {
+                10000, false, function() {
                 reset.call(that);
                 that._viewAdpt.reset();
               });
@@ -556,18 +567,20 @@ define([
       } else if (o.id == that._gameID && o.verb === 'messaged') {
         if (o.data.verb === 'heroesWon') {
           var message;
+
           if (that._player.isTraitor) {
             that._viewAdpt.displayTextOverlay("Game Over", "You have failed " +
                                               "your mission. The heroes have " +
-                                              "escaped", 10000, function() {
+                                              "escaped", 10000, false, function() {
+              destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
-          }
-          else {
+          } else {
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped " +
                                               "the house! Congratulations!",
-                                              10000, function() {
+                                              10000, false, function() {
+              destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
@@ -593,7 +606,13 @@ define([
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
 
-      } else if (o.id == that._gameID && o.verb === 'updated') {
+      } else if (o.verb === 'updated') {
+        fetchGames.call(that);
+
+        if (o.id != that._gameID) {
+          return;
+        }
+
         if (o.data.active !== undefined) {
           var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
@@ -618,26 +637,33 @@ define([
 
           if (o.data.traitor.id === that._player.id) {
             that._player.isTraitor = true;
-            that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
+            that._viewAdpt.displayTextOverlay('Traitor',
+                                              that._haunts[o.data.haunt].traitorFlavor,
                                               that._haunts[o.data.haunt].traitorText,
-                                              10000, function() {});
+                                              10000, false, function() {});
           } else {
-            that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
+            that._viewAdpt.displayTextOverlay('Hero',
+                                              that._haunts[o.data.haunt].heroFlavor,
                                               that._haunts[o.data.haunt].heroText,
-                                              10000, function() {});
+                                              10000, false, function() {});
           }
         }
       } else if (o.verb === 'destroyed') {
           console.log('destroy message');
           console.log(o);
 
-          that.fetchGames();
+          fetchGames.call(that);
 
           if (o.id == that._gameID) {
             reset.call(that);
             that._viewAdpt.reset();
           }
       }
+    });
+  }
+
+  function destroyGame() {
+    io.socket.post('/game/destroy/' + this._gameID, {}, function(res) {
     });
   }
 
