@@ -55,11 +55,9 @@ module.exports = {
   },
 
   destroy: function(req, res) {
-    console.log('called destroy');
     Game.destroy(req.params.id)
       .then(function(games) {
 
-        console.log('callback for destroy');
         console.log(games);
         _.each(games, function(g) {
           Game.publishDestroy(g.id, req);
