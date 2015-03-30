@@ -250,9 +250,38 @@ define([
       },
     });
 
+    Crafty.c('OverlayText', {
+      init: function() {
+        this.requires('HTML');
+      },
+
+      setText: function(text) {
+        this.replace('<p>' + text + '</p>');
+        return this;
+      }
+    });
+
+    Crafty.c('OverlayTitle', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
+    Crafty.c('OverlayFlavor', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
+    Crafty.c('OverlayBody', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
     Crafty.c('Overlay', {
       init: function() {
-        this.requires('2D, DOM, Color');
+        this.requires('2D, HTML, Color');
         this.color('white');
         this.attr({dismissable: true});
       },
@@ -273,21 +302,23 @@ define([
         return this;
       },
 
-      setText: function(title, flavorText, text) {
-        var overlayTitle = Crafty.e('HTML')
-          .replace('<p>' + title + '</p>')
-          .css({'font-size': '20px', 'text-align': 'center', 'top': '15px'});
-
-        var overlayText = Crafty.e('HTML')
-          .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
-          .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
-
-        this.attach(overlayTitle);
-        this.attach(overlayText);
+      setText: function(titleText, flavorText, bodyText) {
         this.attr({x: that._gameModelAdpt.getDimensions().width/2 - 175,
                    y: that._gameModelAdpt.getDimensions().height/2 - 175,
                    w: 350,
                    h: 350});
+
+        var overlayTitle = Crafty.e('OverlayTitle').setText(titleText);
+        var overlayFlavor = Crafty.e('OverlayFlavor').setText(flavorText);
+        var overlayBody = Crafty.e('OverlayBody').setText(bodyText);
+        // var overlayText = Crafty.e('HTML').setText(
+          // .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
+          // .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
+
+
+        this.attach(overlayTitle);
+        this.attach(overlayFlavor);
+        this.attach(overlayBody);
 
         return this;
       }
@@ -1055,7 +1086,7 @@ define([
    * (Used for events, death, etc.)
    * timeout must be in ms
    */
-  function displayTextOverlay(title, flavorText, text, timeout, dismissable, cb) {
+  function displayTextOverlayOld(title, flavorText, text, timeout, dismissable, cb) {
     var that = this;
 
     this._player.disableControl();
@@ -1074,6 +1105,9 @@ define([
       /* Remove the event text box. */
       overlay.destroy();
     }, timeout); /* Display the event text box for timeout ms. */
+  }
+
+  function displayMiniOverlay(title, flavorText, text, timeout, dismissable, cb) {
   }
 
   function hideRelicsShowKeys() {

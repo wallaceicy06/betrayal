@@ -11,7 +11,18 @@
         <div id="player-list">
         </div>
       </div>
-      <div id="game-stage" style="display:inline-block; vertical-align: top"></div>
+      <div id="game-container" class="game-pane">
+        <div id="game-stage" class="game-containted"></div>
+        <div "game-contained">
+          <div class="overlay-container">
+            <div class="overlay-dialog">
+              <div class="overlay-title">Title</div>
+              <div class="overlay-flavor">Some flavor text</div>
+              <div class="overlay-body">The body</div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div id="chatroom" class="chatroom">
         <div id="game-start" class="hidden game-start">
           <button id="btn-game-start" class="btn btn-success">Start Game</button>

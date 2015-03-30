@@ -1,0 +1,23 @@
+.overlay-container {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+div.overlay-dialog {
+  background: white;
+  opacity: .5;
+  margin: 10px;
+  padding: 10px;
+}
+
+.overlay-title {
+  font-weight: bold;
+}
+
+.overlay-flavor {
+  font-style: italic;
+}
+
+.overlay-body {
+}
