@@ -74,8 +74,8 @@ define([
           onCurHealthChange: function(newCurHealth) {
             if (newCurHealth < 1) {
               io.socket.delete('/player/' + player.id, {}, function(data) {
-                that._viewAdpt.displayTextOverlay("You died", "Game over", 3000,
-                                                  function() {
+                that._viewAdpt.displayTextOverlay("You died", "Game over", "", 3000,
+                                                  false, function() {
                   reset.call(that);
                   that._viewAdpt.reset();
                 });
@@ -141,10 +141,6 @@ define([
           that._currentRoom = room;
           that._miniMap = new MapNode(room.id, room.name);
           that._currentMiniRoom = that._miniMap;
-
-          var roomConfig = prepareRoomConfig.call(that, room);
-
-          that._viewAdpt.startGame(roomConfig);
         });
 
         /* Populate other players object when join game */
@@ -203,9 +199,10 @@ define([
               delete that._otherPlayers[v.id];
               if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
                 that._viewAdpt.displayTextOverlay("You Won!", "You have "
-                  + "successfully murdered all your friends. Congratulations!",
-                  10000, function() {
+                  + "successfully murdered all your friends. Congratulations!", "",
+                  10000, false, function() {
 
+                  destroyGame.call(that);
                   reset.call(that);
                   that._viewAdpt.reset();
                 });
@@ -218,6 +215,8 @@ define([
           playerViewAdpt.setVisibility(player.room === roomID);
         });
 
+        that._viewAdpt.loadGame();
+
         that._gameID = gameID;
       });
     });
@@ -227,7 +226,15 @@ define([
     var that = this;
 
     io.socket.get('/game', function(games) {
-      that._viewAdpt.setGames(games);
+      var validGames = [];
+
+      _.each(games, function(g) {
+        if (!g.active) {
+          validGames.push(g);
+        }
+      });
+
+      that._viewAdpt.setGames(validGames);
     });
   };
 
@@ -241,6 +248,16 @@ define([
   }
 
   function start() {
+  }
+
+  function startGame() {
+    var that = this;
+
+    io.socket.put('/game/' + this._gameID, {active: true}, function(res) {
+      var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
+
+      that._viewAdpt.startGame(roomConfig);
+    });
   }
 
   function onDoorVisit(doorID) {
@@ -302,16 +319,18 @@ define([
   function onFurnitureInteract(furnitureID) {
     var that = this;
 
+    console.log('attempting to interact with ' + furnitureID);
+
     io.socket.post('/room/interact/' + this._currentRoom.id,
-                   {furniture: furnitureID}, function(resData) {
+                   {furnitureID: furnitureID}, function(resData) {
 
       /* Don't do anything if there was no interaction. */
       if (_.isEmpty(resData)) {
         return;
       }
 
-      that._viewAdpt.displayTextOverlay(resData.title,
-                                        resData.text, 3000, function() {
+      that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
+                                        resData.text, 3000, true, function() {
         for (var stat in resData.effect) {
           /* For right now, event effects only alter stats. */
           that._player[stat] = that._player[stat] + resData.effect[stat];
@@ -378,7 +397,7 @@ define([
       /* For right now, event effects only alter stats. */
       this._player[stat] = this._player[stat] + event.effect[stat];
     }
-    return {title: event.title, text: event.text};
+    return {title: event.title, flavorText: event.flavorText, text: event.text};
   }
 
   /* Checks if this player can attack, and tells server this player is attacking */
@@ -471,8 +490,8 @@ define([
             delete that._otherPlayers[player.id];
             if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
               that._viewAdpt.displayTextOverlay("You Won!", "You have "
-                + "successfully murdered all your friends. Congratulations!",
-                10000, function() {
+                + "successfully murdered all your friends. Congratulations!", "",
+                10000, false, function() {
                 reset.call(that);
                 that._viewAdpt.reset();
               });
@@ -546,67 +565,90 @@ define([
     io.socket.on('game', function(o) {
       if (o.verb === 'created') {
         that._viewAdpt.addGame(o.data);
-      } else if (o.verb === 'messaged') {
+      } else if (o.id == that._gameID && o.verb === 'messaged') {
         if (o.data.verb === 'heroesWon') {
           var message;
+
           if (that._player.isTraitor) {
             that._viewAdpt.displayTextOverlay("Game Over", "You have failed " +
                                               "your mission. The heroes have " +
-                                              "escaped", 10000, function() {
+                                              "escaped", "", 10000, false, function() {
+              destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
-          }
-          else {
+          } else {
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped " +
-                                              "the house! Congratulations!",
-                                              10000, function() {
+                                              "the house! Congratulations!", "",
+                                              10000, false, function() {
+              destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
           }
-        } else {
+        } else if (o.data.verb === 'chat') {
+          console.log(o.data.verb);
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
 
       } else if (o.verb === 'updated') {
-        /*
-         * An update on the game indicates that the haunt is starting
-         */
-        that._combatEnabled = true;
+        fetchGames.call(that);
 
-        that._viewAdpt.hideRelicsShowKeys();
+        if (o.id != that._gameID) {
+          return;
+        }
 
-        var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
-          changeSprite: function(spriteName) {
-            that._viewAdpt.changePlayerSprite(spriteName);
-            io.socket.put('/player/' + that._player.id, {color: spriteName},
-              function(err, player) {});
+        if (o.data.active !== undefined) {
+          var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
+
+          that._viewAdpt.startGame(roomConfig);
+
+        } else if (o.data.haunt !== undefined) {
+          /*
+           * An update on the game indicates that the haunt is starting
+           */
+          that._combatEnabled = true;
+
+          that._viewAdpt.hideRelicsShowKeys();
+
+          var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
+            changeSprite: function(spriteName) {
+              that._viewAdpt.changePlayerSprite(spriteName);
+              io.socket.put('/player/' + that._player.id, {color: spriteName},
+                function(err, player) {});
+            }
+          });
+          that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
+
+          if (o.data.traitor.id === that._player.id) {
+            that._player.isTraitor = true;
+            that._viewAdpt.displayTextOverlay('Traitor',
+                                              that._haunts[o.data.haunt].traitorFlavor,
+                                              that._haunts[o.data.haunt].traitorText,
+                                              10000, false, function() {});
+          } else {
+            that._viewAdpt.displayTextOverlay('Hero',
+                                              that._haunts[o.data.haunt].heroFlavor,
+                                              that._haunts[o.data.haunt].heroText,
+                                              10000, false, function() {});
           }
-        });
-        that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
-
-        if (o.data.traitor.id === that._player.id) {
-          that._player.isTraitor = true;
-          that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
-                                            that._haunts[o.data.haunt].traitorText,
-                                            10000, function() {});
-        } else {
-          that._viewAdpt.displayTextOverlay(that._haunts[o.data.haunt].title,
-                                            that._haunts[o.data.haunt].heroText,
-                                            10000, function() {});
         }
       } else if (o.verb === 'destroyed') {
           console.log('destroy message');
           console.log(o);
 
-          that.fetchGames();
+          fetchGames.call(that);
 
           if (o.id == that._gameID) {
             reset.call(that);
             that._viewAdpt.reset();
           }
       }
+    });
+  }
+
+  function destroyGame() {
+    io.socket.post('/game/destroy/' + this._gameID, {}, function(res) {
     });
   }
 
@@ -658,6 +700,7 @@ define([
     this.attack = attack.bind(this);
     this.useTraitorPower = useTraitorPower.bind(this);
     this.start = start.bind(this);
+    this.startGame = startGame.bind(this);
   }
 });
 

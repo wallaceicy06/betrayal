@@ -18,6 +18,10 @@ define([
   };
   var TILE_WIDTH = 32;
   var ASSETS = {
+    "audio": {
+        "powerup": ["sounds/powerup.wav"],
+        "game_start": ["sounds/game_start.mp3"]
+    },
     'sprites': {
       'images/game/sprites.png': {
         'tile': TILE_WIDTH,
@@ -63,8 +67,6 @@ define([
 
   function initCrafty() {
     var that = this;
-
-    Crafty.audio.add('itemSound', 'sounds/powerup.wav');
 
     Crafty.c('PlayerHusk', {
       init: function() {
@@ -135,10 +137,7 @@ define([
         var player = this; /* the player */
 
         Crafty('Furniture').each(function(f) {
-          // console.log('i am at ' + that.x + ', ' + that.y);
-          // console.log(this.interactRect());
-          if (player.within(this.interactRect())) {
-            console.log('interacting with a piece' + this.furnitureID);
+          if (player.intersect(this.interactRect())) {
             that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
           }
         });
@@ -182,7 +181,7 @@ define([
           thisPlayer.attr({'itemLock': false});
         });
 
-        Crafty.audio.play('itemSound');
+        Crafty.audio.play('powerup');
       },
 
       fixMovement: function(increaseBy) {
@@ -236,11 +235,13 @@ define([
       },
 
       interactRect: function() {
+        var mbr = this.mbr();
+
         return {
-          _x: this.x - TILE_WIDTH,
-          _y: this.y - TILE_WIDTH,
-          _w: this.w + 2 * TILE_WIDTH,
-          _h: this.h + 2 * TILE_WIDTH
+          x: mbr._x - 1 * TILE_WIDTH,
+          y: mbr._y - 1 * TILE_WIDTH,
+          w: mbr._w + 2 * TILE_WIDTH,
+          h: mbr._h + 2 * TILE_WIDTH
         };
       }
     });
@@ -263,11 +264,63 @@ define([
       },
     });
 
+    Crafty.c('Overlay', {
+      init: function() {
+        this.requires('2D, DOM, Color');
+        this.color('white');
+        this.attr({dismissable: true});
+      },
+
+      dismiss: function() {
+        if (this.dismissable) {
+          this.destroy();
+        }
+
+        that._player.enableControl();
+
+        return this;
+      },
+
+      setDismiss: function(canDismiss, cb) {
+        this.attr({dismissable: canDismiss});
+        this.bind('Remove', cb);
+        return this;
+      },
+
+      setText: function(title, flavorText, text) {
+        var overlayTitle = Crafty.e('HTML')
+          .replace('<p>' + title + '</p>')
+          .css({'font-size': '20px', 'text-align': 'center', 'top': '15px'});
+
+        var overlayText = Crafty.e('HTML')
+          .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
+          .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
+
+        this.attach(overlayTitle);
+        this.attach(overlayText);
+        this.attr({x: that._gameModelAdpt.getDimensions().width/2 - 175,
+                   y: that._gameModelAdpt.getDimensions().height/2 - 175,
+                   w: 350,
+                   h: 350});
+
+        return this;
+      }
+    });
+
     Crafty.init(that._gameModelAdpt.getDimensions().width,
                 that._gameModelAdpt.getDimensions().height,
                 document.getElementById('game-stage'));
 
     Crafty.load(ASSETS, function() {
+    });
+
+    Crafty.defineScene('purgatory', function() {
+      Crafty.background('black');
+
+      var waitImage = Crafty.e('2D, DOM, Image')
+        .image("images/game/wait_screen.png")
+        .attr({x: 576/2 - 200, y: 512/2 - 200, w: 400, h: 400});
+
     });
 
     Crafty.defineScene('room', function(roomConfig) {
@@ -301,15 +354,13 @@ define([
 
       that._mapEnabled = false;
 
-      that._player.enableControl();
-
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
         /*
          * performEvent does the action of the event and returns the text to
          * display.
          */
         var eventInfo = that._gameModelAdpt.performEvent(roomConfig.event);
-        displayTextOverlay.call(that, eventInfo.title, eventInfo.text, 5000);
+        displayTextOverlay.call(that, eventInfo.title, eventInfo.flavorText, eventInfo.text, 5000);
       }
     });
 
@@ -375,7 +426,7 @@ define([
 
       if (!inputInFocus) {
         switch(e.key) {
-          case Crafty.keys.M:
+          case Crafty.keys.Q:
             if (that._mapEnabled) {
               that._gameModelAdpt.onDisableMap();
               that._player.enableControl();
@@ -383,6 +434,10 @@ define([
               that._gameModelAdpt.onEnableMap();
               that._player.disableControl();
             }
+            break;
+
+          case Crafty.keys.ESC:
+            Crafty('Overlay').dismiss();
             break;
 
           case Crafty.keys.SPACE:
@@ -401,23 +456,22 @@ define([
             }, 10);
             break;
 
-          case Crafty.keys.I:
-
+          case Crafty.keys.F:
             that._player.interact();
             break;
 
-          case Crafty.keys.T:
+          case Crafty.keys.E:
 
             that._gameModelAdpt.useTraitorPower();
             break;
 
           default:
-
             break;
         }
       } else {
         switch(e.key) {
           case Crafty.keys.ESC:
+
 
             /* Focuses the game div. */
             window.location.hash = '#game-stage';
@@ -443,6 +497,14 @@ define([
     displayJoinExisting.call(this, false);
     displayJoinNew.call(this, false);
     displayJoinOptions.call(this, true);
+  }
+
+  function displayStartGameButton(display) {
+    if (display == true) {
+      $('#game-start').removeClass('hidden');
+    } else {
+      $('#game-start').addClass('hidden');
+    }
   }
 
   function displayJoinOptions(display) {
@@ -490,6 +552,16 @@ define([
     }
   }
 
+  function enableGame(enable) {
+    displayStartGameButton.call(this, false);
+    Crafty.audio.play('game_start');
+  }
+
+  function loadPurgatory() {
+    Crafty.enterScene('purgatory');
+
+  }
+
   function loadRoom(roomConfig) {
     Crafty.enterScene('room', roomConfig);
   }
@@ -516,27 +588,31 @@ define([
   }
 
   function placeFurniture(furniture) {
-    for (var i = 0; i < furniture.length; i++) {
+    var that = this;
+
+    _.each(_.keys(furniture), function(k) {
+      var furnConfig = furniture[k];
+
       var newFurniture;
-      if (furniture[i].solid) {
+      if (furnConfig.solid) {
         newFurniture = Crafty.e('SolidFurniture');
       } else {
         newFurniture = Crafty.e('Furniture');
       }
 
-      newFurniture.attr({x: furniture[i].gridX * TILE_WIDTH,
-                         y: furniture[i].gridY * TILE_WIDTH,
-                         w: this._spriteMap[furniture[i].id].gridW
+      newFurniture.attr({x: furnConfig.gridX * TILE_WIDTH,
+                         y: furnConfig.gridY * TILE_WIDTH,
+                         w: that._spriteMap[furnConfig.type].gridW
                             * TILE_WIDTH,
-                         h: this._spriteMap[furniture[i].id].gridH
+                         h: that._spriteMap[furnConfig.type].gridH
                             * TILE_WIDTH,
-                         furnitureID: furniture[i].id})
-                  .sprite(this._spriteMap[furniture[i].id].gridX,
-                          this._spriteMap[furniture[i].id].gridY,
-                          this._spriteMap[furniture[i].id].gridW,
-                          this._spriteMap[furniture[i].id].gridH)
-      newFurniture.rotation = furniture[i].rotation;
-    }
+                         furnitureID: k})
+                  .sprite(that._spriteMap[furnConfig.type].gridX,
+                          that._spriteMap[furnConfig.type].gridY,
+                          that._spriteMap[furnConfig.type].gridW,
+                          that._spriteMap[furnConfig.type].gridH)
+      newFurniture.rotation = furnConfig.rotation;
+    });
   }
 
   function makePlayerView(playerModelAdpt) {
@@ -708,9 +784,11 @@ define([
   }
 
   function makePlayerHusk(id, x, y, color) {
-     var husk = Crafty.e('PlayerHusk').attr({x: x, y: y});
-     husk.setColor(color);
-     this._husks[id] = husk;
+     if (Crafty._current === 'room') {
+       var husk = Crafty.e('PlayerHusk').attr({x: x, y: y});
+       husk.setColor(color);
+       this._husks[id] = husk;
+     }
    }
 
   function addOtherPlayer(playerModelAdpt) {
@@ -967,8 +1045,9 @@ define([
 
   function appendChatMessage(playerID, message) {
     var sender;
-
-    if (playerID === this._playerModelAdpt.getID()) {
+    if (playerID == undefined) {
+      sender = null;
+    } else if (playerID === this._playerModelAdpt.getID()) {
       sender = this._playerModelAdpt;
     } else {
       for (var id in this._otherPlayerModelAdpts) {
@@ -980,17 +1059,18 @@ define([
     }
 
     var messageElement = document.createElement('p');
-    messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
-    messageElement.appendChild(
+    if (sender !== null) {
+      messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
+      messageElement.appendChild(
         document.createTextNode(sender.getName() + ': ' + message));
+    } else {
+      messageElement.appendChild(document.createTextNode(message));
+    }
 
     $('#chatroom').find('div.messages').append(messageElement);
-  }
-
-  function appendEvent(message) {
-    var messageElement = document.createElement('p');
-    messageElement.appendChild(document.createTextNode(message));
-    $('#chatroom').find('div.messages').append(messageElement);
+    // Auto scroll to bottom
+    var messages = document.getElementById("message-list");
+    messages.scrollTop = messages.scrollHeight;
   }
 
   /**
@@ -999,40 +1079,24 @@ define([
    * (Used for events, death, etc.)
    * timeout must be in ms
    */
-  function displayTextOverlay(title, text, timeout, cb) {
+  function displayTextOverlay(title, flavorText, text, timeout, dismissable, cb) {
     var that = this;
-    /*
-     * TODO why is the view variable necessary?
-     */
+
     this._player.disableControl();
-    var overlayBackground = Crafty.e('2D, DOM, Color')
-      .color('white');
-    var overlayTitle = Crafty.e('2D, DOM, Text')
-      .text(title)
-      .textFont({size: '20px'})
-      .css({'text-align': 'center', 'top': '15px'});
-    var overlayText = Crafty.e('2D, DOM, Text')
-      .css({'text-align': 'center', 'top': '45px'})
-      .text(text)
-      .textFont({size: '14px'});
-    /*
-      * Attach eventTitle and eventText as children of event so that they
-      * will move together.
-      */
-    overlayBackground.attach(overlayTitle);
-    overlayBackground.attach(overlayText);
-    overlayBackground.attr({x: this._gameModelAdpt.getDimensions().width/2
-                              - 175,
-                          y: this._gameModelAdpt.getDimensions().height/2
-                              - 175, w: 350, h: 350});
+    console.log('disabling player control');
+
+    var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
+                                     .setDismiss(dismissable, function() {
+      /* Allow player to move again. */
+      that._player.enableControl();
+
+      /* Call the provided callback. */
+      cb();
+    });
 
     setTimeout(function() {
       /* Remove the event text box. */
-      overlayBackground.destroy();
-      overlayText.destroy();
-      /* Allow player to move again. */
-      that._player.enableControl();
-      cb();
+      overlay.destroy();
     }, timeout); /* Display the event text box for timeout ms. */
   }
 
@@ -1069,6 +1133,8 @@ define([
       var formData = formToJSON($(this).serializeArray());
 
       that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
+
+      displayStartGameButton.call(this, true);
     });
 
     $('#form-join-existing').submit(function(e) {
@@ -1087,6 +1153,10 @@ define([
 
       that._gameModelAdpt.onSendChatMessage(formData.message);
 
+    });
+
+    document.getElementById('btn-game-start').addEventListener('click', function() {
+      that._gameModelAdpt.onStartGameClick();
     });
 
     /* Prevent default actions for arrow keys. */
@@ -1109,6 +1179,11 @@ define([
         that._player.enableControl();
       }
     });
+
+    /* Only show the GUI after the document has loaded. */
+    $(document).ready(function() {
+      $('div.main').removeClass('hidden');
+    });
   }
 
   return function GameView(gameModelAdpt) {
@@ -1126,13 +1201,14 @@ define([
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
-    this.appendEvent = appendEvent.bind(this);
     this.attackAnimation = attackAnimation.bind(this);
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
+    this.enableGame = enableGame.bind(this);
     this.displayTextOverlay = displayTextOverlay.bind(this);
     this.hideRelicsShowKeys = hideRelicsShowKeys.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);
+    this.loadPurgatory = loadPurgatory.bind(this);
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);

@@ -12,6 +12,9 @@ module.exports = {
   autosubscribe: ['message', 'update', 'destroy'],
 
   attributes: {
+    active: {type: 'boolean',
+             required: true,
+             defaultsTo: false},
   	name: {type: 'string',
   		     required: true},
   	rooms: {collection: 'room',
@@ -45,21 +48,16 @@ module.exports = {
       totalAbundance += i.abundance;
     });
 
-    var numRelics = 0;
+
 
     /* Add 2 items per room per the abundance specifications. */
     var itemBank = [];
     for (i in Game.items) {
       _.times(Math.round(Game.items[i].abundance / totalAbundance
                          * allRooms.length * 2), function(n) {
-        if (Game.items[i].stat === 'relics') {
-          numRelics++;
-        }
         itemBank.push(i);
       });
     }
-
-    Game.update(game.id, {relicsRemaining: numRelics}, function(game){});
 
     /* Randomly order the items. */
     itemBank = _.shuffle(itemBank);
@@ -77,6 +75,8 @@ module.exports = {
     houseGrid[x][y] = roomID;
     openGridLocs.push([6,6], [7,5], [7,7]);
     roomsToCreate.push({game: game.id, name: roomID, background: room.floor});
+
+    var numRelics = 0;
 
     while (allRooms.length > 0) {
       var randLoc = Math.floor(Math.random() * openGridLocs.length);
@@ -97,6 +97,10 @@ module.exports = {
       var possibleLocs = Room.layouts[roomID].itemLocs.slice(0);
       _.times(2, function(n) {
         var item = itemBank.pop();
+
+        if (Game.items[item].stat === 'relics') {
+          numRelics++;
+        }
 
         var index = Math.floor(Math.random() * possibleLocs.length);
         var loc = possibleLocs[index];
@@ -127,6 +131,8 @@ module.exports = {
       }
     }
 
+    Game.update(game.id, {relicsRemaining: numRelics}, function(game){});
+
     var interactableObjects = [];
 
     for (var i = 0; i < houseGrid.length; i++) {
@@ -139,10 +145,13 @@ module.exports = {
 
         var thisRoom = Room.layouts[thisRoomID];
 
-        _.each(thisRoom.objects, function(o) {
-          if (_.has(Room.interactable, o.id)) {
+        _.each(_.keys(thisRoom.objects), function(k) {
+          var id = k;
+          var o = thisRoom.objects[k];
+
+          if (_.has(Room.interactable, o.type)) {
             interactableObjects.push({room: thisRoomID,
-                                      container: o.id});
+                                      container: id});
           }
         });
 

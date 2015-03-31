@@ -23,20 +23,29 @@ module.exports = {
   },
 
   interact: function(req, res) {
-    /* If the object is not interactable, don't do anything. */
-    if (Room.interactable[req.body.furniture] === undefined) {
-      return res.json();
-    }
+    var furnitureType;
 
-    Event.destroy({room: req.params.id, container: req.body.furniture})
+    Room.findOne(req.params.id)
+      .then(function(room) {
+        furnitureType = Room.layouts[room.name]
+                            .objects[req.body.furnitureID]
+                            .type;
+
+        /* If the object is not interactable, don't do anything. */
+        if (Room.interactable[furnitureType] === undefined) {
+          throw new Error(furnitureType + " is not interactable.");
+        }
+
+        return Event.destroy({room: req.params.id, container: req.body.furnitureID})
+      })
       .then(function(events) {
 
-        var prefix = Room.interactable[req.body.furniture].prefix;
+        var prefix = Room.interactable[furnitureType].prefix;
 
         if (events.length == 0) {
-          console.log('No event found in ' + req.body.furniture + '.');
           return res.json({title: '',
-                           text: prefix + ' Nothing happened.',
+                           flavorText: prefix,
+                           text: 'Nothing happened.',
                            effect: {}});
         }
 
@@ -46,7 +55,8 @@ module.exports = {
 
         res.json({
           title: card.title,
-          text: prefix + ' ' + card.text,
+          flavorText: prefix + ' ' + card.flavorText,
+          text: card.text,
           effect: card.effect
         });
       })

@@ -24,6 +24,7 @@ module.exports = {
 
   sendChatMessage: function(req, res) {
     Game.message(req.params.id, {message: req.body.message,
+                                 verb: 'chat',
                                  playerID: req.body.playerID});
     res.json();
   },
@@ -54,11 +55,9 @@ module.exports = {
   },
 
   destroy: function(req, res) {
-    console.log('called destroy');
     Game.destroy(req.params.id)
       .then(function(games) {
 
-        console.log('callback for destroy');
         console.log(games);
         _.each(games, function(g) {
           Game.publishDestroy(g.id, req);
