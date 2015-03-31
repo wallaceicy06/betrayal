@@ -7,6 +7,10 @@
 
 module.exports = {
 
+  autoWatch: false,
+
+  autosubscribe: ['destroy'],
+
   attributes: {
     type: {type: 'string',
            required: true},

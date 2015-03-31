@@ -2,8 +2,9 @@ define([
     'underscore',
     'model/Player',
     'model/MapNode',
-    'model/HauntFactory'
-], function(_, Player, MapNode, HauntFactory) {
+    'model/HauntFactory',
+    'model/Room'
+], function(_, Player, MapNode, HauntFactory, Room) {
 
   'use strict';
 
@@ -13,7 +14,7 @@ define([
   }
 
   var ATTACK_COOLDOWN = 2000;
-  var MIN_SEND_WAIT = 20;
+  var MIN_SEND_WAIT = 32;
 
   function joinGame(playerName, gameID) {
     var that = this;
@@ -132,8 +133,6 @@ define([
           },
 
           onDirectionChange: function(newDirection) {
-            io.socket.put('/player/adjustStat/' + player.id,
-              {stat: 'direction', newValue: newDirection}, function(player) {});
           }
         });
 
@@ -361,8 +360,7 @@ define([
     return {background: room.background,
             doors: doors,
             items: room.items,
-            furniture: room.objects,
-            event: room.event};
+            furniture: room.objects};
   }
 
   function assembleMap() {
@@ -370,9 +368,29 @@ define([
   }
 
   function fetchRoom(roomID, cb) {
-    io.socket.get('/room/' + roomID, function (room) {
-      cb(room);
-    });
+    var that = this;
+
+    if (_.has(that._roomCache, roomID)) {
+      cb(that._roomCache[roomID]);
+    } else {
+      io.socket.get('/room/' + roomID, function (room) {
+        that._roomCache[room.id] = new Room(room.id,
+                                            room.gatewaysOut,
+                                            room.gatewaysIn,
+                                            room.background,
+                                            room.items,
+                                            room.objects,
+                                            {
+          /* Room -> GameModel Adapter */
+          onAddItem: function(item) {
+          },
+
+          onRemoveItem: function(item) {
+          }
+        });
+        cb(room);
+      });
+    }
   }
 
   function sendChatMessage(message) {
@@ -548,9 +566,12 @@ define([
           && o.id === that._currentRoom.id
           && o.data.id !== that._player.id) {
 
+        console.log('player updated');
+
         that._otherPlayers[o.data.id].setPosition(o.data.data.locX,
                                                   o.data.data.locY);
 
+      /* TODO deprecate this! */
       } else if (o.verb === 'messaged' && o.data.verb === 'itemRemoved'
                  && o.id === that._currentRoom.id) {
 
@@ -559,6 +580,10 @@ define([
       } else if (o.verb === 'messaged' && o.data.verb === 'itemCreated') {
         that._viewAdpt.addItem(o.data.item);
       }
+    });
+
+    io.socket.on('item', function(o) {
+      console.log(o);
     });
 
     io.socket.on('game', function(o) {
@@ -668,6 +693,7 @@ define([
 
   return function GameModel(viewAdpt) {
     this._viewAdpt = viewAdpt;
+    this._roomCache = {};
 
     reset.call(this);
     initSockets.call(this);

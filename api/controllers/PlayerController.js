@@ -15,7 +15,6 @@ module.exports = {
                    room: req.body.room,
                    locX: 64,
                    locY: 64,
-                   direction: 'east',
                    socket: req.socket.id,
                    color: req.body.color,
                    maxHealth: 3,
@@ -60,7 +59,7 @@ module.exports = {
           Player.publishUpdate(updatedPlayer.id, req.body);
         }
 
-        res.json(updatedPlayer.toJSON());
+        res.json();
       })
       .catch(function(err) {
         console.log(err);
@@ -188,7 +187,7 @@ module.exports = {
         return Room.findOne(player.room).populate('players');
       })
       .then(function(room) {
-        var attackRegion = Player.getAttackRegion(player.direction, player.locX, player.locY);
+        var attackRegion = Player.attackRegion(player.locX, player.locY);
         for (var i = 0; i < room.players.length; i++) {
           var otherPlayer = room.players[i];
           if (otherPlayer.id !== player.id

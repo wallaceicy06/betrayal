@@ -8,15 +8,16 @@
 module.exports = {
 
 	destroy: function(req, res) {
-    Item.findOne(req.param('id'), function (err, item) {
+    Item.findOne(req.params.id, function (err, item) {
       if (err) {
         console.log(err);
         res.json(err);
         return;
       }
 
-      if(item !== undefined) {
+      if (item !== undefined) {
         Room.message(item.room, {id: item.id, verb: 'itemRemoved'});
+        Item.publishDestroy(item.id, req);
 
         if (item.stat === 'relics') {
           Room.findOne(item.room, function (err, room) {

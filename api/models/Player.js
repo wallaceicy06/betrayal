@@ -22,8 +22,6 @@ module.exports = {
            required: true},
     locY: {type: 'integer',
            required: true},
-    direction: {type: 'string',
-                required: true},
     socket: {type: 'string',
              required: true},
     color: {type: 'string',
@@ -46,36 +44,13 @@ module.exports = {
 
   ATTACK_RADIUS: 64,
 
-  getAttackRegion: function(direction, locX, locY) {
-    /* Base attack region on direction you are facing */
-    var region = {}
-    switch(direction) {
-      case 'east':
-        region['minX'] = locX;
-        region['maxX'] = locX + Player.ATTACK_RADIUS;
-        region['minY'] = locY - Player.ATTACK_RADIUS;
-        region['maxY'] = locY + Player.ATTACK_RADIUS;
-        break;
-      case 'west':
-        region['minX'] = locX - Player.ATTACK_RADIUS;
-        region['maxX'] = locX;
-        region['minY'] = locY - Player.ATTACK_RADIUS;
-        region['maxY'] = locY + Player.ATTACK_RADIUS;
-        break;
-      case 'north':
-        region['minX'] = locX - Player.ATTACK_RADIUS;
-        region['maxX'] = locX + Player.ATTACK_RADIUS;
-        region['minY'] = locY - Player.ATTACK_RADIUS;
-        region['maxY'] = locY;
-        break;
-      case 'south':
-        region['minX'] = locX - Player.ATTACK_RADIUS;
-        region['maxX'] = locX + Player.ATTACK_RADIUS;
-        region['minY'] = locY;
-        region['maxY'] = locY + Player.ATTACK_RADIUS;
-        break;
-    }
-    return region;
+  attackRegion: function(locX, locY) {
+    return {
+      minX: locX,
+      maxX: locX + Player.ATTACK_RADIUS,
+      minY: locY - Player.ATTACK_RADIUS,
+      maxY: locY + Player.ATTACK_RADIUS
+    };
   }
 };
 
