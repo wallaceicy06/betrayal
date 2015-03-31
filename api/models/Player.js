@@ -44,38 +44,14 @@ module.exports = {
                 required: true}
   },
 
-  ATTACK_RADIUS: 64,
+  ATTACK_RADIUS: 42,
 
   getAttackRegion: function(direction, locX, locY) {
     /* Base attack region on direction you are facing */
-    var region = {}
-    switch(direction) {
-      case 'east':
-        region['minX'] = locX;
-        region['maxX'] = locX + Player.ATTACK_RADIUS;
-        region['minY'] = locY - Player.ATTACK_RADIUS;
-        region['maxY'] = locY + Player.ATTACK_RADIUS;
-        break;
-      case 'west':
-        region['minX'] = locX - Player.ATTACK_RADIUS;
-        region['maxX'] = locX;
-        region['minY'] = locY - Player.ATTACK_RADIUS;
-        region['maxY'] = locY + Player.ATTACK_RADIUS;
-        break;
-      case 'north':
-        region['minX'] = locX - Player.ATTACK_RADIUS;
-        region['maxX'] = locX + Player.ATTACK_RADIUS;
-        region['minY'] = locY - Player.ATTACK_RADIUS;
-        region['maxY'] = locY;
-        break;
-      case 'south':
-        region['minX'] = locX - Player.ATTACK_RADIUS;
-        region['maxX'] = locX + Player.ATTACK_RADIUS;
-        region['minY'] = locY;
-        region['maxY'] = locY + Player.ATTACK_RADIUS;
-        break;
-    }
-    return region;
+    return {'minX': locX - Player.ATTACK_RADIUS,
+            'maxX': locX + Player.ATTACK_RADIUS,
+            'minY': locY - Player.ATTACK_RADIUS,
+            'maxY': locY + Player.ATTACK_RADIUS};
   }
 };
 

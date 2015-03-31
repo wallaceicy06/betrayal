@@ -36,11 +36,11 @@ define([
                 'SpritePlayerGreen': [0, COLOR_TO_ROW['green']],
                 'SpritePlayerPurple': [0, COLOR_TO_ROW['purple']]},
       },
-      'images/game/attack_up.png': {
-        'tile': TILE_WIDTH*3,
-        'tileh': TILE_WIDTH*2,
+      'images/game/fire_attack.png': {
+        'tile': 160,
+        'tileh': 160,
         'map': {
-          'AttackUp': [0, 25]
+          'AttackSprite': [0, 0]
         }
       }
     }
@@ -207,8 +207,8 @@ define([
 
     Crafty.c('Attack', {
       init: function() {
-        this.requires('2D, Canvas, AttackUp, SpriteAnimation');
-        this.reel('AttackUp', ATTACK_DUR, 0, 0, 5);
+        this.requires('2D, Canvas, AttackSprite, SpriteAnimation');
+        this.reel('AttackAnimation', ATTACK_DUR, 0, 0, 5);
       },
     });
 
@@ -874,15 +874,12 @@ define([
   }
 
   function attackAnimation() {
-    this._player.disableControl();
-
     var attack = Crafty.e('Attack')
-      .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH, y: this._playerModelAdpt.getY() - TILE_WIDTH});
-    attack.animate('AttackUp', 1);
+      .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH*2, y: this._playerModelAdpt.getY() - TILE_WIDTH*2});
+    attack.animate('AttackAnimation', 1);
     var that = this;
     setTimeout(function() {
       attack.destroy();
-      that._player.enableControl();
     }, ATTACK_DUR); 
   }
 
