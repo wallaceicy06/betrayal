@@ -172,14 +172,6 @@ define([
                                       theItem.amount);
         Crafty.audio.play('powerup');
 
-        // var thisPlayer = this;
-
-        // that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
-
-        // io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
-          // thisPlayer.attr({'itemLock': false});
-        // });
-
       },
 
       fixMovement: function(increaseBy) {
