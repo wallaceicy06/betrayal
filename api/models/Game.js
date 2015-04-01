@@ -23,14 +23,10 @@ module.exports = {
                    required: false},
     players: {collection: 'player',
               via: 'game'},
-    relicsRemaining: {type: 'integer',
-                      required: false},
     traitor: {model: 'player',
               required: false},
     haunt: {type: 'string',
             required: false},
-    keysRemaining: {type: 'integer',
-                    required: false}
   },
 
   checkWin: function(gameID, roomID) {
@@ -216,8 +212,6 @@ module.exports = {
         openGridLocs.push([x, y - 1]);
       }
     }
-
-    Game.update(game.id, {relicsRemaining: numRelics}, function(game){});
 
     var interactableObjects = [];
 

@@ -68,6 +68,7 @@ module.exports = {
   },
 
   destroy: function(req, res) {
+    /* TODO: this can be refactored further. */
     Player.findOne(req.param('id'))
       .then(function(player) {
         if (player.keys > 0) {
@@ -88,15 +89,8 @@ module.exports = {
                 return;
               });
           }
-          Game.findOne(player.game)
-            .then(function(game) {
-              Game.update(game.id, {keysRemaining: game.keysRemaining + player.keys}, function(err, game) {});
-            })
-            .catch(function (err) {
-              sails.log.error(err);
-              res.json(err);
-            });
         }
+
         Player.destroy(req.param('id'))
           .then(function(player) {
             Player.publishDestroy(req.param('id'));
