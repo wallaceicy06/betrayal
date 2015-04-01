@@ -40,6 +40,10 @@ module.exports = {
 
         game = found;
 
+        if (game.haunt === undefined) {
+          return -1;
+        }
+
         return Item.count({stat: 'keys', game: gameID});
       })
       .then(function(keyCount) {
