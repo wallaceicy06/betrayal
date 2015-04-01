@@ -39,6 +39,13 @@ define([
                 'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],
                 'SpritePlayerGreen': [0, COLOR_TO_ROW['green']],
                 'SpritePlayerPurple': [0, COLOR_TO_ROW['purple']]},
+      },
+      'images/game/fire_attack.png': {
+        'tile': 160,
+        'tileh': 160,
+        'map': {
+          'AttackSprite': [0, 0]
+        }
       }
     }
   }
@@ -51,7 +58,7 @@ define([
   };
 
   var MAX_STAT = 7;
-
+  var ATTACK_DUR = 300; // in milliseconds
   var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
 
   function installSpriteMap(sprites) {
@@ -191,6 +198,13 @@ define([
         }
       }
 
+    });
+
+    Crafty.c('Attack', {
+      init: function() {
+        this.requires('2D, Canvas, AttackSprite, SpriteAnimation');
+        this.reel('AttackAnimation', ATTACK_DUR, 0, 0, 5);
+      },
     });
 
     Crafty.c('Item', {
@@ -946,6 +960,16 @@ define([
     }
   }
 
+  function attackAnimation() {
+    var attack = Crafty.e('Attack')
+      .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH*2, y: this._playerModelAdpt.getY() - TILE_WIDTH*2});
+    attack.animate('AttackAnimation', 1);
+    var that = this;
+    setTimeout(function() {
+      attack.destroy();
+    }, ATTACK_DUR);
+  }
+
   function addGameOption(game) {
     var gameOptions = document.getElementById('select-game');
 
@@ -1178,6 +1202,7 @@ define([
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
+    this.attackAnimation = attackAnimation.bind(this);
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.enableGame = enableGame.bind(this);

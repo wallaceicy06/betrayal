@@ -42,11 +42,11 @@ module.exports = {
                 required: true}
   },
 
-  ATTACK_RADIUS: 64,
+  ATTACK_RADIUS: 42,
 
   attackRegion: function(locX, locY) {
     return {
-      minX: locX,
+      minX: locX - Player.ATTACK_RADIUS,
       maxX: locX + Player.ATTACK_RADIUS,
       minY: locY - Player.ATTACK_RADIUS,
       maxY: locY + Player.ATTACK_RADIUS

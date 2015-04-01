@@ -13,7 +13,7 @@ define([
     height: 512
   }
 
-  var ATTACK_COOLDOWN = 2000;
+  var ATTACK_COOLDOWN = 500;
   var MIN_SEND_WAIT = 32;
 
   function joinGame(playerName, gameID) {
@@ -447,6 +447,7 @@ define([
     var curTime = new Date().getTime();
     if (curTime - this._lastAttack > ATTACK_COOLDOWN) {
       this._lastAttack = curTime;
+      this._viewAdpt.attackAnimation();
       io.socket.put('/player/attack/' + this._player.id, {},
                     function(redData, jwr) {});
     }
