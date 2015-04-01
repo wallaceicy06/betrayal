@@ -334,6 +334,11 @@ define([
         for (var stat in resData.effect) {
           /* For right now, event effects only alter stats. */
           that._player[stat] = that._player[stat] + resData.effect[stat];
+          if (stat == 'relics') {
+            io.socket.get('/game/' + that._gameID, function(game) {
+              io.socket.put('/game/' + game.id, {relicsRemaining: game.relicsRemaining-1});
+            });
+          }
         }
       });
 

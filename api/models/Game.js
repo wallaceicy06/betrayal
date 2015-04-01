@@ -76,8 +76,6 @@ module.exports = {
     openGridLocs.push([6,6], [7,5], [7,7]);
     roomsToCreate.push({game: game.id, name: roomID, background: room.floor});
 
-    var numRelics = 0;
-
     while (allRooms.length > 0) {
       var randLoc = Math.floor(Math.random() * openGridLocs.length);
       var randRoom = Math.floor(Math.random() * allRooms.length);
@@ -97,10 +95,6 @@ module.exports = {
       var possibleLocs = Room.layouts[roomID].itemLocs.slice(0);
       _.times(2, function(n) {
         var item = itemBank.pop();
-
-        if (Game.items[item].stat === 'relics') {
-          numRelics++;
-        }
 
         var index = Math.floor(Math.random() * possibleLocs.length);
         var loc = possibleLocs[index];
@@ -130,8 +124,6 @@ module.exports = {
         openGridLocs.push([x, y - 1]);
       }
     }
-
-    Game.update(game.id, {relicsRemaining: numRelics}, function(game){});
 
     var interactableObjects = [];
 

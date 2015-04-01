@@ -42,7 +42,7 @@ module.exports.gameconfig = {
       prefix: 'You bend over and look under the coffee table.'
     },
     piano: {
-      prefix: 'You begin playing chopsticks on the piano. '
+      prefix: 'You begin playing chopsticks on the piano.'
     }
   },
   sprites: {
@@ -110,7 +110,7 @@ module.exports.gameconfig = {
     'stone': {
       stat: 'relics',
       amount: 1,
-      abundance: 0.2
+      abundance: 0
     }
   },
   rooms: {
@@ -761,7 +761,7 @@ module.exports.gameconfig = {
       flavorText: 'Your reflection in the mirror moves on its own. You '
                   + 'realize it is you from another time. It scratches into '
                   + 'the mirror "This will help" and hands you an item.',
-      text: 'Gain one weapon strength!',
+      text: 'Gain one attack power!',
       effect: {weapon: 1}
     },
     mirrorFuture: {
@@ -769,8 +769,71 @@ module.exports.gameconfig = {
       flavorText: 'Your reflection in the mirror moves on its own. You '
                   + 'realize it is you from another time. You scratch into '
                   + 'the mirror "This will help" and hand it an item.',
-      text: 'Lose one weapon strength.',
+      text: 'Lose one attack power.',
       effect: {weapon: -1}
+    },
+    ghost: {
+      title: 'Ghost',
+      flavorText: 'A face appears before your eyes, slightly transparent. The '
+                  + 'ghost rushes toward you! You jump back, but it passes '
+                  + 'right through you, chilling you to the bone.',
+      text: 'Max health decreased by one.',
+      effect: {maxHealth: -1}
+    },
+    book: {
+      title: 'Book',
+      flavorText: 'You find an ancient book, the binding barely holding it '
+                  + 'together. The title has worn off, but it seems to be '
+                  + 'a book of powerful spells.',
+      text: 'Gain one attack power!',
+      effect: {weapon: 1}
+    },
+    youthPotion: {
+      title: 'Youth Potion',
+      flavorText: 'You see a small vile of colorless liquid. The label claims '
+                  + 'it comes from the fountain of youth. You hesitate for a '
+                  + 'moment, then pop off the cap and drink. You can\'t '
+                  + 'explain it, but you feel somehow better . . . stronger.',
+      text: 'Max Health increased by one!',
+      effect: {maxHealth: 1}
+    },
+    shoes: {
+      title: 'Running Shoes',
+      flavorText: 'You find a pair of running shoes, and realize that the '
+                  + 'uncomfortable shoes you\'ve been wearing are holding '
+                  + 'you back. You quickly take off your own shoes and slip '
+                  + 'these on.',
+      text: 'Gain one speed!',
+      effect: {speed: 1}
+    },
+    bandage: {
+      title: 'Bandages',
+      flavorText: 'Sitting there is a pack of bandaids. You put one on your '
+                  + 'knee where you had scraped yourself earlier.',
+      text: 'Gain one health!',
+      effect: {curHealth: 1}
+    },
+    relic1: {
+      title: 'Relic',
+      flavorText: 'You find a strange and mysterious artifact. Curious, you '
+                  + 'pick it up. As you hold it in your hands, it seems to '
+                  + 'pulse with some kind of power.',
+      text: 'Gain one relic! You are one step closer to the second phase.',
+      effect: {relics: 1}
+    },
+    relic2: {
+      title: 'Relic',
+      flavorText: 'You see a strange amulet before you. As you pick it up, '
+                  + 'you feel some sort of power coursing through your veins.',
+      text: 'Gain one relic! You are one step closer to the second phase.',
+      effect: {relics: 1}
+    },
+    relic3: {
+      title: 'Relic',
+      flavorText: 'There is a small box covered in runes. You open it and '
+                  + 'feel a cold breeze wash over you, but the box is empty.',
+      text: 'Gain one relic! You are one step closer to the second phase.',
+      effect: {relics: 1}
     }
   },
 
