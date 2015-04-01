@@ -45,8 +45,6 @@ module.exports = {
             sails.log.error(err);
           });
 
-      } else if (item.stat === 'keys') {
-
       }
     });
 

@@ -23,7 +23,6 @@ module.exports = {
     Item.destroy(req.params.id)
       .then(function(items) {
         _.each(items, function(item) {
-          sails.log.info('publishing destroy');
           Item.publishDestroy(item.id, req, {previous: item});
         });
 
@@ -33,26 +32,6 @@ module.exports = {
         sails.log.error(err);
         res.json(err);
       });
-
-    return;
-
-    Item.findOne(req.params.id).populate('room')
-      .then(function(item) {
-
-        if (item === undefined) {
-          throw new Error('The item could not be found.');
-        }
-
-        return Item.destroy({id: req.param.id});
-      })
-      .then(function(items) {
-
-        res.json(items);
-      })
-      .catch(function(err) {
-        sails.log.error(err);
-        res.json(err);
-      });;
   }
 };
 
