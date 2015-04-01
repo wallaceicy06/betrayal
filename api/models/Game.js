@@ -93,7 +93,7 @@ module.exports = {
       });
 
       var possibleLocs = Room.layouts[roomID].itemLocs.slice(0);
-      _.times(2, function(n) {
+      //_.times(2, function(n) {
         var item = itemBank.pop();
 
         var index = Math.floor(Math.random() * possibleLocs.length);
@@ -104,7 +104,7 @@ module.exports = {
                             amount: Game.items[item].amount,
                             gridX: loc.x,
                             gridY: loc.y});
-      });
+      //});
 
       roomsToCreate.push({game: game.id,
                           name: roomID,
