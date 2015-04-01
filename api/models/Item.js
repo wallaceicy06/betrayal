@@ -23,7 +23,34 @@ module.exports = {
     gridY: {type: 'integer',
             required: true},
     room: {model: 'room',
+           required: true},
+    game: {model: 'game',
            required: true}
+  },
+
+  afterDestroy: function (items, cb) {
+    _.each(items, function(item) {
+      if (item.stat === 'relics') {
+
+        Item.count({stat: 'relics', game: item.game})
+          .then(function(numRelics) {
+
+            sails.log.info('relics remaining: ' + numRelics);
+            if (numRelics == 0) {
+              Game.startHaunt(item.game);
+            }
+
+          })
+          .catch(function(err) {
+            sails.log.error(err);
+          });
+
+      } else if (item.stat === 'keys') {
+
+      }
+    });
+
+    cb();
   }
 };
 

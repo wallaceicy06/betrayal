@@ -666,7 +666,7 @@ define([
           });
           that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
 
-          if (o.data.traitor.id === that._player.id) {
+          if (o.data.traitor === that._player.id) {
             that._player.isTraitor = true;
             that._viewAdpt.displayTextOverlay('Traitor',
                                               that._haunts[o.data.haunt].traitorFlavor,

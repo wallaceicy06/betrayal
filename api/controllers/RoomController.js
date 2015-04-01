@@ -23,7 +23,7 @@ module.exports = {
         res.json(roomMod);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
   },
@@ -67,7 +67,7 @@ module.exports = {
         });
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
   },
@@ -75,7 +75,7 @@ module.exports = {
   removeEvent: function(req, res) {
     Room.update(req.param('id'), {event: -1})
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
       .done(function() {

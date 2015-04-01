@@ -142,7 +142,6 @@ define([
          * being used twice for the same room.
          */
         if (this.attr('doorLock')) {
-          console.log('the lock prevented a double move');
           return;
         }
 
@@ -1062,7 +1061,6 @@ define([
     var that = this;
 
     this._player.disableControl();
-    console.log('disabling player control');
 
     var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
                                      .setDismiss(dismissable, function() {

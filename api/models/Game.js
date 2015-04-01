@@ -33,6 +33,91 @@ module.exports = {
                     required: false}
   },
 
+  checkWin: function(gameID, roomID) {
+    var game;
+
+    Game.findOne(gameID).populate('players').populate('rooms')
+      .then(function(found) {
+        if (found === undefined) {
+          throw new Error('Game could not be found.');
+        }
+
+        game = found;
+
+        return Item.count({stat: 'keys', game: gameID});
+      })
+      .then(function(keyCount) {
+        if (keyCount === 0) {
+          for (var i = 0; i < game.players.length; i++) {
+            var p = game.players[i];
+            if (!p.isTraitor && p.room !== roomID) {
+              return;
+            }
+          }
+
+          /* If we made it through, then the heroes won. */
+          Game.message(game.id, {verb: 'heroesWon'});
+        }
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+      });
+  },
+
+  startHaunt: function(gameID) {
+    var game;
+
+    Game.findOne(gameID).populate('players').populate('rooms')
+      .then(function(found) {
+        if (found === undefined) {
+          return;
+        }
+
+        game = found;
+
+        var traitor = game.players[Math.floor(Math.random()
+                                   * game.players.length)];
+        var allHaunts = _.keys(Game.haunts);
+        var haunt = allHaunts[Math.floor(Math.random() * allHaunts.length)];
+
+        return Game.update(game.id, {traitor: traitor, haunt: haunt});
+      })
+      .then(function(updatedGames) {
+        var updatedGame = updatedGames[0];
+
+        sails.log.info(updatedGame);
+
+        Game.publishUpdate(updatedGame.id, {traitor: updatedGame.traitor, haunt: updatedGame.haunt});
+
+        var itemsToCreate = [];
+
+        /* Create keys for heroes to pick up */
+        for (var x = 0; x < 2 * (game.players.length - 1); x++) {
+          var allRooms = game.rooms.slice(1); //Rooms, excluding entryway
+          var chosenRoom = allRooms[Math.floor(Math.random() * allRooms.length)];
+
+          var possibleLocs = Room.layouts[chosenRoom.name].itemLocs;
+          var loc = possibleLocs[Math.floor(Math.random() * possibleLocs.length)];
+
+          itemsToCreate.push({type: 'key', stat: 'keys', amount: 1,
+                              gridX: loc.x, gridY: loc.y, room: chosenRoom,
+                              game: game});
+        }
+
+        sails.log.info(itemsToCreate);
+
+        return Item.create(itemsToCreate);
+      })
+      .then(function(items) {
+        _.each(items, function(item) {
+          Item.publishCreate(item);
+        });
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+      });
+  },
+
   generateHouse: function(game, cb) {
     var roomsToCreate = [];
     var gatewaysToCreate = [];
@@ -109,7 +194,8 @@ module.exports = {
                             stat: Game.items[item].stat,
                             amount: Game.items[item].amount,
                             gridX: loc.x,
-                            gridY: loc.y});
+                            gridY: loc.y,
+                            game: game.id});
       });
 
       roomsToCreate.push({game: game.id,
@@ -163,8 +249,7 @@ module.exports = {
         var roomWestID = (j == 0 ? null : houseGrid[i][j - 1]);
 
         var roomNorth = Room.layouts[roomNorthID];
-        var roomEast = Room.layouts[roomEastID];
-        var roomSouth = Room.layouts[roomSouthID];
+        var roomEast = Room.layouts[roomEastID]; var roomSouth = Room.layouts[roomSouthID];
         var roomWest = Room.layouts[roomWestID];
 
         if (roomNorth != null && thisRoom.gateways.north
@@ -228,12 +313,10 @@ module.exports = {
           eventsToCreate.push(event);
         });
 
-        console.log(eventsToCreate);
-
         return Event.create(eventsToCreate)
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
       })
       .done(function() {
         cb(databaseID['entryway']);

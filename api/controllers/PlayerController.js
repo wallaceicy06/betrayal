@@ -41,7 +41,7 @@ module.exports = {
         res.json(newPlayer);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
@@ -62,7 +62,7 @@ module.exports = {
         res.json();
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
@@ -83,7 +83,7 @@ module.exports = {
                 Item.publishCreate(item);
               })
               .catch(function(err) {
-                console.log(err);
+                sails.log.error(err);
                 res.json(err);
                 return;
               });
@@ -93,7 +93,7 @@ module.exports = {
               Game.update(game.id, {keysRemaining: game.keysRemaining + player.keys}, function(err, game) {});
             })
             .catch(function (err) {
-              console.log(err);
+              sails.log.error(err);
               res.json(err);
             });
         }
@@ -132,29 +132,15 @@ module.exports = {
 
         Player.publishUpdate(player.id, {room: player.room});
 
-        /* If we entered the entryway, see if the heroes have won */
-        if (room.name === 'entryway' && !player.isTraitor) {
-          Game.findOne(room.game).populate('players')
-            .then(function(game) {
-              if (game.keysRemaining === 0) {
-                var won = true;
-                for (var i = 0; i < game.players.length; i++) {
-                  var p = game.players[i];
-                  if (!p.isTraitor && p.room !== room.id) {
-                    won = false;
-                  }
-                }
-                if (won) {
-                  Game.message(game.id, {verb: 'heroesWon'});
-                }
-              }
-            })
-        }
-
         res.json(room.players);
+        /* If we entered the entryway, see if the heroes have won */
+
+        if (room.name === 'entryway' && !player.isTraitor) {
+          Game.checkWin(room.game, room.id);
+        }
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
@@ -165,14 +151,14 @@ module.exports = {
 
     Player.update(req.params.id, updateObj, function (err, updatedPlayers) {
       if (err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
         return;
       }
       if (updatedPlayers.length > 0) {
         Player.publishUpdate(updatedPlayers[0].id, updateObj);
       } else {
-        console.log("Tried to update a player that doesn't exist");
+        sails.log.warn("Tried to update a player that doesn't exist");
       }
     });
   },
@@ -227,7 +213,7 @@ module.exports = {
         res.json();
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
@@ -238,7 +224,7 @@ module.exports = {
         Player.subscribe(req, player, ['update', 'destroy']);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   }
