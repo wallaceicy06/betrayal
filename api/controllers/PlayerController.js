@@ -80,7 +80,7 @@ module.exports = {
                          gridX: Math.round(player.locX/tileW),
                          gridY: Math.round(player.locY/tileW)})
               .then(function(item) {
-                Room.message(item.room, {verb: 'itemCreated', item: item});
+                Item.publishCreate(item);
               })
               .catch(function(err) {
                 console.log(err);

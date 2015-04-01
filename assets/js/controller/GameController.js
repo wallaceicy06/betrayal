@@ -90,30 +90,8 @@ define([
             return playerModel.isTraitor;
           },
 
-          useItem: function(stat, amount) {
-            switch(stat) {
-              case "speed":
-                playerModel.speed = playerModel.speed + amount;
-                break;
-              case "maxHealth":
-                playerModel.maxHealth = playerModel.maxHealth + amount;
-                break;
-              case "curHealth":
-                playerModel.curHealth = playerModel.curHealth + amount;
-                break;
-              case "weapon":
-                playerModel.weapon = playerModel.weapon + amount;
-                break;
-              case "relics":
-                playerModel.relics = playerModel.relics + amount;
-                break;
-              case "keys":
-                playerModel.keys = playerModel.keys + amount;
-                break;
-              default:
-                console.log("Unknown stat: " + stat);
-                break;
-            }
+          useItem: function(itemID, stat, amount) {
+            return playerModel.useItem(itemID, stat, amount);
           }
         });
 
@@ -247,8 +225,8 @@ define([
         that._view.removeItem(id);
       },
 
-      addItem: function(item) {
-        that._view.placeItems([item]);
+      placeItem: function(item) {
+        that._view.placeItem(item);
       },
 
       addGame: function(game) {

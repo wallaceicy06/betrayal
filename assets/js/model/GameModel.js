@@ -58,6 +58,10 @@ define([
         that._player.installGameModelAdpt({
           /* (This) Player Model -> Game Model adapter. */
 
+          acquireItem: function(itemID, success) {
+            removeItem.call(that, itemID, success);
+          },
+
           onSpeedChange: function(newSpeed, oldSpeed) {
             playerViewAdpt.onSpeedChange(newSpeed, oldSpeed);
             io.socket.put('/player/adjustStat/' + player.id,
@@ -150,6 +154,10 @@ define([
           var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
           player.installGameModelAdpt({
             /* (Other) Player Model -> Game Model Adapter */
+
+            acquireItem: function(itemID, success) {
+              /* Do nothing. */
+            },
 
             onSpeedChange: function(newSpeed) {
               playerViewAdpt.onSpeedChange(newSpeed);
@@ -340,6 +348,15 @@ define([
     });
   }
 
+  function removeItem(itemID, success) {
+    var that = this;
+
+    io.socket.delete('/item/' + itemID, function(data) {
+      that._currentRoom.removeItem(itemID);
+      success();
+    });
+  }
+
   function reloadRoom() {
     var that = this;
 
@@ -374,21 +391,29 @@ define([
       cb(that._roomCache[roomID]);
     } else {
       io.socket.get('/room/' + roomID, function (room) {
-        that._roomCache[room.id] = new Room(room.id,
-                                            room.gatewaysOut,
-                                            room.gatewaysIn,
-                                            room.background,
-                                            room.items,
-                                            room.objects,
-                                            {
+        var newRoom = new Room(room.id, room.gatewaysOut, room.gatewaysIn,
+                               room.background, room.items, room.objects, {
           /* Room -> GameModel Adapter */
           onAddItem: function(item) {
+            /*
+             * Only add the item to the view if the current room is that item's
+             * room.
+             */
+            if (that._currentRoom.id == item.room) {
+              that._viewAdpt.placeItem(item);
+            }
           },
 
-          onRemoveItem: function(item) {
+          onRemoveItem: function(itemID) {
+            console.log('onRemoveItem');
+            that._viewAdpt.removeItem(itemID);
           }
         });
-        cb(room);
+
+        /* Add the newly created room to the cache. */
+        that._roomCache[roomID] = newRoom;
+
+        cb(newRoom);
       });
     }
   }
@@ -459,6 +484,10 @@ define([
         var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
         player.installGameModelAdpt({
           /* (Other) Player -> Game Model adapter. */
+
+          acquireItem: function(itemID, success) {
+            removeItem.call(that, itemID, success);
+          },
 
           onSpeedChange: function(newSpeed) {
             playerViewAdpt.onSpeedChange(newSpeed);
@@ -575,15 +604,29 @@ define([
       } else if (o.verb === 'messaged' && o.data.verb === 'itemRemoved'
                  && o.id === that._currentRoom.id) {
 
-        that._viewAdpt.removeItem(o.data.id);
+        // that._viewAdpt.removeItem(o.data.id);
 
       } else if (o.verb === 'messaged' && o.data.verb === 'itemCreated') {
-        that._viewAdpt.addItem(o.data.item);
+        // that._viewAdpt.addItem(o.data.item);
       }
     });
 
     io.socket.on('item', function(o) {
-      console.log(o);
+      if (o.verb === 'created') {
+        /* TODO do something */
+        console.log('created');
+        console.log(o);
+        if (o.data.room in that._roomCache) {
+          that._roomCache[o.data.room].addItem(o.data);
+        }
+      } else if (o.verb === 'destroyed') {
+        console.log('destroyed');
+        console.log(o);
+
+        if (o.previous.room in that._roomCache) {
+          that._roomCache[o.previous.room].removeItem(o.previous.id);
+        }
+      }
     });
 
     io.socket.on('game', function(o) {

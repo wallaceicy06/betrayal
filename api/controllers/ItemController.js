@@ -17,7 +17,7 @@ module.exports = {
 
       if (item !== undefined) {
         Room.message(item.room, {id: item.id, verb: 'itemRemoved'});
-        Item.publishDestroy(item.id, req);
+        Item.publishDestroy(item.id, req, {previous: item});
 
         if (item.stat === 'relics') {
           Room.findOne(item.room, function (err, room) {
@@ -56,7 +56,8 @@ module.exports = {
                                    gridY: loc.y,
                                    room: chosenRoom})
                         .then(function(item) {
-                          Room.message(item.room, {verb: 'itemCreated', item: item});
+                          Item.publishCreate(item);
+                          // Room.message(item.room, {verb: 'itemCreated', item: item});
                         })
                         .catch(function(err) {
                           console.log(err);

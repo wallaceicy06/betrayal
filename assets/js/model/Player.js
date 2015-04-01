@@ -17,6 +17,36 @@ define([
     this._gameModelAdpt.onDestroy();
   }
 
+  function useItem(itemID, stat, amount) {
+    var that = this;
+
+    this._gameModelAdpt.acquireItem(itemID, function() {
+      switch(stat) {
+        case 'speed':
+          that.speed = that.speed + amount;
+          break;
+        case 'maxHealth':
+          that.maxHealth = that.maxHealth + amount;
+          break;
+        case 'curHealth':
+          that.curHealth = that.curHealth + amount;
+          break;
+        case 'weapon':
+          that.weapon = that.weapon + amount;
+          break;
+        case 'relics':
+          that.relics = that.relics + amount;
+          break;
+        case 'keys':
+          that.keys = that.keys + amount;
+          break;
+        default:
+          console.log('Unknown stat: ' + stat);
+          break;
+      }
+    });
+  }
+
   return function Player(id, name, color, room, initPos) {
     Object.defineProperty(this, 'id', {
       value: id,
@@ -160,6 +190,7 @@ define([
     this.installGameModelAdpt = installGameModelAdpt.bind(this);
     this.setPosition = setPosition.bind(this);
     this.destroy = destroy.bind(this);
+    this.useItem = useItem.bind(this);
 
     this._color = color;
     this._isTraitor = false;

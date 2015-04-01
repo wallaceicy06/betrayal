@@ -9,9 +9,9 @@ define([
     this._gameModelAdpt.onAddItem(item);
   }
 
-  function removeItem(item) {
-    delete this._items[item.id];
-    this._gameModelAdpt.onRemoveItem(item);
+  function removeItem(itemID) {
+    delete this._items[itemID];
+    this._gameModelAdpt.onRemoveItem(itemID);
   }
 
   return function Room(id, gatewaysOut, gatewaysIn, background, items, objects,

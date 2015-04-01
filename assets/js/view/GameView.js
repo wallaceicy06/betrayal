@@ -156,25 +156,30 @@ define([
       },
 
       pickUpItem: function(item) {
-        if (this.attr('itemLock')) {
+        var theItem = item[0].obj;
+
+        if (theItem.itemLock === true) {
           return;
         }
 
         /* Don't allow the traitor to pick up keys */
-        if (that._playerModelAdpt.isTraitor() && item[0].obj.type === 'key') {
+        if (that._playerModelAdpt.isTraitor() && theItem.type === 'key') {
           return;
         }
 
-        this.attr({'itemLock' : true});
-        var thisPlayer = this;
-
-        that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
-
-        io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
-          thisPlayer.attr({'itemLock': false});
-        });
-
+        theItem.attr({'itemLock' : true});
+        that._playerModelAdpt.useItem(theItem.itemID, theItem.stat,
+                                      theItem.amount);
         Crafty.audio.play('powerup');
+
+        // var thisPlayer = this;
+
+        // that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
+
+        // io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
+          // thisPlayer.attr({'itemLock': false});
+        // });
+
       },
 
       fixMovement: function(increaseBy) {
@@ -556,21 +561,27 @@ define([
     Crafty.enterScene('map', mapConfig);
   }
 
-  function placeItems(items) {
-    for (var i = 0; i < items.length; i++) {
-      var item = Crafty.e('Item').attr({x: items[i].gridX * TILE_WIDTH,
-                                        y: items[i].gridY * TILE_WIDTH,
-                                        type: items[i].type,
-                                        stat: items[i].stat,
-                                        amount: items[i].amount,
-                                        itemID: items[i].id})
-                                  .sprite(this._spriteMap[items[i].type].gridX,
-                                          this._spriteMap[items[i].type].gridY,
-                                          this._spriteMap[items[i].type].gridW,
-                                          this._spriteMap[items[i].type].gridH);
+  function placeItem(item) {
+    var newItem = Crafty.e('Item').attr({x: item.gridX * TILE_WIDTH,
+                                         y: item.gridY * TILE_WIDTH,
+                                         type: item.type,
+                                         stat: item.stat,
+                                         amount: item.amount,
+                                         itemID: item.id})
+                                  .sprite(this._spriteMap[item.type].gridX,
+                                          this._spriteMap[item.type].gridY,
+                                          this._spriteMap[item.type].gridW,
+                                          this._spriteMap[item.type].gridH);
 
-      this._items[items[i].id] = item;
-    }
+    this._items[item.id] = newItem;
+  }
+
+  function placeItems(items) {
+    var that = this;
+
+    _.each(items, function(i) {
+      placeItem.call(that, i);
+    });
   }
 
   function placeFurniture(furniture) {
@@ -937,10 +948,10 @@ define([
 
   }
 
-  function removeItem(id) {
-    if(id in this._items) {
-      this._items[id].destroy();
-      delete this._items[id];
+  function removeItem(itemID) {
+    if(itemID in this._items) {
+      this._items[itemID].destroy();
+      delete this._items[itemID];
     }
   }
 
@@ -1187,7 +1198,7 @@ define([
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
-    this.placeItems = placeItems.bind(this);
+    this.placeItem = placeItem.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
     this.reset = reset.bind(this);

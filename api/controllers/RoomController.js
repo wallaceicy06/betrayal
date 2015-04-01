@@ -18,7 +18,7 @@ module.exports = {
         Item.subscribe(req, room.items);
 
         /* Make sure the requester watches for new items created. */
-        Item.watch();
+        Item.watch(req);
 
         res.json(roomMod);
       })
