@@ -12,7 +12,7 @@ define([
     height: 512
   }
 
-  var ATTACK_COOLDOWN = 2000;
+  var ATTACK_COOLDOWN = 500;
   var MIN_SEND_WAIT = 20;
 
   function joinGame(playerName, gameID) {
