@@ -601,6 +601,8 @@ define([
         if (o.data.room in that._roomCache) {
           that._roomCache[o.data.room].addItem(o.data);
         }
+
+        io.socket.get('/item/subscribe/' + o.data.id, function(res) {});
       } else if (o.verb === 'destroyed') {
         /* If we cached this room, remove the item to the cached version. */
         if (o.previous.room in that._roomCache) {

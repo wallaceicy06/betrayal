@@ -7,10 +7,27 @@
 
 module.exports = {
 
+  subscribe: function(req, res) {
+    Item.findOne(req.params.id)
+      .then(function(item) {
+        Item.subscribe(req, item);
+        res.json(item);
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+        res.json(err);
+      });
+  },
+
 	destroy: function(req, res) {
     Item.destroy(req.params.id)
       .then(function(items) {
-        res.json();
+        _.each(items, function(item) {
+          sails.log.info('publishing destroy');
+          Item.publishDestroy(item.id, req, {previous: item});
+        });
+
+        res.json(items);
       })
       .catch(function(err) {
         sails.log.error(err);
@@ -26,13 +43,9 @@ module.exports = {
           throw new Error('The item could not be found.');
         }
 
-        return Item.destroy({id: req.param('id')});
+        return Item.destroy({id: req.param.id});
       })
       .then(function(items) {
-
-        _.each(items, function(item) {
-          Item.publishDestroy(items, req, {previous: item});
-        });
 
         res.json(items);
       })
