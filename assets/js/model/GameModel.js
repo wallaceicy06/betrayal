@@ -326,8 +326,6 @@ define([
   function onFurnitureInteract(furnitureID) {
     var that = this;
 
-    console.log('attempting to interact with ' + furnitureID);
-
     io.socket.post('/room/interact/' + this._currentRoom.id,
                    {furnitureID: furnitureID}, function(resData) {
 
@@ -344,7 +342,6 @@ define([
         }
       });
 
-      console.log(resData);
     });
   }
 
@@ -405,7 +402,6 @@ define([
           },
 
           onRemoveItem: function(itemID) {
-            console.log('onRemoveItem');
             that._viewAdpt.removeItem(itemID);
           }
         });
@@ -446,7 +442,6 @@ define([
   /* Checks if this player can attack, and tells server this player is attacking */
   function attack() {
     if (!this._combatEnabled) {
-      console.log("Combat not enabled yet!");
       return;
     }
     var curTime = new Date().getTime();
@@ -595,34 +590,19 @@ define([
           && o.id === that._currentRoom.id
           && o.data.id !== that._player.id) {
 
-        console.log('player updated');
-
         that._otherPlayers[o.data.id].setPosition(o.data.data.locX,
                                                   o.data.data.locY);
-
-      /* TODO deprecate this! */
-      } else if (o.verb === 'messaged' && o.data.verb === 'itemRemoved'
-                 && o.id === that._currentRoom.id) {
-
-        // that._viewAdpt.removeItem(o.data.id);
-
-      } else if (o.verb === 'messaged' && o.data.verb === 'itemCreated') {
-        // that._viewAdpt.addItem(o.data.item);
       }
     });
 
     io.socket.on('item', function(o) {
       if (o.verb === 'created') {
-        /* TODO do something */
-        console.log('created');
-        console.log(o);
+        /* If we cached this room, add the item to the cached version. */
         if (o.data.room in that._roomCache) {
           that._roomCache[o.data.room].addItem(o.data);
         }
       } else if (o.verb === 'destroyed') {
-        console.log('destroyed');
-        console.log(o);
-
+        /* If we cached this room, remove the item to the cached version. */
         if (o.previous.room in that._roomCache) {
           that._roomCache[o.previous.room].removeItem(o.previous.id);
         }
@@ -654,7 +634,6 @@ define([
             });
           }
         } else if (o.data.verb === 'chat') {
-          console.log(o.data.verb);
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
 
@@ -701,9 +680,6 @@ define([
           }
         }
       } else if (o.verb === 'destroyed') {
-          console.log('destroy message');
-          console.log(o);
-
           fetchGames.call(that);
 
           if (o.id == that._gameID) {
@@ -746,14 +722,6 @@ define([
         return DIMENSIONS;
       }
     });
-
-    var that = this;
-    window.testDestroy = function() {
-      io.socket.delete('/game/' + that._gameID, function(resData) {
-        console.log(resData);
-      });
-    };
-
 
     this.joinGame = joinGame.bind(this);
     this.fetchGames = fetchGames.bind(this);
