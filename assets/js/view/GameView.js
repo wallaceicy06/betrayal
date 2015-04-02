@@ -22,6 +22,8 @@ define([
         'powerup': ['sounds/powerup.wav'],
         'game_start': ['sounds/game_start.mp3'],
         'die': ['sounds/die.wav']
+        'slider': ['sounds/01_Slider.mp3'],
+        'tossed': ['sounds/02_Tossed.mp3']
     },
     'sprites': {
       'images/game/sprites.png': {
@@ -541,6 +543,7 @@ define([
       $('#join-pane').addClass('hidden');
       $('#splash-screen').addClass('hidden');
     } else {
+      Crafty.audio.stop();
       goToBeginningOptions.call(this);
       $('#game-pane').addClass('hidden');
       $('#header').addClass('hidden');
@@ -551,12 +554,13 @@ define([
 
   function enableGame(enable) {
     displayStartGameButton.call(this, false);
-    Crafty.audio.play('game_start');
+    Crafty.audio.stop();
+    Crafty.audio.play('slider', -1);
   }
 
   function loadPurgatory() {
+    Crafty.audio.play('tossed', -1);
     Crafty.enterScene('purgatory');
-
   }
 
   function loadRoom(roomConfig) {
