@@ -85,6 +85,7 @@ define([
                   that._viewAdpt.reset();
                 });
               });
+              playerViewAdpt.destroy();
             } else {
               playerViewAdpt.onCurHealthChange(newCurHealth);
               io.socket.put('/player/adjustStat/' + player.id,
@@ -348,9 +349,11 @@ define([
   function removeItem(itemID, success) {
     var that = this;
 
-    io.socket.delete('/item/' + itemID, function(data) {
-      that._currentRoom.removeItem(itemID);
-      success();
+    io.socket.delete('/item/' + itemID, function(deleted) {
+      if (deleted.length > 0) {
+        that._currentRoom.removeItem(itemID);
+        success();
+      }
     });
   }
 

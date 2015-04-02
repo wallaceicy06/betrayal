@@ -68,35 +68,15 @@ module.exports = {
   },
 
   destroy: function(req, res) {
-    /* TODO: this can be refactored further. */
-    Player.findOne(req.param('id'))
+    Player.destroy(req.params.id)
       .then(function(player) {
-        if (player.keys > 0) {
-          for (var i = 0; i < player.keys; i++) {
-            var tileW = Room.dimensions.tileW;
-            Item.create({type: 'key',
-                         stat: 'keys',
-                         amount: 1,
-                         room: player.room,
-                         gridX: Math.round(player.locX/tileW),
-                         gridY: Math.round(player.locY/tileW)})
-              .then(function(item) {
-                Item.publishCreate(item);
-              })
-              .catch(function(err) {
-                sails.log.error(err);
-                res.json(err);
-                return;
-              });
-          }
-        }
-
-        Player.destroy(req.param('id'))
-          .then(function(player) {
-            Player.publishDestroy(req.param('id'));
-            res.json(player);
-          })
+        Player.publishDestroy(req.params.id);
+        res.json(player);
       })
+      .catch(function(err) {
+        sails.log.error(err);
+        res.json(err);
+      });
   },
 
   changeRoom: function(req, res) {

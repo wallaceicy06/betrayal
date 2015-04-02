@@ -58,7 +58,6 @@ module.exports = {
     Game.destroy(req.params.id)
       .then(function(games) {
 
-        sails.log.info(games);
         _.each(games, function(g) {
           Game.publishDestroy(g.id, req);
         })

@@ -44,6 +44,33 @@ module.exports = {
 
   ATTACK_RADIUS: 42,
 
+  afterDestroy: function(players, cb) {
+    var tileW = Room.dimensions.tileW;
+
+    _.each(players, function(player) {
+      _.times(player.keys, function(i) {
+
+        sails.log.info('creating spawned key death thing');
+        Item.create({type: 'key',
+                     stat: 'keys',
+                     amount: 1,
+                     room: player.room,
+                     gridX: Math.round(player.locX/tileW),
+                     gridY: Math.round(player.locY/tileW),
+                     game: player.game})
+          .then(function(item) {
+            Item.publishCreate(item);
+          })
+          .catch(function(err) {
+            sails.log.error(err);
+          });
+
+      });
+    });
+
+    cb();
+  },
+
   attackRegion: function(locX, locY) {
     return {
       minX: locX - Player.ATTACK_RADIUS,

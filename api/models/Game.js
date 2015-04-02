@@ -85,8 +85,6 @@ module.exports = {
       .then(function(updatedGames) {
         var updatedGame = updatedGames[0];
 
-        sails.log.info(updatedGame);
-
         Game.publishUpdate(updatedGame.id, {traitor: updatedGame.traitor, haunt: updatedGame.haunt});
 
         var itemsToCreate = [];
@@ -103,8 +101,6 @@ module.exports = {
                               gridX: loc.x, gridY: loc.y, room: chosenRoom,
                               game: game});
         }
-
-        sails.log.info(itemsToCreate);
 
         return Item.create(itemsToCreate);
       })

@@ -98,6 +98,10 @@ define([
         return {
           /* Player Model -> Player View Adapter */
 
+          destroy: function() {
+            playerView.destroy();
+          },
+
           onSpeedChange: function(newSpeed, oldSpeed) {
             playerView.setSpeed(newSpeed);
             playerView.fixMovement(newSpeed - oldSpeed);
@@ -126,7 +130,7 @@ define([
       },
 
       addOtherPlayer: function(playerModel) {
-        return that._view.addOtherPlayer({
+        var playerView = that._view.addOtherPlayer({
           /* Player View -> Player Model Adapter for other players*/
 
           getID: function() {
@@ -181,6 +185,46 @@ define([
             return playerModel.isTraitor;
           },
         });
+
+        return {
+          /* (Other) Player Model -> Player View Adapter */
+
+          destroy: function() {
+            return playerView.destroy();
+          },
+
+          onRelicsChange: function(newRelics) {
+            return playerView.setRelics(newRelics);
+          },
+
+          onKeysChange: function(newKeys) {
+            return playerView.setKeys(newKeys);
+          },
+
+          onWeaponChange: function(newWeapon) {
+            return playerView.setWeapon(newWeapon);
+          },
+
+          onCurHealthChange: function(newCurHealth) {
+            return playerView.setCurHealth(newCurHealth);
+          },
+
+          onMaxHealthChange: function(newMaxHealth) {
+            return playerView.setMaxHealth(newMaxHealth);
+          },
+
+          onSpeedChange: function(newSpeed) {
+            return playerView.setSpeed(newSpeed);
+          },
+
+          setLocation: function(newX, newY) {
+            return playerView.setLocation(newX, newY);
+          },
+
+          setVisibility: function(visible) {
+            return playerView.setVisibility(visible);
+          }
+        }
       },
 
       installSpriteMap: function(sprites) {

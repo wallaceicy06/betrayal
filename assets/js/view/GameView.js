@@ -18,9 +18,10 @@ define([
   };
   var TILE_WIDTH = 32;
   var ASSETS = {
-    "audio": {
-        "powerup": ["sounds/powerup.wav"],
-        "game_start": ["sounds/game_start.mp3"]
+    'audio': {
+        'powerup': ['sounds/powerup.wav'],
+        'game_start': ['sounds/game_start.mp3'],
+        'die': ['sounds/die.wav']
     },
     'sprites': {
       'images/game/sprites.png': {
@@ -629,6 +630,12 @@ define([
     $('#' + playerModelAdpt.getID() + '.player-list-item').addClass('my-stats');
 
     return {
+      destroy: function() {
+        $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
+
+        Crafty.audio.play('die');
+      },
+
       setRelics: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-relics img').each(function(index) {
@@ -801,8 +808,7 @@ define([
     var playerListItem = addPlayerToList.call(this, playerModelAdpt);
 
     /*
-     * TODO move some of this back to the controller to match the local
-     * player
+     * TODO maybe make an actual view code thing for this?
      */
     return {
       destroy: function() {
@@ -810,9 +816,11 @@ define([
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
+
+        Crafty.audio.play('die');
       },
 
-      onRelicsChange: function(newRelics) {
+      setRelics: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-relics img').each(function(index) {
             if (index < newRelics) {
@@ -823,7 +831,7 @@ define([
           });
       },
 
-      onKeysChange: function(newKeys) {
+      setKeys: function(newKeys) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-keys img').each(function(index) {
             if (index < newKeys) {
@@ -834,7 +842,7 @@ define([
           });
       },
 
-      onWeaponChange: function(newWeapon) {
+      setWeapon: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-weapon img').each(function(index) {
             if (index < newWeapon) {
@@ -845,7 +853,7 @@ define([
           });
       },
 
-      onCurHealthChange: function(newCurHealth) {
+      setCurHealth: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-health img').each(function(index) {
             if (index < newCurHealth) {
@@ -858,7 +866,7 @@ define([
           });
       },
 
-      onMaxHealthChange: function(newMaxHealth) {
+      setMaxHealth: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-health img').each(function(index) {
             if (index < newMaxHealth) {
@@ -869,7 +877,7 @@ define([
           });
       },
 
-      onSpeedChange: function(newSpeed) {
+      setSpeed: function(newSpeed) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-speed img').each(function(index) {
             if (index < newSpeed) {

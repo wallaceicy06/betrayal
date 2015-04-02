@@ -10,7 +10,7 @@ module.exports = {
   subscribe: function(req, res) {
     Item.findOne(req.params.id)
       .then(function(item) {
-        Item.subscribe(req, item);
+        Item.subscribe(req, item.id);
         res.json(item);
       })
       .catch(function(err) {
