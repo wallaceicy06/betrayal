@@ -17,7 +17,7 @@ module.exports = {
         res.json(game);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
@@ -34,7 +34,7 @@ module.exports = {
                  function(err, game) {
 
       if (err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
         return;
       }
@@ -47,7 +47,7 @@ module.exports = {
             res.json(updatedGame);
           })
           .catch(function(err) {
-            console.log(err);
+            sails.log.error(err);
             res.json(err);
           });
       });
@@ -118,7 +118,6 @@ module.exports = {
     Game.destroy(req.params.id)
       .then(function(games) {
 
-        console.log(games);
         _.each(games, function(g) {
           Game.publishDestroy(g.id, req);
         })
@@ -126,7 +125,7 @@ module.exports = {
         res.json(games);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   }

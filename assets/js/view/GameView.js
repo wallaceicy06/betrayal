@@ -18,9 +18,12 @@ define([
   };
   var TILE_WIDTH = 32;
   var ASSETS = {
-    "audio": {
-        "powerup": ["sounds/powerup.wav"],
-        "game_start": ["sounds/game_start.mp3"]
+    'audio': {
+        'powerup': ['sounds/powerup.wav'],
+        'game_start': ['sounds/game_start.mp3'],
+        'die': ['sounds/die.wav'],
+        'slider': ['sounds/01_Slider.mp3'],
+        'tossed': ['sounds/02_Tossed.mp3']
     },
     'sprites': {
       'images/game/sprites.png': {
@@ -39,6 +42,13 @@ define([
                 'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],
                 'SpritePlayerGreen': [0, COLOR_TO_ROW['green']],
                 'SpritePlayerPurple': [0, COLOR_TO_ROW['purple']]},
+      },
+      'images/game/fire_attack.png': {
+        'tile': 160,
+        'tileh': 160,
+        'map': {
+          'AttackSprite': [0, 0]
+        }
       }
     }
   }
@@ -51,7 +61,7 @@ define([
   };
 
   var MAX_STAT = 7;
-
+  var ATTACK_DUR = 300; // in milliseconds
   var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
 
   function installSpriteMap(sprites) {
@@ -142,7 +152,6 @@ define([
          * being used twice for the same room.
          */
         if (this.attr('doorLock')) {
-          console.log('the lock prevented a double move');
           return;
         }
 
@@ -156,25 +165,22 @@ define([
       },
 
       pickUpItem: function(item) {
-        if (this.attr('itemLock')) {
+        var theItem = item[0].obj;
+
+        if (theItem.itemLock === true) {
           return;
         }
 
         /* Don't allow the traitor to pick up keys */
-        if (that._playerModelAdpt.isTraitor() && item[0].obj.type === 'key') {
+        if (that._playerModelAdpt.isTraitor() && theItem.type === 'key') {
           return;
         }
 
-        this.attr({'itemLock' : true});
-        var thisPlayer = this;
-
-        that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
-
-        io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
-          thisPlayer.attr({'itemLock': false});
-        });
-
+        theItem.attr({'itemLock' : true});
+        that._playerModelAdpt.useItem(theItem.itemID, theItem.stat,
+                                      theItem.amount);
         Crafty.audio.play('powerup');
+
       },
 
       fixMovement: function(increaseBy) {
@@ -195,6 +201,13 @@ define([
         }
       }
 
+    });
+
+    Crafty.c('Attack', {
+      init: function() {
+        this.requires('2D, Canvas, AttackSprite, SpriteAnimation');
+        this.reel('AttackAnimation', ATTACK_DUR, 0, 0, 5);
+      },
     });
 
     Crafty.c('Item', {
@@ -530,6 +543,7 @@ define([
       $('#join-pane').addClass('hidden');
       $('#splash-screen').addClass('hidden');
     } else {
+      Crafty.audio.stop();
       goToBeginningOptions.call(this);
       $('#game-pane').addClass('hidden');
       $('#header').addClass('hidden');
@@ -540,12 +554,13 @@ define([
 
   function enableGame(enable) {
     displayStartGameButton.call(this, false);
-    Crafty.audio.play('game_start');
+    Crafty.audio.stop();
+    Crafty.audio.play('slider', -1);
   }
 
   function loadPurgatory() {
+    Crafty.audio.play('tossed', -1);
     Crafty.enterScene('purgatory');
-
   }
 
   function loadRoom(roomConfig) {
@@ -556,21 +571,27 @@ define([
     Crafty.enterScene('map', mapConfig);
   }
 
-  function placeItems(items) {
-    for (var i = 0; i < items.length; i++) {
-      var item = Crafty.e('Item').attr({x: items[i].gridX * TILE_WIDTH,
-                                        y: items[i].gridY * TILE_WIDTH,
-                                        type: items[i].type,
-                                        stat: items[i].stat,
-                                        amount: items[i].amount,
-                                        itemID: items[i].id})
-                                  .sprite(this._spriteMap[items[i].type].gridX,
-                                          this._spriteMap[items[i].type].gridY,
-                                          this._spriteMap[items[i].type].gridW,
-                                          this._spriteMap[items[i].type].gridH);
+  function placeItem(item) {
+    var newItem = Crafty.e('Item').attr({x: item.gridX * TILE_WIDTH,
+                                         y: item.gridY * TILE_WIDTH,
+                                         type: item.type,
+                                         stat: item.stat,
+                                         amount: item.amount,
+                                         itemID: item.id})
+                                  .sprite(this._spriteMap[item.type].gridX,
+                                          this._spriteMap[item.type].gridY,
+                                          this._spriteMap[item.type].gridW,
+                                          this._spriteMap[item.type].gridH);
 
-      this._items[items[i].id] = item;
-    }
+    this._items[item.id] = newItem;
+  }
+
+  function placeItems(items) {
+    var that = this;
+
+    _.each(items, function(i) {
+      placeItem.call(that, i);
+    });
   }
 
   function placeFurniture(furniture) {
@@ -613,6 +634,12 @@ define([
     $('#' + playerModelAdpt.getID() + '.player-list-item').addClass('my-stats');
 
     return {
+      destroy: function() {
+        $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
+
+        Crafty.audio.play('die');
+      },
+
       setRelics: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-relics img').each(function(index) {
@@ -785,8 +812,7 @@ define([
     var playerListItem = addPlayerToList.call(this, playerModelAdpt);
 
     /*
-     * TODO move some of this back to the controller to match the local
-     * player
+     * TODO maybe make an actual view code thing for this?
      */
     return {
       destroy: function() {
@@ -794,9 +820,11 @@ define([
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
+
+        Crafty.audio.play('die');
       },
 
-      onRelicsChange: function(newRelics) {
+      setRelics: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-relics img').each(function(index) {
             if (index < newRelics) {
@@ -807,7 +835,7 @@ define([
           });
       },
 
-      onKeysChange: function(newKeys) {
+      setKeys: function(newKeys) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-keys img').each(function(index) {
             if (index < newKeys) {
@@ -818,7 +846,7 @@ define([
           });
       },
 
-      onWeaponChange: function(newWeapon) {
+      setWeapon: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-weapon img').each(function(index) {
             if (index < newWeapon) {
@@ -829,7 +857,7 @@ define([
           });
       },
 
-      onCurHealthChange: function(newCurHealth) {
+      setCurHealth: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-health img').each(function(index) {
             if (index < newCurHealth) {
@@ -842,7 +870,7 @@ define([
           });
       },
 
-      onMaxHealthChange: function(newMaxHealth) {
+      setMaxHealth: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-health img').each(function(index) {
             if (index < newMaxHealth) {
@@ -853,7 +881,7 @@ define([
           });
       },
 
-      onSpeedChange: function(newSpeed) {
+      setSpeed: function(newSpeed) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-speed img').each(function(index) {
             if (index < newSpeed) {
@@ -937,11 +965,21 @@ define([
 
   }
 
-  function removeItem(id) {
-    if(id in this._items) {
-      this._items[id].destroy();
-      delete this._items[id];
+  function removeItem(itemID) {
+    if(itemID in this._items) {
+      this._items[itemID].destroy();
+      delete this._items[itemID];
     }
+  }
+
+  function attackAnimation() {
+    var attack = Crafty.e('Attack')
+      .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH*2, y: this._playerModelAdpt.getY() - TILE_WIDTH*2});
+    attack.animate('AttackAnimation', 1);
+    var that = this;
+    setTimeout(function() {
+      attack.destroy();
+    }, ATTACK_DUR);
   }
 
   function addGameOption(game) {
@@ -1059,7 +1097,6 @@ define([
     var that = this;
 
     this._player.disableControl();
-    console.log('disabling player control');
 
     var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
                                      .setDismiss(dismissable, function() {
@@ -1177,6 +1214,7 @@ define([
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
+    this.attackAnimation = attackAnimation.bind(this);
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.enableGame = enableGame.bind(this);
@@ -1187,7 +1225,7 @@ define([
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
-    this.placeItems = placeItems.bind(this);
+    this.placeItem = placeItem.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
     this.reset = reset.bind(this);

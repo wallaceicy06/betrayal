@@ -2,8 +2,9 @@ define([
     'underscore',
     'model/Player',
     'model/MapNode',
-    'model/HauntFactory'
-], function(_, Player, MapNode, HauntFactory) {
+    'model/HauntFactory',
+    'model/Room'
+], function(_, Player, MapNode, HauntFactory, Room) {
 
   'use strict';
 
@@ -12,8 +13,8 @@ define([
     height: 512
   }
 
-  var ATTACK_COOLDOWN = 2000;
-  var MIN_SEND_WAIT = 20;
+  var ATTACK_COOLDOWN = 500;
+  var MIN_SEND_WAIT = 32;
 
   function joinGame(playerName, gameID) {
     var that = this;
@@ -57,6 +58,10 @@ define([
         that._player.installGameModelAdpt({
           /* (This) Player Model -> Game Model adapter. */
 
+          acquireItem: function(itemID, success) {
+            removeItem.call(that, itemID, success);
+          },
+
           onSpeedChange: function(newSpeed, oldSpeed) {
             playerViewAdpt.onSpeedChange(newSpeed, oldSpeed);
             io.socket.put('/player/adjustStat/' + player.id,
@@ -80,6 +85,7 @@ define([
                   that._viewAdpt.reset();
                 });
               });
+              playerViewAdpt.destroy();
             } else {
               playerViewAdpt.onCurHealthChange(newCurHealth);
               io.socket.put('/player/adjustStat/' + player.id,
@@ -132,8 +138,6 @@ define([
           },
 
           onDirectionChange: function(newDirection) {
-            io.socket.put('/player/adjustStat/' + player.id,
-              {stat: 'direction', newValue: newDirection}, function(player) {});
           }
         });
 
@@ -151,6 +155,10 @@ define([
           var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
           player.installGameModelAdpt({
             /* (Other) Player Model -> Game Model Adapter */
+
+            acquireItem: function(itemID, success) {
+              /* Do nothing. */
+            },
 
             onSpeedChange: function(newSpeed) {
               playerViewAdpt.onSpeedChange(newSpeed);
@@ -319,8 +327,6 @@ define([
   function onFurnitureInteract(furnitureID) {
     var that = this;
 
-    console.log('attempting to interact with ' + furnitureID);
-
     io.socket.post('/room/interact/' + this._currentRoom.id,
                    {furnitureID: furnitureID}, function(resData) {
 
@@ -342,7 +348,17 @@ define([
         }
       });
 
-      console.log(resData);
+    });
+  }
+
+  function removeItem(itemID, success) {
+    var that = this;
+
+    io.socket.delete('/item/' + itemID, function(deleted) {
+      if (deleted.length > 0) {
+        that._currentRoom.removeItem(itemID);
+        success();
+      }
     });
   }
 
@@ -366,8 +382,7 @@ define([
     return {background: room.background,
             doors: doors,
             items: room.items,
-            furniture: room.objects,
-            event: room.event};
+            furniture: room.objects};
   }
 
   function assembleMap() {
@@ -375,9 +390,36 @@ define([
   }
 
   function fetchRoom(roomID, cb) {
-    io.socket.get('/room/' + roomID, function (room) {
-      cb(room);
-    });
+    var that = this;
+
+    if (_.has(that._roomCache, roomID)) {
+      cb(that._roomCache[roomID]);
+    } else {
+      io.socket.get('/room/' + roomID, function (room) {
+        var newRoom = new Room(room.id, room.gatewaysOut, room.gatewaysIn,
+                               room.background, room.items, room.objects, {
+          /* Room -> GameModel Adapter */
+          onAddItem: function(item) {
+            /*
+             * Only add the item to the view if the current room is that item's
+             * room.
+             */
+            if (that._currentRoom.id == item.room) {
+              that._viewAdpt.placeItem(item);
+            }
+          },
+
+          onRemoveItem: function(itemID) {
+            that._viewAdpt.removeItem(itemID);
+          }
+        });
+
+        /* Add the newly created room to the cache. */
+        that._roomCache[roomID] = newRoom;
+
+        cb(newRoom);
+      });
+    }
   }
 
   function sendChatMessage(message) {
@@ -408,12 +450,12 @@ define([
   /* Checks if this player can attack, and tells server this player is attacking */
   function attack() {
     if (!this._combatEnabled) {
-      console.log("Combat not enabled yet!");
       return;
     }
     var curTime = new Date().getTime();
     if (curTime - this._lastAttack > ATTACK_COOLDOWN) {
       this._lastAttack = curTime;
+      this._viewAdpt.attackAnimation();
       io.socket.put('/player/attack/' + this._player.id, {},
                     function(redData, jwr) {});
     }
@@ -446,6 +488,10 @@ define([
         var playerViewAdpt = that._viewAdpt.addOtherPlayer(player);
         player.installGameModelAdpt({
           /* (Other) Player -> Game Model adapter. */
+
+          acquireItem: function(itemID, success) {
+            removeItem.call(that, itemID, success);
+          },
 
           onSpeedChange: function(newSpeed) {
             playerViewAdpt.onSpeedChange(newSpeed);
@@ -555,14 +601,22 @@ define([
 
         that._otherPlayers[o.data.id].setPosition(o.data.data.locX,
                                                   o.data.data.locY);
+      }
+    });
 
-      } else if (o.verb === 'messaged' && o.data.verb === 'itemRemoved'
-                 && o.id === that._currentRoom.id) {
+    io.socket.on('item', function(o) {
+      if (o.verb === 'created') {
+        /* If we cached this room, add the item to the cached version. */
+        if (o.data.room in that._roomCache) {
+          that._roomCache[o.data.room].addItem(o.data);
+        }
 
-        that._viewAdpt.removeItem(o.data.id);
-
-      } else if (o.verb === 'messaged' && o.data.verb === 'itemCreated') {
-        that._viewAdpt.addItem(o.data.item);
+        io.socket.get('/item/subscribe/' + o.data.id, function(res) {});
+      } else if (o.verb === 'destroyed') {
+        /* If we cached this room, remove the item to the cached version. */
+        if (o.previous.room in that._roomCache) {
+          that._roomCache[o.previous.room].removeItem(o.previous.id);
+        }
       }
     });
 
@@ -591,7 +645,6 @@ define([
             });
           }
         } else if (o.data.verb === 'chat') {
-          console.log(o.data.verb);
           that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
         }
 
@@ -624,7 +677,7 @@ define([
           });
           that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
 
-          if (o.data.traitor.id === that._player.id) {
+          if (o.data.traitor === that._player.id) {
             that._player.isTraitor = true;
             that._viewAdpt.displayTextOverlay('Traitor',
                                               that._haunts[o.data.haunt].traitorFlavor,
@@ -638,9 +691,6 @@ define([
           }
         }
       } else if (o.verb === 'destroyed') {
-          console.log('destroy message');
-          console.log(o);
-
           fetchGames.call(that);
 
           if (o.id == that._gameID) {
@@ -673,6 +723,7 @@ define([
 
   return function GameModel(viewAdpt) {
     this._viewAdpt = viewAdpt;
+    this._roomCache = {};
 
     reset.call(this);
     initSockets.call(this);
@@ -682,14 +733,6 @@ define([
         return DIMENSIONS;
       }
     });
-
-    var that = this;
-    window.testDestroy = function() {
-      io.socket.delete('/game/' + that._gameID, function(resData) {
-        console.log(resData);
-      });
-    };
-
 
     this.joinGame = joinGame.bind(this);
     this.fetchGames = fetchGames.bind(this);

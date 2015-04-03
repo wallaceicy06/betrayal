@@ -7,6 +7,10 @@
 
 module.exports = {
 
+  autoWatch: false,
+
+  autosubscribe: ['destroy'],
+
   attributes: {
     type: {type: 'string',
            required: true},
@@ -19,6 +23,8 @@ module.exports = {
     gridY: {type: 'integer',
             required: true},
     room: {model: 'room',
+           required: true},
+    game: {model: 'game',
            required: true}
   }
 };

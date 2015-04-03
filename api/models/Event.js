@@ -17,7 +17,34 @@ module.exports = {
     container: {type: 'string',
                 required: true},
     card: {type: 'string',
+           required: true},
+    game: {model: 'game',
            required: true}
+  },
+
+  afterDestroy: function (events, cb) {
+    _.each(events, function(event) {
+      for (var stat in event.card.effect) {
+        if (stat === 'relics') {
+
+          Event.count({card: {'contains': 'relics'}, game: event.game})
+            .then(function(numRelics) {
+
+              sails.log.info('relics remaining: ' + numRelics);
+              if (numRelics == 0) {
+                Game.startHaunt(event.game);
+              }
+
+            })
+            .catch(function(err) {
+              sails.log.error(err);
+            });
+
+        }
+      }
+    });
+
+    cb();
   },
 
   cards: sails.config.gameconfig.cards
