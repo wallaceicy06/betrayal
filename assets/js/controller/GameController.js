@@ -90,35 +90,17 @@ define([
             return playerModel.isTraitor;
           },
 
-          useItem: function(stat, amount) {
-            switch(stat) {
-              case "speed":
-                playerModel.speed = playerModel.speed + amount;
-                break;
-              case "maxHealth":
-                playerModel.maxHealth = playerModel.maxHealth + amount;
-                break;
-              case "curHealth":
-                playerModel.curHealth = playerModel.curHealth + amount;
-                break;
-              case "weapon":
-                playerModel.weapon = playerModel.weapon + amount;
-                break;
-              case "relics":
-                playerModel.relics = playerModel.relics + amount;
-                break;
-              case "keys":
-                playerModel.keys = playerModel.keys + amount;
-                break;
-              default:
-                console.log("Unknown stat: " + stat);
-                break;
-            }
+          useItem: function(itemID, stat, amount) {
+            return playerModel.useItem(itemID, stat, amount);
           }
         });
 
         return {
           /* Player Model -> Player View Adapter */
+
+          destroy: function() {
+            playerView.destroy();
+          },
 
           onSpeedChange: function(newSpeed, oldSpeed) {
             playerView.setSpeed(newSpeed);
@@ -148,7 +130,7 @@ define([
       },
 
       addOtherPlayer: function(playerModel) {
-        return that._view.addOtherPlayer({
+        var playerView = that._view.addOtherPlayer({
           /* Player View -> Player Model Adapter for other players*/
 
           getID: function() {
@@ -203,6 +185,46 @@ define([
             return playerModel.isTraitor;
           },
         });
+
+        return {
+          /* (Other) Player Model -> Player View Adapter */
+
+          destroy: function() {
+            return playerView.destroy();
+          },
+
+          onRelicsChange: function(newRelics) {
+            return playerView.setRelics(newRelics);
+          },
+
+          onKeysChange: function(newKeys) {
+            return playerView.setKeys(newKeys);
+          },
+
+          onWeaponChange: function(newWeapon) {
+            return playerView.setWeapon(newWeapon);
+          },
+
+          onCurHealthChange: function(newCurHealth) {
+            return playerView.setCurHealth(newCurHealth);
+          },
+
+          onMaxHealthChange: function(newMaxHealth) {
+            return playerView.setMaxHealth(newMaxHealth);
+          },
+
+          onSpeedChange: function(newSpeed) {
+            return playerView.setSpeed(newSpeed);
+          },
+
+          setLocation: function(newX, newY) {
+            return playerView.setLocation(newX, newY);
+          },
+
+          setVisibility: function(visible) {
+            return playerView.setVisibility(visible);
+          }
+        }
       },
 
       installSpriteMap: function(sprites) {
@@ -243,12 +265,16 @@ define([
         that._view.changePlayerSprite(spriteName);
       },
 
+      attackAnimation: function() {
+        that._view.attackAnimation();
+      },
+
       removeItem: function(id) {
         that._view.removeItem(id);
       },
 
-      addItem: function(item) {
-        that._view.placeItems([item]);
+      placeItem: function(item) {
+        that._view.placeItem(item);
       },
 
       addGame: function(game) {

@@ -12,12 +12,18 @@ module.exports = {
       .then(function(room) {
         var roomMod = room;
 
-        roomMod.objects = Room.layouts[room.name].objects
+        roomMod.objects = Room.layouts[room.name].objects;
+
+        /* Subscribe the requester to items that they see in this room. */
+        Item.subscribe(req, room.items);
+
+        /* Make sure the requester watches for new items created. */
+        Item.watch(req);
 
         res.json(roomMod);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
   },
@@ -61,7 +67,7 @@ module.exports = {
         });
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
   },
@@ -69,7 +75,7 @@ module.exports = {
   removeEvent: function(req, res) {
     Room.update(req.param('id'), {event: -1})
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
       .done(function() {

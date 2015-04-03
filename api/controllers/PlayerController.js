@@ -15,7 +15,6 @@ module.exports = {
                    room: req.body.room,
                    locX: 64,
                    locY: 64,
-                   direction: 'east',
                    socket: req.socket.id,
                    color: req.body.color,
                    maxHealth: 3,
@@ -42,7 +41,7 @@ module.exports = {
         res.json(newPlayer);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
@@ -60,50 +59,24 @@ module.exports = {
           Player.publishUpdate(updatedPlayer.id, req.body);
         }
 
-        res.json(updatedPlayer.toJSON());
+        res.json();
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
 
   destroy: function(req, res) {
-    Player.findOne(req.param('id'))
+    Player.destroy(req.params.id)
       .then(function(player) {
-        if (player.keys > 0) {
-          for (var i = 0; i < player.keys; i++) {
-            var tileW = Room.dimensions.tileW;
-            Item.create({type: 'key',
-                         stat: 'keys',
-                         amount: 1,
-                         room: player.room,
-                         gridX: Math.round(player.locX/tileW),
-                         gridY: Math.round(player.locY/tileW)})
-              .then(function(item) {
-                Room.message(item.room, {verb: 'itemCreated', item: item});
-              })
-              .catch(function(err) {
-                console.log(err);
-                res.json(err);
-                return;
-              });
-          }
-          Game.findOne(player.game)
-            .then(function(game) {
-              Game.update(game.id, {keysRemaining: game.keysRemaining + player.keys}, function(err, game) {});
-            })
-            .catch(function (err) {
-              console.log(err);
-              res.json(err);
-            });
-        }
-        Player.destroy(req.param('id'))
-          .then(function(player) {
-            Player.publishDestroy(req.param('id'));
-            res.json(player);
-          })
+        Player.publishDestroy(req.params.id);
+        res.json(player);
       })
+      .catch(function(err) {
+        sails.log.error(err);
+        res.json(err);
+      });
   },
 
   changeRoom: function(req, res) {
@@ -133,29 +106,15 @@ module.exports = {
 
         Player.publishUpdate(player.id, {room: player.room});
 
-        /* If we entered the entryway, see if the heroes have won */
-        if (room.name === 'entryway' && !player.isTraitor) {
-          Game.findOne(room.game).populate('players')
-            .then(function(game) {
-              if (game.keysRemaining === 0) {
-                var won = true;
-                for (var i = 0; i < game.players.length; i++) {
-                  var p = game.players[i];
-                  if (!p.isTraitor && p.room !== room.id) {
-                    won = false;
-                  }
-                }
-                if (won) {
-                  Game.message(game.id, {verb: 'heroesWon'});
-                }
-              }
-            })
-        }
-
         res.json(room.players);
+        /* If we entered the entryway, see if the heroes have won */
+
+        if (room.name === 'entryway' && !player.isTraitor) {
+          Game.checkWin(room.game, room.id);
+        }
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
@@ -166,14 +125,14 @@ module.exports = {
 
     Player.update(req.params.id, updateObj, function (err, updatedPlayers) {
       if (err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
         return;
       }
       if (updatedPlayers.length > 0) {
         Player.publishUpdate(updatedPlayers[0].id, updateObj);
       } else {
-        console.log("Tried to update a player that doesn't exist");
+        sails.log.warn("Tried to update a player that doesn't exist");
       }
     });
   },
@@ -188,7 +147,7 @@ module.exports = {
         return Room.findOne(player.room).populate('players');
       })
       .then(function(room) {
-        var attackRegion = Player.getAttackRegion(player.direction, player.locX, player.locY);
+        var attackRegion = Player.attackRegion(player.locX, player.locY);
         for (var i = 0; i < room.players.length; i++) {
           var otherPlayer = room.players[i];
           if (otherPlayer.id !== player.id
@@ -228,7 +187,7 @@ module.exports = {
         res.json();
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   },
@@ -239,7 +198,7 @@ module.exports = {
         Player.subscribe(req, player, ['update', 'destroy']);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       });
   }
