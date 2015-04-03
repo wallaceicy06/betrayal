@@ -4,20 +4,24 @@
   bottom: 0;
 }
 
-div.overlay-dialog {
+.overlay {
   background: white;
   opacity: .5;
   margin: 10px;
   padding: 10px;
 }
 
-.overlay-title {
+.overlay .title {
   font-weight: bold;
 }
 
-.overlay-flavor {
+.overlay .flavor {
   font-style: italic;
 }
 
-.overlay-body {
+.overlay .body {
+}
+
+.overlay .countdown {
+
 }

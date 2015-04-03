@@ -52,7 +52,7 @@ module.exports = {
           return res.json({title: '',
                            flavorText: prefix,
                            text: 'Nothing happened.',
-                           effect: {}});
+                           effect: null});
         }
 
         /* There only should be one destroyed event at maximum. */

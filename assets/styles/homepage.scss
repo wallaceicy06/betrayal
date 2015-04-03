@@ -79,11 +79,30 @@ body {
   bottom: 0;
 }
 
-.overlay-dialog {
+.overlay {
   background: white;
-  opacity: .5;
+  opacity: .6;
   margin: 10px;
   padding: 10px;
+}
+
+.overlay .title {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.overlay .flavor {
+  font-style: italic;
+  font-size: 14px;
+
+}
+
+.overlay .body {
+  font-size: 14px;
+}
+
+.overlay .countdown {
+  font-size: 10px;
 }
 
 .chatroom {

@@ -63,6 +63,7 @@ define([
   var MAX_STAT = 7;
   var ATTACK_DUR = 300; // in milliseconds
   var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
+  var OVERLAY_TEMPLATE = 'assets/templates/overlay.html';
 
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
@@ -1124,27 +1125,58 @@ define([
    * (Used for events, death, etc.)
    * timeout must be in ms
    */
-  function displayTextOverlayOld(title, flavorText, text, timeout, dismissable, cb) {
+  function displayTextOverlay(title, flavorText, text, timeout, dismissable, cb) {
+    return displayMiniOverlay.call(this, title, flavorText, text, timeout, dismissable, cb);
+    // var that = this;
+
+    // this._player.disableControl();
+
+    // var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
+                                     // .setDismiss(dismissable, function() {
+      // [> Allow player to move again. <]
+      // that._player.enableControl();
+
+      // [> Call the provided callback. <]
+      // cb();
+    // });
+
+    // setTimeout(function() {
+      // [> Remove the event text box. <]
+      // overlay.destroy();
+    // }, timeout); [> Display the event text box for timeout ms. <]
+  }
+
+  function displayMiniOverlay(titleText, flavorText, bodyText, timeout, dismissable, cb) {
     var that = this;
 
     this._player.disableControl();
 
-    var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
-                                     .setDismiss(dismissable, function() {
-      /* Allow player to move again. */
-      that._player.enableControl();
+    var secondsLeft = timeout / 1000;
 
-      /* Call the provided callback. */
-      cb();
-    });
+    var overlay = $(JST[OVERLAY_TEMPLATE]({ title: titleText,
+                                            flavor: flavorText,
+                                            body: bodyText,
+                                            seconds: secondsLeft}));
 
+    var timer = setInterval(function() {
+      if (secondsLeft === 0) {
+        overlay.children('.countdown').fadeOut();
+        clearInterval(timer);
+        that._player.enableControl();
+        cb();
+      }
+
+      secondsLeft--;
+      overlay.find('.seconds').text(secondsLeft);
+
+    }, 1000);
+
+    $('#overlay-stack').append(overlay);
+
+    overlay.fadeIn('slow');
     setTimeout(function() {
-      /* Remove the event text box. */
-      overlay.destroy();
-    }, timeout); /* Display the event text box for timeout ms. */
-  }
-
-  function displayMiniOverlay(title, flavorText, text, timeout, dismissable, cb) {
+      overlay.fadeOut('slow');
+    }, timeout + 3000);
   }
 
   function hideRelicsShowKeys() {
