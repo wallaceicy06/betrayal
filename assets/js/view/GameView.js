@@ -1149,8 +1149,6 @@ define([
   function displayMiniOverlay(titleText, flavorText, bodyText, timeout, dismissable, cb) {
     var that = this;
 
-    this._player.disableControl();
-
     var secondsLeft = timeout / 1000;
 
     var overlay = $(JST[OVERLAY_TEMPLATE]({ title: titleText,
@@ -1158,18 +1156,21 @@ define([
                                             body: bodyText,
                                             seconds: secondsLeft}));
 
-    var timer = setInterval(function() {
-      if (secondsLeft === 0) {
-        overlay.children('.countdown').fadeOut();
-        clearInterval(timer);
-        that._player.enableControl();
-        cb();
-      }
 
-      secondsLeft--;
-      overlay.find('.seconds').text(secondsLeft);
+    if (secondsLeft > 0) {
+      var timer = setInterval(function() {
+        secondsLeft--;
+        that._player.disableControl();
+        overlay.find('.seconds').text(secondsLeft);
 
-    }, 1000);
+        if (secondsLeft <= 0) {
+          overlay.children('.countdown').fadeOut();
+          that._player.enableControl();
+          clearInterval(timer);
+          cb();
+        }
+      }, 1000);
+    }
 
     $('#overlay-stack').append(overlay);
 
