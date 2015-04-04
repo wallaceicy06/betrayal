@@ -1125,28 +1125,8 @@ define([
    * (Used for events, death, etc.)
    * timeout must be in ms
    */
-  function displayTextOverlay(title, flavorText, text, timeout, dismissable, cb) {
-    return displayMiniOverlay.call(this, title, flavorText, text, timeout, dismissable, cb);
-    // var that = this;
-
-    // this._player.disableControl();
-
-    // var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
-                                     // .setDismiss(dismissable, function() {
-      // [> Allow player to move again. <]
-      // that._player.enableControl();
-
-      // [> Call the provided callback. <]
-      // cb();
-    // });
-
-    // setTimeout(function() {
-      // [> Remove the event text box. <]
-      // overlay.destroy();
-    // }, timeout); [> Display the event text box for timeout ms. <]
-  }
-
-  function displayMiniOverlay(titleText, flavorText, bodyText, timeout, dismissable, cb) {
+  function displayTextOverlay(titleText, flavorText, bodyText, timeout,
+                              dismissable, cb) {
     var that = this;
 
     var secondsLeft = timeout / 1000;
@@ -1158,6 +1138,7 @@ define([
 
 
     if (secondsLeft > 0) {
+      $('#game-stage').fadeTo('fast', 0.2);
       var timer = setInterval(function() {
         secondsLeft--;
         that._player.disableControl();
@@ -1165,6 +1146,7 @@ define([
 
         if (secondsLeft <= 0) {
           overlay.children('.countdown').fadeOut();
+          $('#game-stage').fadeTo('fast', 1);
           that._player.enableControl();
           clearInterval(timer);
           cb();
