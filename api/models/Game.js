@@ -302,6 +302,8 @@ module.exports = {
           eventsToCreate.push(event);
         });
 
+        sails.log.info(eventsToCreate);
+
         return Event.create(eventsToCreate)
       })
       .catch(function(err) {

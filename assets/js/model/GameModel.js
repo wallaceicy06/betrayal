@@ -335,18 +335,18 @@ define([
         return;
       }
 
-      that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
-                                        resData.text, 3000, true, function() {
-        for (var stat in resData.effect) {
-          /* For right now, event effects only alter stats. */
-          that._player[stat] = that._player[stat] + resData.effect[stat];
-          if (stat == 'relics') {
-            io.socket.get('/game/' + that._gameID, function(game) {
-              io.socket.put('/game/' + game.id, {relicsRemaining: game.relicsRemaining-1});
-            });
+      if (resData.effect === null) {
+        that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
+                                          resData.text, 0, true, function() {});
+      } else {
+        that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
+                                          resData.text, 2000, true, function() {
+          for (var stat in resData.effect) {
+            /* For right now, event effects only alter stats. */
+            that._player[stat] = that._player[stat] + resData.effect[stat];
           }
-        }
-      });
+        });
+      }
 
     });
   }

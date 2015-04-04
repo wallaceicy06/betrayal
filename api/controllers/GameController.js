@@ -30,7 +30,7 @@ module.exports = {
   },
 
 	create: function(req, res) {
-    Game.create({name: req.body.name, relicsRemaining: 3},
+    Game.create({name: req.body.name},
                  function(err, game) {
 
       if (err) {

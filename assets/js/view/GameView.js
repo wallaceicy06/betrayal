@@ -63,6 +63,7 @@ define([
   var MAX_STAT = 7;
   var ATTACK_DUR = 300; // in milliseconds
   var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
+  var OVERLAY_TEMPLATE = 'assets/templates/overlay.html';
 
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
@@ -263,9 +264,38 @@ define([
       },
     });
 
+    Crafty.c('OverlayText', {
+      init: function() {
+        this.requires('HTML');
+      },
+
+      setText: function(text) {
+        this.replace('<p>' + text + '</p>');
+        return this;
+      }
+    });
+
+    Crafty.c('OverlayTitle', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
+    Crafty.c('OverlayFlavor', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
+    Crafty.c('OverlayBody', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
     Crafty.c('Overlay', {
       init: function() {
-        this.requires('2D, DOM, Color');
+        this.requires('2D, HTML, Color');
         this.color('white');
         this.attr({dismissable: true});
       },
@@ -286,21 +316,23 @@ define([
         return this;
       },
 
-      setText: function(title, flavorText, text) {
-        var overlayTitle = Crafty.e('HTML')
-          .replace('<p>' + title + '</p>')
-          .css({'font-size': '20px', 'text-align': 'center', 'top': '15px'});
-
-        var overlayText = Crafty.e('HTML')
-          .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
-          .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
-
-        this.attach(overlayTitle);
-        this.attach(overlayText);
+      setText: function(titleText, flavorText, bodyText) {
         this.attr({x: that._gameModelAdpt.getDimensions().width/2 - 175,
                    y: that._gameModelAdpt.getDimensions().height/2 - 175,
                    w: 350,
                    h: 350});
+
+        var overlayTitle = Crafty.e('OverlayTitle').setText(titleText);
+        var overlayFlavor = Crafty.e('OverlayFlavor').setText(flavorText);
+        var overlayBody = Crafty.e('OverlayBody').setText(bodyText);
+        // var overlayText = Crafty.e('HTML').setText(
+          // .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
+          // .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
+
+
+        this.attach(overlayTitle);
+        this.attach(overlayFlavor);
+        this.attach(overlayBody);
 
         return this;
       }
@@ -1094,23 +1126,58 @@ define([
    * timeout must be in ms
    */
   function displayTextOverlay(title, flavorText, text, timeout, dismissable, cb) {
+    return displayMiniOverlay.call(this, title, flavorText, text, timeout, dismissable, cb);
+    // var that = this;
+
+    // this._player.disableControl();
+
+    // var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
+                                     // .setDismiss(dismissable, function() {
+      // [> Allow player to move again. <]
+      // that._player.enableControl();
+
+      // [> Call the provided callback. <]
+      // cb();
+    // });
+
+    // setTimeout(function() {
+      // [> Remove the event text box. <]
+      // overlay.destroy();
+    // }, timeout); [> Display the event text box for timeout ms. <]
+  }
+
+  function displayMiniOverlay(titleText, flavorText, bodyText, timeout, dismissable, cb) {
     var that = this;
 
-    this._player.disableControl();
+    var secondsLeft = timeout / 1000;
 
-    var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
-                                     .setDismiss(dismissable, function() {
-      /* Allow player to move again. */
-      that._player.enableControl();
+    var overlay = $(JST[OVERLAY_TEMPLATE]({ title: titleText,
+                                            flavor: flavorText,
+                                            body: bodyText,
+                                            seconds: secondsLeft}));
 
-      /* Call the provided callback. */
-      cb();
-    });
 
+    if (secondsLeft > 0) {
+      var timer = setInterval(function() {
+        secondsLeft--;
+        that._player.disableControl();
+        overlay.find('.seconds').text(secondsLeft);
+
+        if (secondsLeft <= 0) {
+          overlay.children('.countdown').fadeOut();
+          that._player.enableControl();
+          clearInterval(timer);
+          cb();
+        }
+      }, 1000);
+    }
+
+    $('#overlay-stack').append(overlay);
+
+    overlay.fadeIn('slow');
     setTimeout(function() {
-      /* Remove the event text box. */
-      overlay.destroy();
-    }, timeout); /* Display the event text box for timeout ms. */
+      overlay.fadeOut('slow');
+    }, timeout + 3000);
   }
 
   function hideRelicsShowKeys() {

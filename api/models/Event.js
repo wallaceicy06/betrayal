@@ -24,10 +24,10 @@ module.exports = {
 
   afterDestroy: function (events, cb) {
     _.each(events, function(event) {
-      for (var stat in event.card.effect) {
+      for (var stat in Event.cards[event.card].effect) {
         if (stat === 'relics') {
 
-          Event.count({card: {'contains': 'relics'}, game: event.game})
+          Event.count({card: {'contains': 'relic'}, game: event.game})
             .then(function(numRelics) {
 
               sails.log.info('relics remaining: ' + numRelics);
