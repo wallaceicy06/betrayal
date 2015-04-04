@@ -16,6 +16,8 @@ Move using the **W**, **A**, **S**, **D** or arrow keys.
 
 Use the **space bar** to attack another player.
 
+Press **F** to interact with items in rooms.
+
 Press **Q** to toggle the map view.
 
 After the haunt begins (if you are the traitor), use **E** to toggle your
