@@ -327,6 +327,11 @@ define([
   function onFurnitureInteract(furnitureID) {
     var that = this;
 
+    var obj = this._currentRoom.objects[furnitureID];
+    if (!obj.interactable) {
+      return;
+    }
+
     io.socket.post('/room/interact/' + this._currentRoom.id,
                    {furnitureID: furnitureID}, function(resData) {
 

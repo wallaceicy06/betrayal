@@ -14,6 +14,14 @@ module.exports = {
 
         roomMod.objects = Room.layouts[room.name].objects;
 
+        _.each(roomMod.objects, function(o) {
+          if (Room.interactable[o.type] !== undefined) {
+            o.interactable = true;
+          } else {
+            o.interactable = false;
+          }
+        });
+
         /* Subscribe the requester to items that they see in this room. */
         Item.subscribe(req, room.items);
 
