@@ -1198,6 +1198,16 @@ define([
       }
     });
 
+    $('.options-sound .btn').click(function() {
+      var selection = $(this).children('input').attr('id');
+
+      if (selection === 'ipt-soundon') {
+        Crafty.audio.unmute();
+      } else if (selection === 'ipt-soundoff') {
+        Crafty.audio.mute();
+      }
+    });
+
     /* Only show the GUI after the document has loaded. */
     $(document).ready(function() {
       $('div.main').removeClass('hidden');
