@@ -1,8 +1,9 @@
 define([
     'jquery',
     'underscore',
-    'crafty'
-], function($, _, Crafty) {
+    'crafty',
+    'templates'
+], function($, _, Crafty, Templates) {
 
   'use strict';
 
@@ -60,9 +61,9 @@ define([
     'green': 3
   };
 
-  var MAX_STAT = 7;
   var ATTACK_DUR = 300; // in milliseconds
   var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
+  var PLAYER_LIST_ITEM_TEMPLATE = 'assets/templates/playerlistitem.html';
   var OVERLAY_TEMPLATE = 'assets/templates/overlay.html';
 
   function installSpriteMap(sprites) {
@@ -749,83 +750,19 @@ define([
   }
 
   function addPlayerToList(playerModelAdpt) {
-    var playerList = document.getElementById('player-list');
 
-    var player = document.createElement('div');
-    player.style.cssText = 'color: ' + playerModelAdpt.getColor() + ';';
-    player.style.border = '1px solid ' + playerModelAdpt.getColor();
-    player.id = playerModelAdpt.getID();
-    player.className = 'player-list-item';
-    player.appendChild(document.createTextNode(playerModelAdpt.getName()));
+    var rendered = Templates[PLAYER_LIST_ITEM_TEMPLATE]({ id: playerModelAdpt.getID(),
+                                                          name: playerModelAdpt.getName(),
+                                                          color: playerModelAdpt.getColor(),
+                                                          curHealth: playerModelAdpt.getCurHealth(),
+                                                          maxHealth: playerModelAdpt.getMaxHealth(),
+                                                          speed: playerModelAdpt.getSpeed(),
+                                                          weapon: playerModelAdpt.getWeapon(),
+                                                          relics: playerModelAdpt.getRelics(),
+                                                          keys: playerModelAdpt.getKeys()
+    });
 
-    var playerHealth = document.createElement('div');
-    playerHealth.className = 'player-health';
-    var html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getCurHealth()) {
-        html += STAT_TEMPLATE({imgClass: 'full_heart'});
-      } else if (i < playerModelAdpt.getMaxHealth()) {
-        html += STAT_TEMPLATE({imgClass: 'empty_heart'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'empty_heart invisible'});
-      }
-    }
-    playerHealth.innerHTML = html;
-    player.appendChild(playerHealth);
-
-    var playerSpeed = document.createElement('div');
-    playerSpeed.className = 'player-speed';
-    html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getSpeed()) {
-        html += STAT_TEMPLATE({imgClass: 'small_lightning'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'small_lightning invisible'});
-      }
-    }
-    playerSpeed.innerHTML = html;
-    player.appendChild(playerSpeed);
-
-    var playerWeapon = document.createElement('div');
-    playerWeapon.className = 'player-weapon';
-    html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getWeapon()) {
-        html += STAT_TEMPLATE({imgClass: 'small_sword'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'small_sword invisible'});
-      }
-    }
-    playerWeapon.innerHTML = html;
-    player.appendChild(playerWeapon);
-
-    var playerRelics = document.createElement('div');
-    playerRelics.className = 'player-relics';
-    html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getRelics()) {
-        html += STAT_TEMPLATE({imgClass: 'small_jewel'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'small_jewel invisible'});
-      }
-    }
-    playerRelics.innerHTML = html;
-    player.appendChild(playerRelics);
-
-    var playerKeys = document.createElement('div');
-    playerKeys.className = 'player-keys hidden';
-    html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getKeys()) {
-        html += STAT_TEMPLATE({imgClass: 'small_key'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'small_key invisible'});
-      }
-    }
-    playerKeys.innerHTML = html;
-    player.appendChild(playerKeys);
-
-    playerList.appendChild(player);
+    $('#player-list').append(rendered);
   }
 
   function makePlayerHusk(id, x, y, color) {
@@ -1131,10 +1068,10 @@ define([
 
     var secondsLeft = timeout / 1000;
 
-    var overlay = $(JST[OVERLAY_TEMPLATE]({ title: titleText,
-                                            flavor: flavorText,
-                                            body: bodyText,
-                                            seconds: secondsLeft}));
+    var overlay = $(Templates[OVERLAY_TEMPLATE]({ title: titleText,
+                                                  flavor: flavorText,
+                                                  body: bodyText,
+                                                  seconds: secondsLeft}));
 
 
     if (secondsLeft > 0) {
