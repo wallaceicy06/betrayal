@@ -25,6 +25,22 @@ __p += '\n</div>\n';
 return __p
 };
 
+this["JST"]["assets/templates/overlay_chat.html"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<div id="overlay" class="overlay" style="display: none; color: ' +
+((__t = ( color )) == null ? '' : __t) +
+';">\n  <div class="name">' +
+((__t = ( name )) == null ? '' : __t) +
+'</div>\n  <div class="body">' +
+((__t = ( message )) == null ? '' : __t) +
+'</div>\n</div>\n';
+
+}
+return __p
+};
+
 this["JST"]["assets/templates/playerlistitem.html"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;

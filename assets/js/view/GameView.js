@@ -65,6 +65,7 @@ define([
   var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
   var PLAYER_LIST_ITEM_TEMPLATE = 'assets/templates/playerlistitem.html';
   var OVERLAY_TEMPLATE = 'assets/templates/overlay.html';
+  var OVERLAY_CHAT_TEMPLATE = 'assets/templates/overlay_chat.html';
 
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
@@ -468,15 +469,12 @@ define([
             }
             break;
 
-          case Crafty.keys.ESC:
-            Crafty('Overlay').dismiss();
-            break;
-
           case Crafty.keys.SPACE:
             that._gameModelAdpt.attack();
             break;
 
-          case Crafty.keys.C:
+          /* Forward slash */
+          case 191:
             /*
              * This timeout is to prevent the letter 'c' from being typed in
              * the chat box since this event will be handled by it as soon as
@@ -484,7 +482,8 @@ define([
              */
             setTimeout(function() {
               that._player.disableControl();
-              document.getElementById('ipt-message').focus();
+              $('#omni-box').fadeIn();
+              $('#ipt-message').focus();
             }, 10);
             break;
 
@@ -498,7 +497,6 @@ define([
             break;
 
           default:
-            break;
         }
       } else {
         switch(e.key) {
@@ -1027,33 +1025,46 @@ define([
   }
 
   function appendChatMessage(playerID, message) {
-    var sender;
-    if (playerID == undefined) {
-      sender = null;
-    } else if (playerID === this._playerModelAdpt.getID()) {
-      sender = this._playerModelAdpt;
-    } else {
-      for (var id in this._otherPlayerModelAdpts) {
-        if (playerID == id) {
-          sender = this._otherPlayerModelAdpts[id];
-          break;
-        }
-      }
-    }
+    var chatOverlay = $(Templates[OVERLAY_CHAT_TEMPLATE]({ name: this._playerModelAdpt.getName(),
+                                                           color: this._playerModelAdpt.getColor(),
+                                                           message: message
+    }));
 
-    var messageElement = document.createElement('p');
-    if (sender !== null) {
-      messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
-      messageElement.appendChild(
-        document.createTextNode(sender.getName() + ': ' + message));
-    } else {
-      messageElement.appendChild(document.createTextNode(message));
-    }
+    $('#overlay-stack').append(chatOverlay);
 
-    $('#chatroom').find('div.messages').append(messageElement);
-    // Auto scroll to bottom
-    var messages = document.getElementById("message-list");
-    messages.scrollTop = messages.scrollHeight;
+    chatOverlay.fadeIn('slow');
+    setTimeout(function() {
+      chatOverlay.fadeOut('slow');
+    }, 3000);
+
+
+    // var sender;
+    // if (playerID == undefined) {
+      // sender = null;
+    // } else if (playerID === this._playerModelAdpt.getID()) {
+      // sender = this._playerModelAdpt;
+    // } else {
+      // for (var id in this._otherPlayerModelAdpts) {
+        // if (playerID == id) {
+          // sender = this._otherPlayerModelAdpts[id];
+          // break;
+        // }
+      // }
+    // }
+
+    // var messageElement = document.createElement('p');
+    // if (sender !== null) {
+      // messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
+      // messageElement.appendChild(
+        // document.createTextNode(sender.getName() + ': ' + message));
+    // } else {
+      // messageElement.appendChild(document.createTextNode(message));
+    // }
+
+    // $('#chatroom').find('div.messages').append(messageElement);
+    // // Auto scroll to bottom
+    // var messages = document.getElementById("message-list");
+    // messages.scrollTop = messages.scrollHeight;
   }
 
   /**
@@ -1144,8 +1155,16 @@ define([
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
     });
 
+    $('#ipt-message').focusout(function(e) {
+      $('#omni-box').fadeOut();
+      $('#game-stage').focus();
+    });
+
     $('#form-send-message').submit(function(e) {
       event.preventDefault();
+
+      $('#omni-box').fadeOut();
+      $('#game-stage').focus();
 
       var formData = formToJSON($(this).serializeArray());
       $(this)[0].reset();
