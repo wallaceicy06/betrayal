@@ -37,7 +37,7 @@ define([
                 'SpriteSpeedInc': [0, 14],
                 'SpriteMaxHealth': [1, 14],
                 'SpriteCurHealth': [2, 14],
-                'SpriteWeapon': [3, 14],
+                'SpriteWeapon': [6, 14],
                 'SpriteRelic': [4, 14],
                 'SpritePlayerRed': [0, COLOR_TO_ROW['red']],
                 'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],

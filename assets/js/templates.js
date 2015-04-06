@@ -86,11 +86,11 @@ __p += '\n  </div>\n  <div class="player-weapon">\n    ';
  _.times(7, function(i) {
       if (i < weapon) {
         ;
-__p += '<img class="small_sword">';
+__p += '<img class="small_flame">';
 
       } else {
         ;
-__p += '<img class="small_sword invisible">';
+__p += '<img class="small_flame invisible">';
 
       }
     }); ;

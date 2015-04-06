@@ -79,7 +79,8 @@ module.exports.gameconfig = {
     'firstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
     'sword': {gridX: 3, gridY: 14, gridW: 1, gridH: 1},
     'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1},
-    'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1}
+    'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
+    'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1}
   },
   dimensions: {
     tileW: 32,
@@ -102,7 +103,7 @@ module.exports.gameconfig = {
       amount: 1,
       abundance: 0.3
     },
-    'sword': {
+    'flame': {
       stat: 'weapon',
       amount: 1,
       abundance: 0.2
