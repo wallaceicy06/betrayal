@@ -69,9 +69,12 @@ module.exports = {
 
   destroy: function(req, res) {
     Player.destroy(req.params.id)
-      .then(function(player) {
-        Player.publishDestroy(req.params.id);
-        res.json(player);
+      .then(function(players) {
+        _.each(players, function() {
+          Player.publishDestroy(req, player.id);
+        });
+
+        res.json(players);
       })
       .catch(function(err) {
         sails.log.error(err);
@@ -82,19 +85,28 @@ module.exports = {
   changeRoom: function(req, res) {
     var oldRoom;
     var player;
+        sails.log.info(req.body.room);
 
-    Player.findOne(req.params.id).populate('room')
-      .then(function(player) {
+    sails.promise.all([
+        Room.findOne(req.body.room),
+        Player.findOne(req.params.id).populate('room')
+      ])
+      .spread(function(roomTo, player) {
+
+        sails.log.info(roomTo);
+
+        if (roomTo.name === 'exit' && player.keys === 0) {
+          res.json({error: 'Cannot exit house without keys'});
+          throw new sails.promise.CancellationError();
+        }
+
         oldRoom = player.room;
 
-        return Player.update(player.id, {room: req.body.room});
+        return [roomTo, Player.update(player.id, {room: req.body.room})];
       })
-      .then(function(players) {
+      .spread(function(room, players) {
         player = players[0];
 
-        return Room.findOne(player.room).populate('players');
-      })
-      .then(function(room) {
         /*
          * Unsubscribe player from the room they used to be in on the 'message'
          * context. It is super important to pass the 'message' context
@@ -109,9 +121,12 @@ module.exports = {
         res.json(room.players);
         /* If we entered the entryway, see if the heroes have won */
 
-        if (room.name === 'entryway' && !player.isTraitor) {
+        if (room.name === 'exit' && !player.isTraitor) {
           Game.checkWin(room.game, room.id);
         }
+      })
+      .catch(sails.promise.CancellationError, function(err) {
+        sails.log.info('cancelled!');
       })
       .catch(function(err) {
         sails.log.error(err);

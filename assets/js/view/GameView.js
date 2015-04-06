@@ -158,13 +158,21 @@ define([
           return;
         }
 
-        that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID);
+        this.stopMovement();
 
         /* Lock the door to prevent double usages. */
         this.attr({'doorLock': true});
 
         /* Player cannot move as they go through a door */
         this.disableControl();
+
+        var thatPlayer = this;
+
+        that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID, function() {
+          thatPlayer.attr({'doorLock': false});
+
+          thatPlayer.enableControl();
+        });
       },
 
       pickUpItem: function(item) {
@@ -1182,6 +1190,16 @@ define([
 
     document.getElementById('btn-game-leave').addEventListener('click', function() {
       that._gameModelAdpt.onLeaveGameClick();
+    });
+
+    $('.options-sound label').click(function() {
+      var selected = $(this).children('input').attr('id');
+
+      if (selected === 'ipt-soundon') {
+        Crafty.audio.unmute();
+      } else if (selected === 'ipt-soundoff') {
+        Crafty.audio.mute();
+      }
     });
 
     /* Prevent default actions for arrow keys. */

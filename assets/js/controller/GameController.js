@@ -312,8 +312,8 @@ define([
         return that._model.dimensions;
       },
 
-      onDoorVisit: function(doorID) {
-        return that._model.onDoorVisit(doorID);
+      onDoorVisit: function(doorID, cb) {
+        return that._model.onDoorVisit(doorID, cb);
       },
 
       onFurnitureInteract: function(furnitureID) {
