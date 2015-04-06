@@ -32,11 +32,14 @@ module.exports = function(grunt) {
 			// default interpolation. If you want to parse templates with the default _.template behavior
 			// (i.e. using <div></div>), there's no need to overwrite `templateSettings.interpolate`.
 
+      options: {
+        amd: true
+      },
 
 			files: {
 				// e.g.
 				// 'relative/path/from/gruntfile/to/compiled/template/destination'  : ['relative/path/to/sourcefiles/**/*.html']
-				'.tmp/public/jst.js': require('../pipeline').templateFilesToInject
+				'assets/js/templates.js': require('../pipeline').templateFilesToInject
 			}
 		}
 	});

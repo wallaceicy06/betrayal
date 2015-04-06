@@ -14,6 +14,7 @@ module.exports = {
       .then(function(game) {
         game.sprites = sails.config.gameconfig.sprites;
         game.haunts = sails.config.gameconfig.haunts;
+        Player.subscribe(req, game.players, ['update', 'destroy']);
         res.json(game);
       })
       .catch(function(err) {

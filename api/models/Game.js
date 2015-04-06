@@ -120,8 +120,8 @@ module.exports = {
     var gatewaysToCreate = [];
     var openGridLocs = [];
 
-    /* Put all rooms except the entryway into allRooms and shuffle. */
-    var allRooms = Object.keys(Room.layouts).slice(1);
+    /* Put all rooms except the entryway, exit into allRooms and shuffle. */
+    var allRooms = Object.keys(Room.layouts).slice(2);
     allRooms = _.shuffle(allRooms);
 
     /* Sums the total abundance to make percentages of items relative. */
@@ -149,14 +149,26 @@ module.exports = {
       houseGrid[i] = new Array(16);
     }
 
-    var roomID = 'entryway';
-    var room = Room.layouts[roomID];
+    var entrywayLayout = Room.layouts['entryway'];
+    var exitLayout = Room.layouts['exit'];
+
     var x = 7;
     var y = 6;
 
-    houseGrid[x][y] = roomID;
+    houseGrid[x][y] = 'entryway';
     openGridLocs.push([6,6], [7,5], [7,7]);
-    roomsToCreate.push({game: game.id, name: roomID, background: room.floor});
+    roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor});
+
+    exitLayout = Room.layouts['exit'];
+    houseGrid[x][y + 1] = 'exit';
+    roomsToCreate.push({game: game.id, name: 'exit', background: exitLayout.floor});
+
+    gatewaysToCreate.push({roomFrom: 'entryway',
+                           roomTo: 'exit',
+                           direction: 'south'})
+
+    var roomID;
+    var room;
 
     while (allRooms.length > 0) {
       var randLoc = Math.floor(Math.random() * openGridLocs.length);
@@ -175,18 +187,19 @@ module.exports = {
       });
 
       var possibleLocs = Room.layouts[roomID].itemLocs.slice(0);
+      _.times(Math.min(2, possibleLocs.length), function(n) {
+        var item = itemBank.pop();
 
-      var item = itemBank.pop();
-
-      var index = Math.floor(Math.random() * possibleLocs.length);
-      var loc = possibleLocs[index];
-      possibleLocs.splice(index, 1);
-      itemsToCreate.push({type: item,
-                          stat: Game.items[item].stat,
-                          amount: Game.items[item].amount,
-                          gridX: loc.x,
-                          gridY: loc.y,
-                          game: game.id});
+        var index = Math.floor(Math.random() * possibleLocs.length);
+        var loc = possibleLocs[index];
+        possibleLocs.splice(index, 1);
+        itemsToCreate.push({type: item,
+                            stat: Game.items[item].stat,
+                            amount: Game.items[item].amount,
+                            gridX: loc.x,
+                            gridY: loc.y,
+                            game: game.id});
+      });
 
       roomsToCreate.push({game: game.id,
                           name: roomID,
@@ -237,7 +250,8 @@ module.exports = {
         var roomWestID = (j == 0 ? null : houseGrid[i][j - 1]);
 
         var roomNorth = Room.layouts[roomNorthID];
-        var roomEast = Room.layouts[roomEastID]; var roomSouth = Room.layouts[roomSouthID];
+        var roomEast = Room.layouts[roomEastID];
+        var roomSouth = Room.layouts[roomSouthID];
         var roomWest = Room.layouts[roomWestID];
 
         if (roomNorth != null && thisRoom.gateways.north

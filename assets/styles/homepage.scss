@@ -3,7 +3,7 @@ html {
 }
 
 body {
-  background-image: url('http://darkcreationsatx.com/wp-content/uploads/2012/10/spooky-woods.jpg');
+  background-image: url('../images/spooky-woods.jpg');
   height: 100%
 }
 
@@ -34,10 +34,6 @@ body {
   display: inline-block;
   vertical-align: top;
   background: rgba(255, 255, 255, 0.4);
-}
-
-.game-start button {
-  width: 100%;
 }
 
 .center {
@@ -81,7 +77,16 @@ body {
 }
 
 .chatroom div {
-  margin-bottom: 3px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+.chatroom button {
+  width: 100%;
+}
+
+.options-sound label {
+  width: 50%;
 }
 
 .form-spaced {
