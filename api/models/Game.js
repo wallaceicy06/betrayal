@@ -99,7 +99,7 @@ module.exports = {
 
           itemsToCreate.push({type: 'key', stat: 'keys', amount: 1,
                               gridX: loc.x, gridY: loc.y, room: chosenRoom,
-                              game: game});
+                              game: game.id});
         }
 
         return Item.create(itemsToCreate);
