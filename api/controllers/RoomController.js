@@ -41,6 +41,8 @@ module.exports = {
         if (Room.interactable[furnitureType] === undefined) {
           //throw new Error(furnitureType + " is not interactable.");
           sails.log.error(furnitureType + " is not interactable.");
+          res.json(err);
+          return;
         }
 
         return Event.destroy({room: req.params.id, container: req.body.furnitureID})
