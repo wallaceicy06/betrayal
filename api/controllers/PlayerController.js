@@ -70,8 +70,8 @@ module.exports = {
   destroy: function(req, res) {
     Player.destroy(req.params.id)
       .then(function(players) {
-        _.each(players, function() {
-          Player.publishDestroy(req, player.id);
+        _.each(players, function(player) {
+          Player.publishDestroy(player.id, req);
         });
 
         res.json(players);
