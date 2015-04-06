@@ -89,17 +89,26 @@ module.exports = {
 
         var itemsToCreate = [];
 
-        /* Create keys for heroes to pick up */
-        for (var x = 0; x < 2 * (game.players.length - 1); x++) {
-          var allRooms = game.rooms.slice(1); //Rooms, excluding entryway
+        var numKeysToPlace = 2 * (game.players.length - 1);
+
+        var allRooms = game.rooms.slice(2); //Rooms, excluding entryway and exit
+
+        while (numKeysToPlace > 0) {
           var chosenRoom = allRooms[Math.floor(Math.random() * allRooms.length)];
 
           var possibleLocs = Room.layouts[chosenRoom.name].itemLocs;
+
+          if (possibleLocs.length == 0) {
+            continue;
+          }
+
           var loc = possibleLocs[Math.floor(Math.random() * possibleLocs.length)];
 
           itemsToCreate.push({type: 'key', stat: 'keys', amount: 1,
                               gridX: loc.x, gridY: loc.y, room: chosenRoom,
                               game: game.id});
+
+          numKeysToPlace--;
         }
 
         return Item.create(itemsToCreate);
@@ -164,7 +173,11 @@ module.exports = {
 
     gatewaysToCreate.push({roomFrom: 'entryway',
                            roomTo: 'exit',
-                           direction: 'south'})
+                           direction: 'south'});
+
+    gatewaysToCreate.push({roomFrom: 'exit',
+                           roomTo: 'entryway',
+                           direction: 'north'});
 
 
     var roomID;

@@ -791,7 +791,7 @@ define([
      */
     return {
       destroy: function() {
-        appendChatMessage.call(that, playerModelAdpt.getID(), 'has died');
+        appendChatMessage.call(that, playerModelAdpt, 'has died');
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
@@ -1032,9 +1032,9 @@ define([
 
   }
 
-  function appendChatMessage(playerID, message) {
-    var chatOverlay = $(Templates[OVERLAY_CHAT_TEMPLATE]({ name: this._playerModelAdpt.getName(),
-                                                           color: this._playerModelAdpt.getColor(),
+  function appendChatMessage(player, message) {
+    var chatOverlay = $(Templates[OVERLAY_CHAT_TEMPLATE]({ name: player.name,
+                                                           color: player.color,
                                                            message: message
     }));
 

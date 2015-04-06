@@ -665,7 +665,15 @@ define([
             });
           }
         } else if (o.data.verb === 'chat') {
-          that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+          var player;
+
+          if (o.data.playerID == that._player.id) {
+            player = that._player;
+          } else {
+            player = that._otherPlayers[o.data.playerID];
+          }
+
+          that._viewAdpt.messageReceived(player, o.data.message);
         }
 
       } else if (o.verb === 'updated') {

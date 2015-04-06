@@ -288,8 +288,8 @@ define([
       /*
        * Received a chat or event message that needs to be displayed
        */
-      messageReceived: function(playerID, message) {
-        that._view.appendChatMessage(playerID, message);
+      messageReceived: function(player, message) {
+        that._view.appendChatMessage(player, message);
       },
 
       displayTextOverlay: function(title, flavorText, text, timeout, dismissable, cb) {
