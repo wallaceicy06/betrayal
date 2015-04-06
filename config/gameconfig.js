@@ -147,6 +147,17 @@ module.exports.gameconfig = {
         }
       }
     },
+    'exit': {
+      floor: '#FFFFFF',
+      gateways: {
+        north: true,
+        east: false,
+        south: false,
+        west: false
+      },
+      itemLocs: [],
+      objects: {}
+    },
     'livingRoom': {
       floor: '#EBACA4',
       gateways: {

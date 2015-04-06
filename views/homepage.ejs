@@ -5,7 +5,6 @@
     <div id="header" class="header center hidden">
       <img src="images/game/title_image.png" class="header-img">
     </div>
-
     <div id="game-pane" class="hidden" style="height:512px;" align="center">
       <div id="player-pane" class="player-pane">
         <div id="player-list">
@@ -13,8 +12,14 @@
       </div>
       <div id="game-container" class="game-pane">
         <div id="game-stage" class="game-containted"></div>
-        <div "game-contained">
-          <div id="overlay-stack" class="overlay-container">
+        <div class="game-contained">
+          <div id="overlay-stack" class="overlay-container"></div>
+          <div id="omni-box" class="omni-box" style="display: none">
+            <div class="message-input">
+              <form id="form-send-message">
+                <input id="ipt-message" name="message" type="text">
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -23,13 +28,17 @@
           <button id="btn-game-start" class="btn btn-success">Start Game</button>
         </div>
 
-        <div id="message-list" class="messages" style="overflow-y:scroll; height: 93%; background-color: white; opacity: 0.6; padding: 3px" align="left">
+        <div id="game-leave" class="game-leave">
+          <button id="btn-game-leave" class="btn btn-danger">Leave Game</button>
         </div>
-        <div class="chatroom-controls">
-          <form id="form-send-message" class="form-inline">
-            <input id="ipt-message" name="message" class="form-control" name="message" type="text">
-            <button id="btn-send-message" class="btn btn-default" type="submit">Send</button>
-          </form>
+
+        <div class="options-sound btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="radio" name="sound" id="ipt-soundon" autocomplete="off" checked><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span> Sound On</input>
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="sound" id="ipt-soundoff" autocomplete="off"><span class="glyphicon glyphicon-volume-off" aria-hidden="true"></span> Sound Off</input>
+          </label>
         </div>
       </div>
     </div>
