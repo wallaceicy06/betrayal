@@ -158,13 +158,21 @@ define([
           return;
         }
 
-        that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID);
+        this.stopMovement();
 
         /* Lock the door to prevent double usages. */
         this.attr({'doorLock': true});
 
         /* Player cannot move as they go through a door */
         this.disableControl();
+
+        var thatPlayer = this;
+
+        that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID, function() {
+          thatPlayer.attr({'doorLock': false});
+
+          thatPlayer.enableControl();
+        });
       },
 
       pickUpItem: function(item) {
@@ -1142,9 +1150,9 @@ define([
 
       var formData = formToJSON($(this).serializeArray());
 
-      that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
-
       displayStartGameButton.call(this, true);
+
+      that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
     });
 
     $('#form-join-existing').submit(function(e) {
@@ -1152,7 +1160,10 @@ define([
 
       var formData = formToJSON($(this).serializeArray());
 
+      displayStartGameButton.call(this, false);
+
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
+
     });
 
     $('#ipt-message').focusout(function(e) {
@@ -1175,6 +1186,20 @@ define([
 
     document.getElementById('btn-game-start').addEventListener('click', function() {
       that._gameModelAdpt.onStartGameClick();
+    });
+
+    document.getElementById('btn-game-leave').addEventListener('click', function() {
+      that._gameModelAdpt.onLeaveGameClick();
+    });
+
+    $('.options-sound label').click(function() {
+      var selected = $(this).children('input').attr('id');
+
+      if (selected === 'ipt-soundon') {
+        Crafty.audio.unmute();
+      } else if (selected === 'ipt-soundoff') {
+        Crafty.audio.mute();
+      }
     });
 
     /* Prevent default actions for arrow keys. */
