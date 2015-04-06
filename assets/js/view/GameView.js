@@ -1142,9 +1142,9 @@ define([
 
       var formData = formToJSON($(this).serializeArray());
 
-      that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
-
       displayStartGameButton.call(this, true);
+
+      that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
     });
 
     $('#form-join-existing').submit(function(e) {
@@ -1152,7 +1152,10 @@ define([
 
       var formData = formToJSON($(this).serializeArray());
 
+      displayStartGameButton.call(this, false);
+
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
+
     });
 
     $('#ipt-message').focusout(function(e) {
@@ -1175,6 +1178,10 @@ define([
 
     document.getElementById('btn-game-start').addEventListener('click', function() {
       that._gameModelAdpt.onStartGameClick();
+    });
+
+    document.getElementById('btn-game-leave').addEventListener('click', function() {
+      that._gameModelAdpt.onLeaveGameClick();
     });
 
     /* Prevent default actions for arrow keys. */

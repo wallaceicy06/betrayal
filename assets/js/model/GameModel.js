@@ -77,21 +77,10 @@ define([
           },
 
           onCurHealthChange: function(newCurHealth) {
-            if (newCurHealth < 1) {
-              io.socket.delete('/player/' + player.id, {}, function(data) {
-                that._viewAdpt.displayTextOverlay("You died", "Game over", "", 3000,
-                                                  false, function() {
-                  reset.call(that);
-                  that._viewAdpt.reset();
-                });
-              });
-              playerViewAdpt.destroy();
-            } else {
-              playerViewAdpt.onCurHealthChange(newCurHealth);
-              io.socket.put('/player/adjustStat/' + player.id,
-                            {stat: 'curHealth', newValue: newCurHealth},
-                            function (player) {});
-            }
+            playerViewAdpt.onCurHealthChange(newCurHealth);
+            io.socket.put('/player/adjustStat/' + player.id,
+                          {stat: 'curHealth', newValue: newCurHealth},
+                          function (player) {});
           },
 
           onWeaponChange: function(newWeapon) {
@@ -125,7 +114,13 @@ define([
           },
 
           onDestroy: function() {
-            /* Do nothing. */
+            io.socket.delete('/player/' + player.id, {}, function(data) {
+              that._viewAdpt.displayTextOverlay("You died", "Game over", "", 3000,
+                                                false, function() {
+                reset.call(that);
+                that._viewAdpt.reset();
+              });
+            });
           },
 
           onPositionChange: function(newX, newY) {
@@ -266,6 +261,12 @@ define([
 
       that._viewAdpt.startGame(roomConfig);
     });
+  }
+
+  function leaveGame() {
+    var that = this;
+
+    this._player.destroy();
   }
 
   function onDoorVisit(doorID) {
@@ -594,7 +595,11 @@ define([
           }
         }
       } else if (o.verb === 'destroyed') {
+        if (o.id === that._player.id) {
+          that._player.destroy();
+        } else {
           that._otherPlayers[o.id].destroy();
+        }
       }
     });
 
@@ -753,6 +758,7 @@ define([
     this.useTraitorPower = useTraitorPower.bind(this);
     this.start = start.bind(this);
     this.startGame = startGame.bind(this);
+    this.leaveGame = leaveGame.bind(this);
   }
 });
 

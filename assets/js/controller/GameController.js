@@ -332,6 +332,10 @@ define([
         that._model.startGame();
       },
 
+      onLeaveGameClick: function() {
+        that._model.leaveGame();
+      },
+
       onSendChatMessage: function(message) {
         return that._model.sendChatMessage(message);
       },

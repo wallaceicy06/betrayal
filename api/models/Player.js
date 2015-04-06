@@ -9,7 +9,7 @@ module.exports = {
 
   autoWatch: false,
 
-  autosubscribe: [],
+  autosubscribe: ['update', 'destroy'],
 
   attributes: {
     name: {type: 'string',
@@ -43,6 +43,15 @@ module.exports = {
   },
 
   ATTACK_RADIUS: 42,
+
+  afterUpdate: function(player, cb) {
+    if (player.curHealth < 1) {
+      sails.log.info('destroying ' + player.name);
+      Player.destroy(player.id);
+      Player.publishDestroy(player.id, {});
+    }
+    cb();
+  },
 
   afterDestroy: function(players, cb) {
     var tileW = Room.dimensions.tileW;

@@ -36,10 +36,6 @@ body {
   background: rgba(255, 255, 255, 0.4);
 }
 
-.game-start button {
-  width: 100%;
-}
-
 .center {
   margin-left: auto;
   margin-right: auto;
@@ -81,7 +77,16 @@ body {
 }
 
 .chatroom div {
-  margin-bottom: 3px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+.chatroom button {
+  width: 100%;
+}
+
+.options-sound label {
+  width: 50%;
 }
 
 .form-spaced {
