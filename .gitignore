@@ -118,3 +118,4 @@ nbproject
 .node_history
 *.swp
 .sass-cache
+assets/js/templates.js
