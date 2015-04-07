@@ -258,6 +258,8 @@ define([
       var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
       that._viewAdpt.startGame(roomConfig, function() {});
+
+      that._viewAdpt.updateMap(that._roomCache);
     });
   }
 
