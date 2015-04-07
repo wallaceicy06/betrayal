@@ -34,6 +34,7 @@ define([
         'map': {'SpriteFurniture': [0,0],
                 'SpriteWall': [7, 13],
                 'SpriteDoor': [6,13],
+                'SpriteLockedDoor': [10, 13],
                 'SpriteWhiteRoom': [8, 13],
                 'SpriteSpeedInc': [0, 14],
                 'SpriteMaxHealth': [1, 14],
