@@ -2,6 +2,8 @@ Betrayal
 ========
 a web game spinoff of "Betrayal of the House on the Hill"
 
+developed by Valerie Baretsky, Sean Harger, and Lauren Staal at Rice University
+
 Game Creation
 -------------
 To create a new game, click **Create Game** and enter the name of your player
@@ -18,25 +20,32 @@ Use the **space bar** to attack another player.
 
 Press **F** to interact with items in rooms.
 
-Press **Q** to toggle the map view.
-
 After the haunt begins (if you are the traitor), use **E** to toggle your
 traitor ability.
+
+For more detailed instructions, see the "How to play" section by clicking the
+aptly named button in the GUI.
 
 Installation
 ------------
 This game depends on the NodeJS framework. Make sure you have `node` and `npm`
 installed.
 
-To install dependencies for this project, run
+in the "Betrayal" top-level directory. You will need to install `sails`
+globally instead of simply in the local project directory. To do this, execute
+before running the above command.
+
+    npm install -g sails
+
+To install the other dependencies for this project, run
 
     npm install
 
-in the "Betrayal" top-level directory. It is recommended (but not required)
-that you install `sails` globally instead of simply in the local project
-directory. To do this, execute before running the above command.
+To compile the SASS templates for this project, you will need `ruby` and the
+`sass` gem to be in your PATH. Once you install `ruby`, you can install `sass`
+by executing
 
-    npm install -g sails
+    gem install sass
 
 Running
 -------
