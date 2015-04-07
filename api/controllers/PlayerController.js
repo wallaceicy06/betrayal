@@ -68,6 +68,8 @@ module.exports = {
   },
 
   destroy: function(req, res) {
+    Player.findOne(req.param('id'))
+      .then(function(player) {
       if (!player.isTraitor) {
         Game.message(player.game, {verb: 'traitorWon'});
       } else {
