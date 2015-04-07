@@ -94,19 +94,21 @@
       <img style="display: block; margin: auto;" src="images/game/intro_image.png">
     </div>
 
-    <div id="join-pane" align="center" class="center" style="width: 100%">
+    <div id="join-pane" align="center" class="center">
       <div id='join-options' style="display: inline-block">
         <button id="btn-goto-new" class="btn btn-default form-spaced">Create new game</button>
         <button id="btn-goto-existing" class="btn btn-default form-spaced">Join existing game</button>
         <button type="button" class="btn btn-default form-spaced" data-toggle="modal" data-target="#tutorialModal">How to play</button>
       </div>
       <form id='form-join-existing' class="hidden form-inline" style="display: inline-block">
+        <div class="alert alert-danger" style="display: none" role="alert">...</div>
         <input name="playerName" type="text" class="form-control" placeholder="player name">
         <select id="select-game" name="gameID" class="form-control" style="width: 150px"></select>
         <button id="btn-join" type="submit" class="btn btn-primary" disabled="disabled">Join</button>
         <button type="button" class="btn btn-default cancel">Cancel</button>
       </form>
       <form id='form-join-new' class= "hidden form-inline" style="display: inline-block">
+        <div class="alert alert-danger" style="display: none" role="alert">...</div>
         <input name="playerName" type="text" class="form-control" placeholder="player name">
         <input name="gameName" type="text" class="form-control" placeholder="new game name">
         <button id="btn-create-game" type="submit" class="btn btn-primary">Create Game</button>

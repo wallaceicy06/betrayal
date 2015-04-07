@@ -907,6 +907,8 @@ define([
 
     if (games.length > 0) {
       document.getElementById('btn-join').disabled = false;
+    } else {
+      document.getElementById('btn-join').disabled = true;
     }
 
     games.forEach(function(v, i, a) {
@@ -1071,6 +1073,18 @@ define([
 
       displayStartGameButton.call(this, true);
 
+      if (formData.playerName === '') {
+        $(this).children('.alert').text('Player name cannot be blank.').show();
+        return;
+      }
+
+      if (formData.gameName === '') {
+        $(this).children('.alert').text('Game name cannot be blank.').show();
+        return;
+      }
+
+      $(this).children('.alert').hide();
+
       that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
     });
 
@@ -1080,6 +1094,18 @@ define([
       var formData = formToJSON($(this).serializeArray());
 
       displayStartGameButton.call(this, false);
+
+      if (formData.playerName === '') {
+        $(this).children('.alert').text('Player name cannot be blank.').show();
+        return;
+      }
+
+      if (formData.gameID === undefined) {
+        $(this).children('.alert').text('You must select a game.').show();
+        return;
+      }
+
+      $(this).children('.alert').hide();
 
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
 
