@@ -506,6 +506,7 @@ define([
     $('#player-list').empty();
     $('#message-list').empty();
     displayGamePane.call(this, false);
+    this._miniMap.reset();
   }
 
   function displayGamePane(display) {

@@ -6,13 +6,18 @@ define([
   'use strict';
 
   var TILE_WIDTH = 32;
-  var CANVAS_WIDTH = 254;
-  var CANVAS_HEIGHT = 254;
+  var CANVAS_WIDTH = 253;
+  var CANVAS_HEIGHT = 253;
 
   function initCanvas() {
     this._stage = new Easel.Stage(this._viewAdpt.getMiniMapID());
     this._stage.canvas.width = CANVAS_WIDTH;
     this._stage.canvas.height = CANVAS_HEIGHT;
+  }
+
+  function reset() {
+    this._stage.removeAllChildren();
+    this._stage.update();
   }
 
   function drawMap(allRooms, startingRoomID) {
@@ -130,5 +135,6 @@ define([
     initCanvas.call(this);
 
     this.drawMap = drawMap.bind(this);
+    this.reset = reset.bind(this);
   }
 });

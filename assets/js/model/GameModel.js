@@ -704,8 +704,13 @@ define([
           fetchGames.call(that);
 
           if (o.id == that._gameID) {
-            reset.call(that);
-            that._viewAdpt.reset();
+            that._viewAdpt.displayTextOverlay('Game cancelled',
+                                              '',
+                                              'The game was cancelled.',
+                                              3000, false, function() {
+              reset.call(that);
+              that._viewAdpt.reset();
+            });
           }
       }
     });
