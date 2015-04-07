@@ -73,12 +73,19 @@ body {
   display: inline-block;
   vertical-align: top;
   height: 100%;
-  width: 270px;
+  width: 256px;
 }
 
 .chatroom div {
   margin-bottom: 5px;
   width: 100%;
+}
+
+div .mini-map {
+  width: 256px;
+  height: 256px;
+  background-color: black;
+  border: 1px solid white;
 }
 
 .chatroom button {

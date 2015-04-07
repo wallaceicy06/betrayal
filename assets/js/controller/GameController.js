@@ -245,8 +245,8 @@ define([
         that._view.loadRoom(roomConfig);
       },
 
-      loadMap: function(mapConfig) {
-        that._view.loadMap(mapConfig);
+      updateMap: function(allRooms) {
+        that._view.loadMap(allRooms);
       },
 
       reset: function() {
@@ -338,14 +338,6 @@ define([
 
       onSendChatMessage: function(message) {
         return that._model.sendChatMessage(message);
-      },
-
-      onEnableMap: function() {
-        return that._model.assembleMap();
-      },
-
-      onDisableMap: function() {
-        return that._model.reloadRoom();
       },
 
       attack: function() {

@@ -2,8 +2,9 @@ define([
     'jquery',
     'underscore',
     'crafty',
-    'templates'
-], function($, _, Crafty, Templates) {
+    'templates',
+    'view/MiniMap'
+], function($, _, Crafty, Templates, MiniMap) {
 
   'use strict';
 
@@ -393,7 +394,7 @@ define([
         }
       }
 
-      that._mapEnabled = false;
+      // that._mapEnabled = false;
 
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
         /*
@@ -405,77 +406,79 @@ define([
       }
     });
 
-    Crafty.defineScene('map', function(mapConfig) {
-      Crafty.background('black');
+    // Crafty.defineScene('map', function(mapConfig) {
+      // that._miniMap.drawMap();
 
-      var toVisit = [{room: mapConfig,
-                      x: that._gameModelAdpt.getDimensions().width / 2
-                         - (TILE_WIDTH / 2),
-                      y: that._gameModelAdpt.getDimensions().height / 2
-                         - (TILE_WIDTH / 2)}];
+      // Crafty.background('black');
 
-      while (toVisit.length > 0) {
-        var curNode;
+      // var toVisit = [{room: mapConfig,
+                      // x: that._gameModelAdpt.getDimensions().width / 2
+                         // - (TILE_WIDTH / 2),
+                      // y: that._gameModelAdpt.getDimensions().height / 2
+                         // - (TILE_WIDTH / 2)}];
 
-        curNode = toVisit.shift();
+      // while (toVisit.length > 0) {
+        // var curNode;
 
-        Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
+        // curNode = toVisit.shift();
 
-        /* If other players in room, draw them. */
-        for(var id in that._otherPlayerModelAdpts) {
-          var otherPlayer = that._otherPlayerModelAdpts[id];
-          if (curNode.room.id === otherPlayer.getRoom()
-            && !otherPlayer.isTraitor()) {
-            Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
-                                  .setColor(otherPlayer.getColor());
-          }
-        }
+        // Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
 
-        /* Draw ourselves after other players so we are on top. */
-        if (curNode.room.id === that._playerModelAdpt.getRoom()) {
-          Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
-                                .setColor(that._playerModelAdpt.getColor());
-        }
+        // [> If other players in room, draw them. <]
+        // for(var id in that._otherPlayerModelAdpts) {
+          // var otherPlayer = that._otherPlayerModelAdpts[id];
+          // if (curNode.room.id === otherPlayer.getRoom()
+            // && !otherPlayer.isTraitor()) {
+            // Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
+                                  // .setColor(otherPlayer.getColor());
+          // }
+        // }
+
+        // [> Draw ourselves after other players so we are on top. <]
+        // if (curNode.room.id === that._playerModelAdpt.getRoom()) {
+          // Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
+                                // .setColor(that._playerModelAdpt.getColor());
+        // }
 
 
-        if (curNode.room.hasGateway('north')) {
-          toVisit.push({room: curNode.room.getGateway('north'),
-                        x: curNode.x, y: curNode.y - TILE_WIDTH});
-        }
+        // if (curNode.room.hasGateway('north')) {
+          // toVisit.push({room: curNode.room.getGateway('north'),
+                        // x: curNode.x, y: curNode.y - TILE_WIDTH});
+        // }
 
-        if (curNode.room.hasGateway('east')) {
-          toVisit.push({room: curNode.room.getGateway('east'),
-                        x: curNode.x + TILE_WIDTH, y: curNode.y});
-        }
+        // if (curNode.room.hasGateway('east')) {
+          // toVisit.push({room: curNode.room.getGateway('east'),
+                        // x: curNode.x + TILE_WIDTH, y: curNode.y});
+        // }
 
-        if (curNode.room.hasGateway('south')) {
-          toVisit.push({room: curNode.room.getGateway('south'),
-                        x: curNode.x, y: curNode.y + TILE_WIDTH});
-        }
+        // if (curNode.room.hasGateway('south')) {
+          // toVisit.push({room: curNode.room.getGateway('south'),
+                        // x: curNode.x, y: curNode.y + TILE_WIDTH});
+        // }
 
-        if (curNode.room.hasGateway('west')) {
-          toVisit.push({room: curNode.room.getGateway('west'),
-                        x: curNode.x - TILE_WIDTH, y: curNode.y});
-        }
-      }
+        // if (curNode.room.hasGateway('west')) {
+          // toVisit.push({room: curNode.room.getGateway('west'),
+                        // x: curNode.x - TILE_WIDTH, y: curNode.y});
+        // }
+      // }
 
-      that._mapEnabled = true;
-    });
+      // that._mapEnabled = true;
+    // });
 
     Crafty.bind('KeyDown', function(e) {
       var inputInFocus = $('input').is(':focus');
 
       if (!inputInFocus) {
         switch(e.key) {
-          case Crafty.keys.Q:
-            if (that._mapEnabled) {
-              that._gameModelAdpt.onDisableMap();
-              that._player.enableControl();
-            } else {
-              that._gameModelAdpt.onEnableMap();
-              that._player.disableControl();
-            }
-            break;
+          // case Crafty.keys.Q:
+            // if (that._mapEnabled) {
+              // that._gameModelAdpt.onDisableMap();
+              // that._player.enableControl();
+            // } else {
+              // that._gameModelAdpt.onEnableMap();
+              // that._player.disableControl();
+            // }
+            // break;
 
           case Crafty.keys.SPACE:
             that._gameModelAdpt.attack();
@@ -606,8 +609,8 @@ define([
     Crafty.enterScene('room', roomConfig);
   }
 
-  function loadMap(mapConfig) {
-    Crafty.enterScene('map', mapConfig);
+  function loadMap(allRooms) {
+    this._miniMap.drawMap(allRooms, this._playerModelAdpt.getRoom());
   }
 
   function placeItem(item) {
@@ -1135,6 +1138,20 @@ define([
   function initGUI() {
     var that = this;
 
+    this._miniMap = new MiniMap({
+      getMiniMapID: function() {
+        return 'mini-map';
+      },
+
+      getPlayerAdpt: function() {
+        return that._playerModelAdpt;
+      },
+
+      getOtherPlayerAdpts: function() {
+        return that._otherPlayerModelAdpts;
+      },
+    });
+
     document.getElementById('btn-goto-new').addEventListener('click', function() {
       displayJoinOptions.call(that, false);
       displayJoinNew.call(that, true);
@@ -1246,8 +1263,9 @@ define([
     this._otherPlayerModelAdpts = {};
     this._husks = {};
     this._items = {};
-    this._mapEnabled = false;
+    // this._mapEnabled = false;
     this._spriteMap = null;
+    this._miniMap = null;
 
     initGUI.call(this);
     initCrafty.call(this);
