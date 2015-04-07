@@ -12,12 +12,26 @@ module.exports = {
       .then(function(room) {
         var roomMod = room;
 
-        roomMod.objects = Room.layouts[room.name].objects
+        roomMod.objects = Room.layouts[room.name].objects;
+
+        _.each(roomMod.objects, function(o) {
+          if (Room.interactable[o.type] !== undefined) {
+            o.interactable = true;
+          } else {
+            o.interactable = false;
+          }
+        });
+
+        /* Subscribe the requester to items that they see in this room. */
+        Item.subscribe(req, room.items);
+
+        /* Make sure the requester watches for new items created. */
+        Item.watch(req);
 
         res.json(roomMod);
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
   },
@@ -33,7 +47,10 @@ module.exports = {
 
         /* If the object is not interactable, don't do anything. */
         if (Room.interactable[furnitureType] === undefined) {
-          throw new Error(furnitureType + " is not interactable.");
+          //throw new Error(furnitureType + " is not interactable.");
+          sails.log.error(furnitureType + " is not interactable.");
+          res.json(err);
+          return;
         }
 
         return Event.destroy({room: req.params.id, container: req.body.furnitureID})
@@ -46,7 +63,7 @@ module.exports = {
           return res.json({title: '',
                            flavorText: prefix,
                            text: 'Nothing happened.',
-                           effect: {}});
+                           effect: null});
         }
 
         /* There only should be one destroyed event at maximum. */
@@ -61,7 +78,7 @@ module.exports = {
         });
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
   },
@@ -69,7 +86,7 @@ module.exports = {
   removeEvent: function(req, res) {
     Room.update(req.param('id'), {event: -1})
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
         res.json(err);
       })
       .done(function() {

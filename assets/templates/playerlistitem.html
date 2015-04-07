@@ -1,0 +1,50 @@
+<div id="<%= id %>" class="player-list-item" style="color: <%= color %>; border: 1px solid <%= color %>;">
+  <%= name %>
+  <div class="player-health">
+    <% _.times(7, function(i) {
+      if (i < curHealth) {
+        %><img class="full_heart"><%
+      } else if (i < maxHealth) {
+        %><img class="empty_heart"><%
+      } else {
+        %><img class="empty_heart invisible"><%
+      }
+    }); %>
+  </div>
+  <div class="player-speed">
+    <% _.times(7, function(i) {
+      if (i < speed) {
+        %><img class="small_lightning"><%
+      } else {
+        %><img class="small_lightning invisible"><%
+      }
+    }); %>
+  </div>
+  <div class="player-weapon">
+    <% _.times(7, function(i) {
+      if (i < weapon) {
+        %><img class="small_flame"><%
+      } else {
+        %><img class="small_flame invisible"><%
+      }
+    }); %>
+  </div>
+  <div class="player-relics">
+    <% _.times(7, function(i) {
+      if (i < relics) {
+        %><img class="small_jewel"><%
+      } else {
+        %><img class="small_jewel invisible"><%
+      }
+    }); %>
+  </div>
+  <div class="player-keys hidden">
+    <% _.times(7, function(i) {
+      if (i < keys) {
+        %><img class="small_key"><%
+      } else {
+        %><img class="small_key invisible"><%
+      }
+    }); %>
+  </div>
+</div>

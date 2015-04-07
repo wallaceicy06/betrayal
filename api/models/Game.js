@@ -23,14 +23,105 @@ module.exports = {
                    required: false},
     players: {collection: 'player',
               via: 'game'},
-    relicsRemaining: {type: 'integer',
-                      required: false},
     traitor: {model: 'player',
               required: false},
     haunt: {type: 'string',
             required: false},
-    keysRemaining: {type: 'integer',
-                    required: false}
+  },
+
+  checkWin: function(gameID, roomID) {
+    var game;
+
+    Game.findOne(gameID).populate('players').populate('rooms')
+      .then(function(found) {
+        if (found === undefined) {
+          throw new Error('Game could not be found.');
+        }
+
+        game = found;
+
+        if (game.haunt === undefined) {
+          return -1;
+        }
+
+        return Item.count({stat: 'keys', game: gameID});
+      })
+      .then(function(keyCount) {
+        if (keyCount === 0) {
+          for (var i = 0; i < game.players.length; i++) {
+            var p = game.players[i];
+            if (!p.isTraitor && p.room !== roomID) {
+              return;
+            }
+          }
+
+          /* If we made it through, then the heroes won. */
+          Game.message(game.id, {verb: 'heroesWon'});
+        }
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+      });
+  },
+
+  startHaunt: function(gameID) {
+    var game;
+
+    Game.findOne(gameID).populate('players').populate('rooms')
+      .then(function(found) {
+        if (found === undefined) {
+          return;
+        }
+
+        game = found;
+
+        var traitor = game.players[Math.floor(Math.random()
+                                   * game.players.length)];
+
+        var allHaunts = _.keys(Game.haunts);
+        var haunt = allHaunts[Math.floor(Math.random() * allHaunts.length)];
+
+        return Game.update(game.id, {traitor: traitor, haunt: haunt});
+      })
+      .then(function(updatedGames) {
+        var updatedGame = updatedGames[0];
+
+        Game.publishUpdate(updatedGame.id, {traitor: updatedGame.traitor, haunt: updatedGame.haunt});
+
+        var itemsToCreate = [];
+
+        var numKeysToPlace = 2 * (game.players.length - 1);
+
+        var allRooms = game.rooms.slice(2); //Rooms, excluding entryway and exit
+
+        while (numKeysToPlace > 0) {
+          var chosenRoom = allRooms[Math.floor(Math.random() * allRooms.length)];
+
+          var possibleLocs = Room.layouts[chosenRoom.name].itemLocs;
+
+          if (possibleLocs.length == 0) {
+            continue;
+          }
+
+          var loc = possibleLocs[Math.floor(Math.random() * possibleLocs.length)];
+
+          itemsToCreate.push({type: 'key', stat: 'keys', amount: 1,
+                              gridX: loc.x, gridY: loc.y, room: chosenRoom,
+                              game: game.id});
+
+          numKeysToPlace--;
+        }
+
+        return Item.create(itemsToCreate);
+      })
+      .then(function(items) {
+        _.each(items, function(item) {
+          Item.publishCreate(item);
+        });
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+      });
   },
 
   generateHouse: function(game, cb) {
@@ -38,8 +129,8 @@ module.exports = {
     var gatewaysToCreate = [];
     var openGridLocs = [];
 
-    /* Put all rooms except the entryway into allRooms and shuffle. */
-    var allRooms = Object.keys(Room.layouts).slice(1);
+    /* Put all rooms except the entryway, exit into allRooms and shuffle. */
+    var allRooms = Object.keys(Room.layouts).slice(2);
     allRooms = _.shuffle(allRooms);
 
     /* Sums the total abundance to make percentages of items relative. */
@@ -67,16 +158,30 @@ module.exports = {
       houseGrid[i] = new Array(16);
     }
 
-    var roomID = 'entryway';
-    var room = Room.layouts[roomID];
+    var entrywayLayout = Room.layouts['entryway'];
+    var exitLayout = Room.layouts['exit'];
+
     var x = 7;
     var y = 6;
 
-    houseGrid[x][y] = roomID;
+    houseGrid[x][y] = 'entryway';
     openGridLocs.push([6,6], [7,5], [7,7]);
-    roomsToCreate.push({game: game.id, name: roomID, background: room.floor});
+    roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor});
 
-    var numRelics = 0;
+    exitLayout = Room.layouts['exit'];
+    houseGrid[x][y + 1] = 'exit';
+    roomsToCreate.push({game: game.id, name: 'exit', background: exitLayout.floor});
+
+    gatewaysToCreate.push({roomFrom: 'entryway',
+                           roomTo: 'exit',
+                           direction: 'south'});
+
+    gatewaysToCreate.push({roomFrom: 'exit',
+                           roomTo: 'entryway',
+                           direction: 'north'});
+
+    var roomID;
+    var room;
 
     while (allRooms.length > 0) {
       var randLoc = Math.floor(Math.random() * openGridLocs.length);
@@ -95,12 +200,8 @@ module.exports = {
       });
 
       var possibleLocs = Room.layouts[roomID].itemLocs.slice(0);
-      _.times(2, function(n) {
+      _.times(Math.min(2, possibleLocs.length), function(n) {
         var item = itemBank.pop();
-
-        if (Game.items[item].stat === 'relics') {
-          numRelics++;
-        }
 
         var index = Math.floor(Math.random() * possibleLocs.length);
         var loc = possibleLocs[index];
@@ -109,7 +210,8 @@ module.exports = {
                             stat: Game.items[item].stat,
                             amount: Game.items[item].amount,
                             gridX: loc.x,
-                            gridY: loc.y});
+                            gridY: loc.y,
+                            game: game.id});
       });
 
       roomsToCreate.push({game: game.id,
@@ -130,8 +232,6 @@ module.exports = {
         openGridLocs.push([x, y - 1]);
       }
     }
-
-    Game.update(game.id, {relicsRemaining: numRelics}, function(game){});
 
     var interactableObjects = [];
 
@@ -222,18 +322,19 @@ module.exports = {
           var event = {
             room: databaseID[object.room],
             container: object.container,
-            card: c
+            card: c,
+            game: game
           };
 
           eventsToCreate.push(event);
         });
 
-        console.log(eventsToCreate);
+        sails.log.info(eventsToCreate);
 
         return Event.create(eventsToCreate)
       })
       .catch(function(err) {
-        console.log(err);
+        sails.log.error(err);
       })
       .done(function() {
         cb(databaseID['entryway']);

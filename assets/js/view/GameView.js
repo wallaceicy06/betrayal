@@ -1,8 +1,10 @@
 define([
     'jquery',
     'underscore',
-    'crafty'
-], function($, _, Crafty) {
+    'crafty',
+    'templates',
+    'view/MiniMap'
+], function($, _, Crafty, Templates, MiniMap) {
 
   'use strict';
 
@@ -18,9 +20,12 @@ define([
   };
   var TILE_WIDTH = 32;
   var ASSETS = {
-    "audio": {
-        "powerup": ["sounds/powerup.wav"],
-        "game_start": ["sounds/game_start.mp3"]
+    'audio': {
+        'powerup': ['sounds/powerup.wav'],
+        'game_start': ['sounds/game_start.mp3'],
+        'die': ['sounds/die.wav'],
+        'slider': ['sounds/01_Slider.mp3'],
+        'tossed': ['sounds/02_Tossed.mp3']
     },
     'sprites': {
       'images/game/sprites.png': {
@@ -33,12 +38,19 @@ define([
                 'SpriteSpeedInc': [0, 14],
                 'SpriteMaxHealth': [1, 14],
                 'SpriteCurHealth': [2, 14],
-                'SpriteWeapon': [3, 14],
+                'SpriteWeapon': [6, 14],
                 'SpriteRelic': [4, 14],
                 'SpritePlayerRed': [0, COLOR_TO_ROW['red']],
                 'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],
                 'SpritePlayerGreen': [0, COLOR_TO_ROW['green']],
                 'SpritePlayerPurple': [0, COLOR_TO_ROW['purple']]},
+      },
+      'images/game/fire_attack.png': {
+        'tile': 160,
+        'tileh': 160,
+        'map': {
+          'AttackSprite': [0, 0]
+        }
       }
     }
   }
@@ -50,9 +62,11 @@ define([
     'green': 3
   };
 
-  var MAX_STAT = 7;
-
+  var ATTACK_DUR = 300; // in milliseconds
   var STAT_TEMPLATE = _.template('<img class="<%=imgClass%>">');
+  var PLAYER_LIST_ITEM_TEMPLATE = 'assets/templates/playerlistitem.html';
+  var OVERLAY_TEMPLATE = 'assets/templates/overlay.html';
+  var OVERLAY_CHAT_TEMPLATE = 'assets/templates/overlay_chat.html';
 
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
@@ -142,39 +156,43 @@ define([
          * being used twice for the same room.
          */
         if (this.attr('doorLock')) {
-          console.log('the lock prevented a double move');
           return;
         }
 
-        that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID);
+        this.stopMovement();
 
         /* Lock the door to prevent double usages. */
         this.attr({'doorLock': true});
 
         /* Player cannot move as they go through a door */
         this.disableControl();
+
+        var thatPlayer = this;
+
+        that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID, function() {
+          thatPlayer.attr({'doorLock': false});
+
+          thatPlayer.enableControl();
+        });
       },
 
       pickUpItem: function(item) {
-        if (this.attr('itemLock')) {
+        var theItem = item[0].obj;
+
+        if (theItem.itemLock === true) {
           return;
         }
 
         /* Don't allow the traitor to pick up keys */
-        if (that._playerModelAdpt.isTraitor() && item[0].obj.type === 'key') {
+        if (that._playerModelAdpt.isTraitor() && theItem.type === 'key') {
           return;
         }
 
-        this.attr({'itemLock' : true});
-        var thisPlayer = this;
-
-        that._playerModelAdpt.useItem(item[0].obj.stat, item[0].obj.amount);
-
-        io.socket.delete('/item/' + item[0].obj.itemID, {}, function(data) {
-          thisPlayer.attr({'itemLock': false});
-        });
-
+        theItem.attr({'itemLock' : true});
+        that._playerModelAdpt.useItem(theItem.itemID, theItem.stat,
+                                      theItem.amount);
         Crafty.audio.play('powerup');
+
       },
 
       fixMovement: function(increaseBy) {
@@ -195,6 +213,13 @@ define([
         }
       }
 
+    });
+
+    Crafty.c('Attack', {
+      init: function() {
+        this.requires('2D, Canvas, AttackSprite, SpriteAnimation');
+        this.reel('AttackAnimation', ATTACK_DUR, 0, 0, 5);
+      },
     });
 
     Crafty.c('Item', {
@@ -250,9 +275,38 @@ define([
       },
     });
 
+    Crafty.c('OverlayText', {
+      init: function() {
+        this.requires('HTML');
+      },
+
+      setText: function(text) {
+        this.replace('<p>' + text + '</p>');
+        return this;
+      }
+    });
+
+    Crafty.c('OverlayTitle', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
+    Crafty.c('OverlayFlavor', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
+    Crafty.c('OverlayBody', {
+      init: function() {
+        this.requires('OverlayText');
+      }
+    });
+
     Crafty.c('Overlay', {
       init: function() {
-        this.requires('2D, DOM, Color');
+        this.requires('2D, HTML, Color');
         this.color('white');
         this.attr({dismissable: true});
       },
@@ -273,21 +327,23 @@ define([
         return this;
       },
 
-      setText: function(title, flavorText, text) {
-        var overlayTitle = Crafty.e('HTML')
-          .replace('<p>' + title + '</p>')
-          .css({'font-size': '20px', 'text-align': 'center', 'top': '15px'});
-
-        var overlayText = Crafty.e('HTML')
-          .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
-          .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
-
-        this.attach(overlayTitle);
-        this.attach(overlayText);
+      setText: function(titleText, flavorText, bodyText) {
         this.attr({x: that._gameModelAdpt.getDimensions().width/2 - 175,
                    y: that._gameModelAdpt.getDimensions().height/2 - 175,
                    w: 350,
                    h: 350});
+
+        var overlayTitle = Crafty.e('OverlayTitle').setText(titleText);
+        var overlayFlavor = Crafty.e('OverlayFlavor').setText(flavorText);
+        var overlayBody = Crafty.e('OverlayBody').setText(bodyText);
+        // var overlayText = Crafty.e('HTML').setText(
+          // .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
+          // .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
+
+
+        this.attach(overlayTitle);
+        this.attach(overlayFlavor);
+        this.attach(overlayBody);
 
         return this;
       }
@@ -338,7 +394,6 @@ define([
         }
       }
 
-      that._mapEnabled = false;
 
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
         /*
@@ -350,87 +405,17 @@ define([
       }
     });
 
-    Crafty.defineScene('map', function(mapConfig) {
-      Crafty.background('black');
-
-      var toVisit = [{room: mapConfig,
-                      x: that._gameModelAdpt.getDimensions().width / 2
-                         - (TILE_WIDTH / 2),
-                      y: that._gameModelAdpt.getDimensions().height / 2
-                         - (TILE_WIDTH / 2)}];
-
-      while (toVisit.length > 0) {
-        var curNode;
-
-        curNode = toVisit.shift();
-
-        Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
-
-        /* If other players in room, draw them. */
-        for(var id in that._otherPlayerModelAdpts) {
-          var otherPlayer = that._otherPlayerModelAdpts[id];
-          if (curNode.room.id === otherPlayer.getRoom()
-            && !otherPlayer.isTraitor()) {
-            Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
-                                  .setColor(otherPlayer.getColor());
-          }
-        }
-
-        /* Draw ourselves after other players so we are on top. */
-        if (curNode.room.id === that._playerModelAdpt.getRoom()) {
-          Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
-                                .setColor(that._playerModelAdpt.getColor());
-        }
-
-
-        if (curNode.room.hasGateway('north')) {
-          toVisit.push({room: curNode.room.getGateway('north'),
-                        x: curNode.x, y: curNode.y - TILE_WIDTH});
-        }
-
-        if (curNode.room.hasGateway('east')) {
-          toVisit.push({room: curNode.room.getGateway('east'),
-                        x: curNode.x + TILE_WIDTH, y: curNode.y});
-        }
-
-        if (curNode.room.hasGateway('south')) {
-          toVisit.push({room: curNode.room.getGateway('south'),
-                        x: curNode.x, y: curNode.y + TILE_WIDTH});
-        }
-
-        if (curNode.room.hasGateway('west')) {
-          toVisit.push({room: curNode.room.getGateway('west'),
-                        x: curNode.x - TILE_WIDTH, y: curNode.y});
-        }
-      }
-
-      that._mapEnabled = true;
-    });
-
     Crafty.bind('KeyDown', function(e) {
       var inputInFocus = $('input').is(':focus');
 
       if (!inputInFocus) {
-        switch(e.key) {
-          case Crafty.keys.Q:
-            if (that._mapEnabled) {
-              that._gameModelAdpt.onDisableMap();
-              that._player.enableControl();
-            } else {
-              that._gameModelAdpt.onEnableMap();
-              that._player.disableControl();
-            }
-            break;
-
-          case Crafty.keys.ESC:
-            Crafty('Overlay').dismiss();
-            break;
-
+        switch (e.key) {
           case Crafty.keys.SPACE:
             that._gameModelAdpt.attack();
             break;
 
-          case Crafty.keys.C:
+          /* Forward slash */
+          case 191:
             /*
              * This timeout is to prevent the letter 'c' from being typed in
              * the chat box since this event will be handled by it as soon as
@@ -438,7 +423,8 @@ define([
              */
             setTimeout(function() {
               that._player.disableControl();
-              document.getElementById('ipt-message').focus();
+              $('#omni-box').fadeIn();
+              $('#ipt-message').focus();
             }, 10);
             break;
 
@@ -452,7 +438,6 @@ define([
             break;
 
           default:
-            break;
         }
       } else {
         switch(e.key) {
@@ -521,6 +506,7 @@ define([
     $('#player-list').empty();
     $('#message-list').empty();
     displayGamePane.call(this, false);
+    this._miniMap.reset();
   }
 
   function displayGamePane(display) {
@@ -530,6 +516,7 @@ define([
       $('#join-pane').addClass('hidden');
       $('#splash-screen').addClass('hidden');
     } else {
+      Crafty.audio.stop();
       goToBeginningOptions.call(this);
       $('#game-pane').addClass('hidden');
       $('#header').addClass('hidden');
@@ -540,37 +527,44 @@ define([
 
   function enableGame(enable) {
     displayStartGameButton.call(this, false);
-    Crafty.audio.play('game_start');
+    Crafty.audio.stop();
+    Crafty.audio.play('slider', -1);
   }
 
   function loadPurgatory() {
+    Crafty.audio.play('tossed', -1);
     Crafty.enterScene('purgatory');
-
   }
 
   function loadRoom(roomConfig) {
     Crafty.enterScene('room', roomConfig);
   }
 
-  function loadMap(mapConfig) {
-    Crafty.enterScene('map', mapConfig);
+  function loadMap(allRooms) {
+    this._miniMap.drawMap(allRooms, this._playerModelAdpt.getRoom());
+  }
+
+  function placeItem(item) {
+    var newItem = Crafty.e('Item').attr({x: item.gridX * TILE_WIDTH,
+                                         y: item.gridY * TILE_WIDTH,
+                                         type: item.type,
+                                         stat: item.stat,
+                                         amount: item.amount,
+                                         itemID: item.id})
+                                  .sprite(this._spriteMap[item.type].gridX,
+                                          this._spriteMap[item.type].gridY,
+                                          this._spriteMap[item.type].gridW,
+                                          this._spriteMap[item.type].gridH);
+
+    this._items[item.id] = newItem;
   }
 
   function placeItems(items) {
-    for (var i = 0; i < items.length; i++) {
-      var item = Crafty.e('Item').attr({x: items[i].gridX * TILE_WIDTH,
-                                        y: items[i].gridY * TILE_WIDTH,
-                                        type: items[i].type,
-                                        stat: items[i].stat,
-                                        amount: items[i].amount,
-                                        itemID: items[i].id})
-                                  .sprite(this._spriteMap[items[i].type].gridX,
-                                          this._spriteMap[items[i].type].gridY,
-                                          this._spriteMap[items[i].type].gridW,
-                                          this._spriteMap[items[i].type].gridH);
+    var that = this;
 
-      this._items[items[i].id] = item;
-    }
+    _.each(items, function(i) {
+      placeItem.call(that, i);
+    });
   }
 
   function placeFurniture(furniture) {
@@ -613,6 +607,12 @@ define([
     $('#' + playerModelAdpt.getID() + '.player-list-item').addClass('my-stats');
 
     return {
+      destroy: function() {
+        $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
+
+        Crafty.audio.play('die');
+      },
+
       setRelics: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-relics img').each(function(index) {
@@ -690,83 +690,19 @@ define([
   }
 
   function addPlayerToList(playerModelAdpt) {
-    var playerList = document.getElementById('player-list');
 
-    var player = document.createElement('div');
-    player.style.cssText = 'color: ' + playerModelAdpt.getColor() + ';';
-    player.style.border = '1px solid ' + playerModelAdpt.getColor();
-    player.id = playerModelAdpt.getID();
-    player.className = 'player-list-item';
-    player.appendChild(document.createTextNode(playerModelAdpt.getName()));
+    var rendered = Templates[PLAYER_LIST_ITEM_TEMPLATE]({ id: playerModelAdpt.getID(),
+                                                          name: playerModelAdpt.getName(),
+                                                          color: playerModelAdpt.getColor(),
+                                                          curHealth: playerModelAdpt.getCurHealth(),
+                                                          maxHealth: playerModelAdpt.getMaxHealth(),
+                                                          speed: playerModelAdpt.getSpeed(),
+                                                          weapon: playerModelAdpt.getWeapon(),
+                                                          relics: playerModelAdpt.getRelics(),
+                                                          keys: playerModelAdpt.getKeys()
+    });
 
-    var playerHealth = document.createElement('div');
-    playerHealth.className = 'player-health';
-    var html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getCurHealth()) {
-        html += STAT_TEMPLATE({imgClass: 'full_heart'});
-      } else if (i < playerModelAdpt.getMaxHealth()) {
-        html += STAT_TEMPLATE({imgClass: 'empty_heart'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'empty_heart invisible'});
-      }
-    }
-    playerHealth.innerHTML = html;
-    player.appendChild(playerHealth);
-
-    var playerSpeed = document.createElement('div');
-    playerSpeed.className = 'player-speed';
-    html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getSpeed()) {
-        html += STAT_TEMPLATE({imgClass: 'small_lightning'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'small_lightning invisible'});
-      }
-    }
-    playerSpeed.innerHTML = html;
-    player.appendChild(playerSpeed);
-
-    var playerWeapon = document.createElement('div');
-    playerWeapon.className = 'player-weapon';
-    html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getWeapon()) {
-        html += STAT_TEMPLATE({imgClass: 'small_sword'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'small_sword invisible'});
-      }
-    }
-    playerWeapon.innerHTML = html;
-    player.appendChild(playerWeapon);
-
-    var playerRelics = document.createElement('div');
-    playerRelics.className = 'player-relics';
-    html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getRelics()) {
-        html += STAT_TEMPLATE({imgClass: 'small_jewel'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'small_jewel invisible'});
-      }
-    }
-    playerRelics.innerHTML = html;
-    player.appendChild(playerRelics);
-
-    var playerKeys = document.createElement('div');
-    playerKeys.className = 'player-keys hidden';
-    html = '';
-    for (var i = 0; i < MAX_STAT; i++) {
-      if (i < playerModelAdpt.getKeys()) {
-        html += STAT_TEMPLATE({imgClass: 'small_key'});
-      } else {
-        html += STAT_TEMPLATE({imgClass: 'small_key invisible'});
-      }
-    }
-    playerKeys.innerHTML = html;
-    player.appendChild(playerKeys);
-
-    playerList.appendChild(player);
+    $('#player-list').append(rendered);
   }
 
   function makePlayerHusk(id, x, y, color) {
@@ -785,18 +721,19 @@ define([
     var playerListItem = addPlayerToList.call(this, playerModelAdpt);
 
     /*
-     * TODO move some of this back to the controller to match the local
-     * player
+     * TODO maybe make an actual view code thing for this?
      */
     return {
       destroy: function() {
-        appendChatMessage.call(that, playerModelAdpt.getID(), 'has died');
+        appendChatMessage.call(that, playerModelAdpt, 'has died');
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
+
+        Crafty.audio.play('die');
       },
 
-      onRelicsChange: function(newRelics) {
+      setRelics: function(newRelics) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-relics img').each(function(index) {
             if (index < newRelics) {
@@ -807,7 +744,7 @@ define([
           });
       },
 
-      onKeysChange: function(newKeys) {
+      setKeys: function(newKeys) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-keys img').each(function(index) {
             if (index < newKeys) {
@@ -818,7 +755,7 @@ define([
           });
       },
 
-      onWeaponChange: function(newWeapon) {
+      setWeapon: function(newWeapon) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-weapon img').each(function(index) {
             if (index < newWeapon) {
@@ -829,7 +766,7 @@ define([
           });
       },
 
-      onCurHealthChange: function(newCurHealth) {
+      setCurHealth: function(newCurHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-health img').each(function(index) {
             if (index < newCurHealth) {
@@ -842,7 +779,7 @@ define([
           });
       },
 
-      onMaxHealthChange: function(newMaxHealth) {
+      setMaxHealth: function(newMaxHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-health img').each(function(index) {
             if (index < newMaxHealth) {
@@ -853,7 +790,7 @@ define([
           });
       },
 
-      onSpeedChange: function(newSpeed) {
+      setSpeed: function(newSpeed) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-speed img').each(function(index) {
             if (index < newSpeed) {
@@ -937,11 +874,21 @@ define([
 
   }
 
-  function removeItem(id) {
-    if(id in this._items) {
-      this._items[id].destroy();
-      delete this._items[id];
+  function removeItem(itemID) {
+    if(itemID in this._items) {
+      this._items[itemID].destroy();
+      delete this._items[itemID];
     }
+  }
+
+  function attackAnimation() {
+    var attack = Crafty.e('Attack')
+      .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH*2, y: this._playerModelAdpt.getY() - TILE_WIDTH*2});
+    attack.animate('AttackAnimation', 1);
+    var that = this;
+    setTimeout(function() {
+      attack.destroy();
+    }, ATTACK_DUR);
   }
 
   function addGameOption(game) {
@@ -960,6 +907,8 @@ define([
 
     if (games.length > 0) {
       document.getElementById('btn-join').disabled = false;
+    } else {
+      document.getElementById('btn-join').disabled = true;
     }
 
     games.forEach(function(v, i, a) {
@@ -1019,34 +968,18 @@ define([
 
   }
 
-  function appendChatMessage(playerID, message) {
-    var sender;
-    if (playerID == undefined) {
-      sender = null;
-    } else if (playerID === this._playerModelAdpt.getID()) {
-      sender = this._playerModelAdpt;
-    } else {
-      for (var id in this._otherPlayerModelAdpts) {
-        if (playerID == id) {
-          sender = this._otherPlayerModelAdpts[id];
-          break;
-        }
-      }
-    }
+  function appendChatMessage(player, message) {
+    var chatOverlay = $(Templates[OVERLAY_CHAT_TEMPLATE]({ name: player.name,
+                                                           color: player.color,
+                                                           message: message
+    }));
 
-    var messageElement = document.createElement('p');
-    if (sender !== null) {
-      messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
-      messageElement.appendChild(
-        document.createTextNode(sender.getName() + ': ' + message));
-    } else {
-      messageElement.appendChild(document.createTextNode(message));
-    }
+    $('#overlay-stack').append(chatOverlay);
 
-    $('#chatroom').find('div.messages').append(messageElement);
-    // Auto scroll to bottom
-    var messages = document.getElementById("message-list");
-    messages.scrollTop = messages.scrollHeight;
+    chatOverlay.fadeIn('slow');
+    setTimeout(function() {
+      chatOverlay.fadeOut('slow');
+    }, 3000);
   }
 
   /**
@@ -1055,25 +988,41 @@ define([
    * (Used for events, death, etc.)
    * timeout must be in ms
    */
-  function displayTextOverlay(title, flavorText, text, timeout, dismissable, cb) {
+  function displayTextOverlay(titleText, flavorText, bodyText, timeout,
+                              dismissable, cb) {
     var that = this;
 
-    this._player.disableControl();
-    console.log('disabling player control');
+    var secondsLeft = timeout / 1000;
 
-    var overlay = Crafty.e('Overlay').setText(title, flavorText, text)
-                                     .setDismiss(dismissable, function() {
-      /* Allow player to move again. */
-      that._player.enableControl();
+    var overlay = $(Templates[OVERLAY_TEMPLATE]({ title: titleText,
+                                                  flavor: flavorText,
+                                                  body: bodyText,
+                                                  seconds: secondsLeft}));
 
-      /* Call the provided callback. */
-      cb();
-    });
 
+    if (secondsLeft > 0) {
+      $('#game-stage').fadeTo('fast', 0.2);
+      var timer = setInterval(function() {
+        secondsLeft--;
+        that._player.disableControl();
+        overlay.find('.seconds').text(secondsLeft);
+
+        if (secondsLeft <= 0) {
+          overlay.children('.countdown').fadeOut();
+          $('#game-stage').fadeTo('fast', 1);
+          that._player.enableControl();
+          clearInterval(timer);
+          cb();
+        }
+      }, 1000);
+    }
+
+    $('#overlay-stack').append(overlay);
+
+    overlay.fadeIn('slow');
     setTimeout(function() {
-      /* Remove the event text box. */
-      overlay.destroy();
-    }, timeout); /* Display the event text box for timeout ms. */
+      overlay.fadeOut('slow');
+    }, timeout + 3000);
   }
 
   function hideRelicsShowKeys() {
@@ -1093,6 +1042,20 @@ define([
   function initGUI() {
     var that = this;
 
+    this._miniMap = new MiniMap({
+      getMiniMapID: function() {
+        return 'mini-map';
+      },
+
+      getPlayerAdpt: function() {
+        return that._playerModelAdpt;
+      },
+
+      getOtherPlayerAdpts: function() {
+        return that._otherPlayerModelAdpts;
+      },
+    });
+
     document.getElementById('btn-goto-new').addEventListener('click', function() {
       displayJoinOptions.call(that, false);
       displayJoinNew.call(that, true);
@@ -1108,9 +1071,21 @@ define([
 
       var formData = formToJSON($(this).serializeArray());
 
-      that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
-
       displayStartGameButton.call(this, true);
+
+      if (formData.playerName === '') {
+        $(this).children('.alert').text('Player name cannot be blank.').show();
+        return;
+      }
+
+      if (formData.gameName === '') {
+        $(this).children('.alert').text('Game name cannot be blank.').show();
+        return;
+      }
+
+      $(this).children('.alert').hide();
+
+      that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
     });
 
     $('#form-join-existing').submit(function(e) {
@@ -1118,11 +1093,34 @@ define([
 
       var formData = formToJSON($(this).serializeArray());
 
+      displayStartGameButton.call(this, false);
+
+      if (formData.playerName === '') {
+        $(this).children('.alert').text('Player name cannot be blank.').show();
+        return;
+      }
+
+      if (formData.gameID === undefined) {
+        $(this).children('.alert').text('You must select a game.').show();
+        return;
+      }
+
+      $(this).children('.alert').hide();
+
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
+
+    });
+
+    $('#ipt-message').focusout(function(e) {
+      $('#omni-box').fadeOut();
+      $('#game-stage').focus();
     });
 
     $('#form-send-message').submit(function(e) {
       event.preventDefault();
+
+      $('#omni-box').fadeOut();
+      $('#game-stage').focus();
 
       var formData = formToJSON($(this).serializeArray());
       $(this)[0].reset();
@@ -1133,6 +1131,20 @@ define([
 
     document.getElementById('btn-game-start').addEventListener('click', function() {
       that._gameModelAdpt.onStartGameClick();
+    });
+
+    document.getElementById('btn-game-leave').addEventListener('click', function() {
+      that._gameModelAdpt.onLeaveGameClick();
+    });
+
+    $('.options-sound label').click(function() {
+      var selected = $(this).children('input').attr('id');
+
+      if (selected === 'ipt-soundon') {
+        Crafty.audio.unmute();
+      } else if (selected === 'ipt-soundoff') {
+        Crafty.audio.mute();
+      }
     });
 
     /* Prevent default actions for arrow keys. */
@@ -1156,6 +1168,16 @@ define([
       }
     });
 
+    $('.options-sound .btn').click(function() {
+      var selection = $(this).children('input').attr('id');
+
+      if (selection === 'ipt-soundon') {
+        Crafty.audio.unmute();
+      } else if (selection === 'ipt-soundoff') {
+        Crafty.audio.mute();
+      }
+    });
+
     /* Only show the GUI after the document has loaded. */
     $(document).ready(function() {
       $('div.main').removeClass('hidden');
@@ -1169,14 +1191,16 @@ define([
     this._otherPlayerModelAdpts = {};
     this._husks = {};
     this._items = {};
-    this._mapEnabled = false;
+    // this._mapEnabled = false;
     this._spriteMap = null;
+    this._miniMap = null;
 
     initGUI.call(this);
     initCrafty.call(this);
 
     this.addOtherPlayer = addOtherPlayer.bind(this);
     this.appendChatMessage = appendChatMessage.bind(this);
+    this.attackAnimation = attackAnimation.bind(this);
     this.changePlayerSprite = changePlayerSprite.bind(this);
     this.displayGamePane = displayGamePane.bind(this);
     this.enableGame = enableGame.bind(this);
@@ -1187,7 +1211,7 @@ define([
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
-    this.placeItems = placeItems.bind(this);
+    this.placeItem = placeItem.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
     this.reset = reset.bind(this);

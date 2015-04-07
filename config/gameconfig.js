@@ -42,7 +42,7 @@ module.exports.gameconfig = {
       prefix: 'You bend over and look under the coffee table.'
     },
     piano: {
-      prefix: 'You begin playing chopsticks on the piano. '
+      prefix: 'You begin playing chopsticks on the piano.'
     }
   },
   sprites: {
@@ -79,7 +79,8 @@ module.exports.gameconfig = {
     'firstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
     'sword': {gridX: 3, gridY: 14, gridW: 1, gridH: 1},
     'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1},
-    'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1}
+    'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
+    'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1}
   },
   dimensions: {
     tileW: 32,
@@ -102,7 +103,7 @@ module.exports.gameconfig = {
       amount: 1,
       abundance: 0.3
     },
-    'sword': {
+    'flame': {
       stat: 'weapon',
       amount: 1,
       abundance: 0.2
@@ -110,12 +111,12 @@ module.exports.gameconfig = {
     'stone': {
       stat: 'relics',
       amount: 1,
-      abundance: 0.2
+      abundance: 0
     }
   },
   rooms: {
     'entryway': {
-      floor: '#F0DEC7',
+      floor: '#6C5033',
       gateways: {
         north: true,
         east: true,
@@ -146,6 +147,17 @@ module.exports.gameconfig = {
           gridY: 7
         }
       }
+    },
+    'exit': {
+      floor: '#FFFFFF',
+      gateways: {
+        north: true,
+        east: false,
+        south: false,
+        west: false
+      },
+      itemLocs: [],
+      objects: {}
     },
     'livingRoom': {
       floor: '#EBACA4',
@@ -761,7 +773,7 @@ module.exports.gameconfig = {
       flavorText: 'Your reflection in the mirror moves on its own. You '
                   + 'realize it is you from another time. It scratches into '
                   + 'the mirror "This will help" and hands you an item.',
-      text: 'Gain one weapon strength!',
+      text: 'Gain one attack power!',
       effect: {weapon: 1}
     },
     mirrorFuture: {
@@ -769,8 +781,71 @@ module.exports.gameconfig = {
       flavorText: 'Your reflection in the mirror moves on its own. You '
                   + 'realize it is you from another time. You scratch into '
                   + 'the mirror "This will help" and hand it an item.',
-      text: 'Lose one weapon strength.',
+      text: 'Lose one attack power.',
       effect: {weapon: -1}
+    },
+    ghost: {
+      title: 'Ghost',
+      flavorText: 'A face appears before your eyes, slightly transparent. The '
+                  + 'ghost rushes toward you! You jump back, but it passes '
+                  + 'right through you, chilling you to the bone.',
+      text: 'Max health decreased by one.',
+      effect: {maxHealth: -1}
+    },
+    book: {
+      title: 'Book',
+      flavorText: 'You find an ancient book, the binding barely holding it '
+                  + 'together. The title has worn off, but it seems to be '
+                  + 'a book of powerful spells.',
+      text: 'Gain one attack power!',
+      effect: {weapon: 1}
+    },
+    youthPotion: {
+      title: 'Youth Potion',
+      flavorText: 'You see a small vile of colorless liquid. The label claims '
+                  + 'it comes from the fountain of youth. You hesitate for a '
+                  + 'moment, then pop off the cap and drink. You can\'t '
+                  + 'explain it, but you feel somehow better . . . stronger.',
+      text: 'Max Health increased by one!',
+      effect: {maxHealth: 1}
+    },
+    shoes: {
+      title: 'Running Shoes',
+      flavorText: 'You find a pair of running shoes, and realize that the '
+                  + 'uncomfortable shoes you\'ve been wearing are holding '
+                  + 'you back. You quickly take off your own shoes and slip '
+                  + 'these on.',
+      text: 'Gain one speed!',
+      effect: {speed: 1}
+    },
+    bandage: {
+      title: 'Bandages',
+      flavorText: 'Sitting there is a pack of bandaids. You put one on your '
+                  + 'knee where you had scraped yourself earlier.',
+      text: 'Gain one health!',
+      effect: {curHealth: 1}
+    },
+    relic1: {
+      title: 'Relic',
+      flavorText: 'You find a strange and mysterious artifact. Curious, you '
+                  + 'pick it up. As you hold it in your hands, it seems to '
+                  + 'pulse with some kind of power.',
+      text: 'Gain one relic! You are one step closer to the second phase.',
+      effect: {relics: 1}
+    },
+    relic2: {
+      title: 'Relic',
+      flavorText: 'You see a strange amulet before you. As you pick it up, '
+                  + 'you feel some sort of power coursing through your veins.',
+      text: 'Gain one relic! You are one step closer to the second phase.',
+      effect: {relics: 1}
+    },
+    relic3: {
+      title: 'Relic',
+      flavorText: 'There is a small box covered in runes. You open it and '
+                  + 'feel a cold breeze wash over you, but the box is empty.',
+      text: 'Gain one relic! You are one step closer to the second phase.',
+      effect: {relics: 1}
     }
   },
 

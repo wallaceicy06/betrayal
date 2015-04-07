@@ -3,7 +3,7 @@ html {
 }
 
 body {
-  background-image: url('http://darkcreationsatx.com/wp-content/uploads/2012/10/spooky-woods.jpg');
+  background-image: url('../images/spooky-woods.jpg');
   height: 100%
 }
 
@@ -36,10 +36,6 @@ body {
   background: rgba(255, 255, 255, 0.4);
 }
 
-.game-start button {
-  width: 100%;
-}
-
 .center {
   margin-left: auto;
   margin-right: auto;
@@ -59,15 +55,46 @@ body {
   padding-bottom: 20px;
 }
 
+.game-pane {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+}
+
+.game-contained {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
 .chatroom {
   display: inline-block;
   vertical-align: top;
   height: 100%;
-  width: 270px;
+  width: 256px;
 }
 
 .chatroom div {
-  margin-bottom: 3px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+div .mini-map {
+  width: 256px;
+  height: 256px;
+  padding: 1px;
+  background-color: black;
+  border: 1px solid white;
+}
+
+.chatroom button {
+  width: 100%;
+}
+
+.options-sound label {
+  width: 50%;
 }
 
 .form-spaced {
@@ -94,6 +121,10 @@ img.small_lightning {
 
 img.small_sword {
   content:url("/images/game/small_sword.png");
+}
+
+img.small_flame {
+  content:url("/images/game/small_flame.png");
 }
 
 img.small_jewel {

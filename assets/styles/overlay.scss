@@ -1,0 +1,34 @@
+.overlay-container {
+  position: absolute;
+  width: 100%;
+  top: 0;
+}
+
+.overlay {
+  background: white;
+  opacity: .6;
+  margin: 10px;
+  padding: 10px;
+}
+
+.overlay .title {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.overlay .flavor {
+  font-style: italic;
+  font-size: 14px;
+}
+
+.overlay .body {
+  font-size: 14px;
+}
+
+.overlay .countdown {
+  font-size: 10px;
+}
+
+.overlay .name {
+  font-size: 12px;
+}
