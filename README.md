@@ -1,8 +1,10 @@
 Betrayal
 ========
-a web game spinoff of "Betrayal of the House on the Hill"
+A web game spinoff of
+[Betrayal of the House on the Hill](http://boardgamegeek.com/boardgame/10547/betrayal-house-hill).
 
-developed by Valerie Baretsky, Sean Harger, and Lauren Staal at Rice University
+developed by Valerie Baretsky, Sean Harger, and Lauren Staal at
+[Rice University](http://www.rice.edu).
 
 Game Creation
 -------------
@@ -60,3 +62,9 @@ The application will run on your local machine on port 1337 by default. This
 can be accessed in a web browser by navigating to
 
     http://[youripaddress]:1337
+
+Credits
+-------
+
+We graciously appreciate [Glyphicons'](http://glyphicons.com/) generous donation
+of their icons to the Bootstrap library. Some of these were used in the project.
