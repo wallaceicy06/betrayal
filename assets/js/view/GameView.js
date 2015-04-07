@@ -2,8 +2,9 @@ define([
     'jquery',
     'underscore',
     'crafty',
-    'templates'
-], function($, _, Crafty, Templates) {
+    'templates',
+    'view/MiniMap'
+], function($, _, Crafty, Templates, MiniMap) {
 
   'use strict';
 
@@ -37,7 +38,7 @@ define([
                 'SpriteSpeedInc': [0, 14],
                 'SpriteMaxHealth': [1, 14],
                 'SpriteCurHealth': [2, 14],
-                'SpriteWeapon': [3, 14],
+                'SpriteWeapon': [6, 14],
                 'SpriteRelic': [4, 14],
                 'SpritePlayerRed': [0, COLOR_TO_ROW['red']],
                 'SpritePlayerBlue': [0, COLOR_TO_ROW['blue']],
@@ -393,7 +394,6 @@ define([
         }
       }
 
-      that._mapEnabled = false;
 
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
         /*
@@ -405,78 +405,11 @@ define([
       }
     });
 
-    Crafty.defineScene('map', function(mapConfig) {
-      Crafty.background('black');
-
-      var toVisit = [{room: mapConfig,
-                      x: that._gameModelAdpt.getDimensions().width / 2
-                         - (TILE_WIDTH / 2),
-                      y: that._gameModelAdpt.getDimensions().height / 2
-                         - (TILE_WIDTH / 2)}];
-
-      while (toVisit.length > 0) {
-        var curNode;
-
-        curNode = toVisit.shift();
-
-        Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
-
-        /* If other players in room, draw them. */
-        for(var id in that._otherPlayerModelAdpts) {
-          var otherPlayer = that._otherPlayerModelAdpts[id];
-          if (curNode.room.id === otherPlayer.getRoom()
-            && !otherPlayer.isTraitor()) {
-            Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
-                                  .setColor(otherPlayer.getColor());
-          }
-        }
-
-        /* Draw ourselves after other players so we are on top. */
-        if (curNode.room.id === that._playerModelAdpt.getRoom()) {
-          Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
-                                .setColor(that._playerModelAdpt.getColor());
-        }
-
-
-        if (curNode.room.hasGateway('north')) {
-          toVisit.push({room: curNode.room.getGateway('north'),
-                        x: curNode.x, y: curNode.y - TILE_WIDTH});
-        }
-
-        if (curNode.room.hasGateway('east')) {
-          toVisit.push({room: curNode.room.getGateway('east'),
-                        x: curNode.x + TILE_WIDTH, y: curNode.y});
-        }
-
-        if (curNode.room.hasGateway('south')) {
-          toVisit.push({room: curNode.room.getGateway('south'),
-                        x: curNode.x, y: curNode.y + TILE_WIDTH});
-        }
-
-        if (curNode.room.hasGateway('west')) {
-          toVisit.push({room: curNode.room.getGateway('west'),
-                        x: curNode.x - TILE_WIDTH, y: curNode.y});
-        }
-      }
-
-      that._mapEnabled = true;
-    });
-
     Crafty.bind('KeyDown', function(e) {
       var inputInFocus = $('input').is(':focus');
 
       if (!inputInFocus) {
-        switch(e.key) {
-          case Crafty.keys.Q:
-            if (that._mapEnabled) {
-              that._gameModelAdpt.onDisableMap();
-              that._player.enableControl();
-            } else {
-              that._gameModelAdpt.onEnableMap();
-              that._player.disableControl();
-            }
-            break;
-
+        switch (e.key) {
           case Crafty.keys.SPACE:
             that._gameModelAdpt.attack();
             break;
@@ -573,6 +506,7 @@ define([
     $('#player-list').empty();
     $('#message-list').empty();
     displayGamePane.call(this, false);
+    this._miniMap.reset();
   }
 
   function displayGamePane(display) {
@@ -606,8 +540,8 @@ define([
     Crafty.enterScene('room', roomConfig);
   }
 
-  function loadMap(mapConfig) {
-    Crafty.enterScene('map', mapConfig);
+  function loadMap(allRooms) {
+    this._miniMap.drawMap(allRooms, this._playerModelAdpt.getRoom());
   }
 
   function placeItem(item) {
@@ -791,7 +725,7 @@ define([
      */
     return {
       destroy: function() {
-        appendChatMessage.call(that, playerModelAdpt.getID(), 'has died');
+        appendChatMessage.call(that, playerModelAdpt, 'has died');
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
@@ -973,6 +907,8 @@ define([
 
     if (games.length > 0) {
       document.getElementById('btn-join').disabled = false;
+    } else {
+      document.getElementById('btn-join').disabled = true;
     }
 
     games.forEach(function(v, i, a) {
@@ -1032,9 +968,9 @@ define([
 
   }
 
-  function appendChatMessage(playerID, message) {
-    var chatOverlay = $(Templates[OVERLAY_CHAT_TEMPLATE]({ name: this._playerModelAdpt.getName(),
-                                                           color: this._playerModelAdpt.getColor(),
+  function appendChatMessage(player, message) {
+    var chatOverlay = $(Templates[OVERLAY_CHAT_TEMPLATE]({ name: player.name,
+                                                           color: player.color,
                                                            message: message
     }));
 
@@ -1044,35 +980,6 @@ define([
     setTimeout(function() {
       chatOverlay.fadeOut('slow');
     }, 3000);
-
-
-    // var sender;
-    // if (playerID == undefined) {
-      // sender = null;
-    // } else if (playerID === this._playerModelAdpt.getID()) {
-      // sender = this._playerModelAdpt;
-    // } else {
-      // for (var id in this._otherPlayerModelAdpts) {
-        // if (playerID == id) {
-          // sender = this._otherPlayerModelAdpts[id];
-          // break;
-        // }
-      // }
-    // }
-
-    // var messageElement = document.createElement('p');
-    // if (sender !== null) {
-      // messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
-      // messageElement.appendChild(
-        // document.createTextNode(sender.getName() + ': ' + message));
-    // } else {
-      // messageElement.appendChild(document.createTextNode(message));
-    // }
-
-    // $('#chatroom').find('div.messages').append(messageElement);
-    // // Auto scroll to bottom
-    // var messages = document.getElementById("message-list");
-    // messages.scrollTop = messages.scrollHeight;
   }
 
   /**
@@ -1135,6 +1042,20 @@ define([
   function initGUI() {
     var that = this;
 
+    this._miniMap = new MiniMap({
+      getMiniMapID: function() {
+        return 'mini-map';
+      },
+
+      getPlayerAdpt: function() {
+        return that._playerModelAdpt;
+      },
+
+      getOtherPlayerAdpts: function() {
+        return that._otherPlayerModelAdpts;
+      },
+    });
+
     document.getElementById('btn-goto-new').addEventListener('click', function() {
       displayJoinOptions.call(that, false);
       displayJoinNew.call(that, true);
@@ -1152,6 +1073,18 @@ define([
 
       displayStartGameButton.call(this, true);
 
+      if (formData.playerName === '') {
+        $(this).children('.alert').text('Player name cannot be blank.').show();
+        return;
+      }
+
+      if (formData.gameName === '') {
+        $(this).children('.alert').text('Game name cannot be blank.').show();
+        return;
+      }
+
+      $(this).children('.alert').hide();
+
       that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
     });
 
@@ -1161,6 +1094,18 @@ define([
       var formData = formToJSON($(this).serializeArray());
 
       displayStartGameButton.call(this, false);
+
+      if (formData.playerName === '') {
+        $(this).children('.alert').text('Player name cannot be blank.').show();
+        return;
+      }
+
+      if (formData.gameID === undefined) {
+        $(this).children('.alert').text('You must select a game.').show();
+        return;
+      }
+
+      $(this).children('.alert').hide();
 
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
 
@@ -1223,6 +1168,16 @@ define([
       }
     });
 
+    $('.options-sound .btn').click(function() {
+      var selection = $(this).children('input').attr('id');
+
+      if (selection === 'ipt-soundon') {
+        Crafty.audio.unmute();
+      } else if (selection === 'ipt-soundoff') {
+        Crafty.audio.mute();
+      }
+    });
+
     /* Only show the GUI after the document has loaded. */
     $(document).ready(function() {
       $('div.main').removeClass('hidden');
@@ -1236,8 +1191,9 @@ define([
     this._otherPlayerModelAdpts = {};
     this._husks = {};
     this._items = {};
-    this._mapEnabled = false;
+    // this._mapEnabled = false;
     this._spriteMap = null;
+    this._miniMap = null;
 
     initGUI.call(this);
     initCrafty.call(this);

@@ -85,15 +85,12 @@ module.exports = {
   changeRoom: function(req, res) {
     var oldRoom;
     var player;
-        sails.log.info(req.body.room);
 
     sails.promise.all([
-        Room.findOne(req.body.room),
+        Room.findOne(req.body.room).populate('players'),
         Player.findOne(req.params.id).populate('room')
       ])
       .spread(function(roomTo, player) {
-
-        sails.log.info(roomTo);
 
         if (roomTo.name === 'exit' && player.keys === 0) {
           res.json({error: 'Cannot exit house without keys'});
@@ -182,13 +179,15 @@ module.exports = {
             var damage = myRoll - otherRoll;
             if (damage <= 0) {
               Game.message(player.game,
-                           {message: player.name + " attacked "
+                           {playerID: player.id,
+                            message: player.name + " attacked "
                                      + otherPlayer.name
                                      + "! They were unharmed.",
                             verb: 'chat'});
             }
             else {
-              Game.message(player.game, {message: player.name + " attacked "
+              Game.message(player.game, {playerID: player.id,
+                                         message: player.name + " attacked "
                                                   + otherPlayer.name + "! "
                                                   + otherPlayer.name + " took "
                                                   + damage + " damage.",

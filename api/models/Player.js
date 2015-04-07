@@ -60,15 +60,17 @@ module.exports = {
 
       Player.count({game: player.game})
         .then(function(count) {
-          Game.destroy(player.game)
-            .then(function(destroyed) {
-              _.each(destroyed, function(game) {
-                Game.publishDestroy(game.id);
+          if (count == 0) {
+            Game.destroy(player.game)
+              .then(function(destroyed) {
+                _.each(destroyed, function(game) {
+                  Game.publishDestroy(game.id);
+                });
+              })
+              .catch(function(err) {
+                sails.log.error(err);
               });
-            })
-            .catch(function(err) {
-              sails.log.error(err);
-            });
+          }
         })
         .catch(function(err) {
           sails.log.error(err);

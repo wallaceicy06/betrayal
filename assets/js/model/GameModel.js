@@ -138,8 +138,6 @@ define([
 
         fetchRoom.call(that, roomID, function (room) {
           that._currentRoom = room;
-          that._miniMap = new MapNode(room.id, room.name);
-          that._currentMiniRoom = that._miniMap;
         });
 
         /* Populate other players object when join game */
@@ -260,6 +258,8 @@ define([
       var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
       that._viewAdpt.startGame(roomConfig, function() {});
+
+      that._viewAdpt.updateMap(that._roomCache);
     });
   }
 
@@ -301,21 +301,16 @@ define([
         var newMiniRoom = new MapNode(room.id, room.name);
 
           /*
-           * Set the position of the player in the new room and add that room
-           * as a connection to our mini map.
+           * Set the position of the player in the new room.
            */
           if (doorID === 'north') {
             that._player.setPosition(that._player.x, DIMENSIONS.height - 65);
-            that._currentMiniRoom.setGateway('north', newMiniRoom);
           } else if (doorID === 'east') {
             that._player.setPosition(33, that._player.y);
-            that._currentMiniRoom.setGateway('east', newMiniRoom);
           } else if (doorID === 'south') {
             that._player.setPosition(that._player.x, 33);
-            that._currentMiniRoom.setGateway('south', newMiniRoom);
           } else if (doorID === 'west') {
             that._player.setPosition(DIMENSIONS.width - 65, that._player.y);
-            that._currentMiniRoom.setGateway('west', newMiniRoom);
           }
 
           /* Set locations of other players in room. */
@@ -325,10 +320,9 @@ define([
             }
           });
 
-          /* Set the current mini room to the one we just moved to. */
-          that._currentMiniRoom = newMiniRoom;
-
           that._viewAdpt.loadRoom(roomConfig);
+
+          that._viewAdpt.updateMap(that._roomCache);
 
           cb();
       });
@@ -378,16 +372,6 @@ define([
     });
   }
 
-  function reloadRoom() {
-    var that = this;
-
-    fetchRoom.call(this, this._currentRoom.id, function(room) {
-      var roomConfig = prepareRoomConfig.call(that, room);
-
-      that._viewAdpt.loadRoom(roomConfig, function() {});
-    });
-  }
-
   function prepareRoomConfig(room) {
     var doors = {};
     for (var i = 0; i < room.gatewaysOut.length; i++) {
@@ -399,10 +383,6 @@ define([
             doors: doors,
             items: room.items,
             furniture: room.objects};
-  }
-
-  function assembleMap() {
-    this._viewAdpt.loadMap(this._miniMap);
   }
 
   function fetchRoom(roomID, cb) {
@@ -432,6 +412,7 @@ define([
 
         /* Add the newly created room to the cache. */
         that._roomCache[roomID] = newRoom;
+
 
         cb(newRoom);
       });
@@ -583,6 +564,7 @@ define([
         if (o.data.room !== undefined) {
           if (o.data.room !== null && o.id !== that._player.id) {
             that._otherPlayers[o.id].room = o.data.room;
+            that._viewAdpt.updateMap(that._roomCache);
           }
         } else if (o.data.color !== undefined && o.id !== that._player.id) {
           that._otherPlayers[o.id].color = o.data.color;
@@ -665,7 +647,15 @@ define([
             });
           }
         } else if (o.data.verb === 'chat') {
-          that._viewAdpt.messageReceived(o.data.playerID, o.data.message);
+          var player;
+
+          if (o.data.playerID == that._player.id) {
+            player = that._player;
+          } else {
+            player = that._otherPlayers[o.data.playerID];
+          }
+
+          that._viewAdpt.messageReceived(player, o.data.message);
         }
 
       } else if (o.verb === 'updated') {
@@ -714,8 +704,13 @@ define([
           fetchGames.call(that);
 
           if (o.id == that._gameID) {
-            reset.call(that);
-            that._viewAdpt.reset();
+            that._viewAdpt.displayTextOverlay('Game cancelled',
+                                              '',
+                                              'The game was cancelled.',
+                                              3000, false, function() {
+              reset.call(that);
+              that._viewAdpt.reset();
+            });
           }
       }
     });
@@ -731,7 +726,6 @@ define([
     this._currentRoom = null;
     this._otherPlayers = {};
     this._gameID = null;
-    this._miniMap = null;
     this._currentMiniRoom = null;
     this._haunts = null;
     this._lastSend = new Date().getTime();
@@ -761,8 +755,6 @@ define([
     this.onFurnitureInteract = onFurnitureInteract.bind(this);
     this.sendChatMessage = sendChatMessage.bind(this);
     this.sendEventMessage = sendEventMessage.bind(this);
-    this.reloadRoom = reloadRoom.bind(this);
-    this.assembleMap = assembleMap.bind(this);
     this.performEvent = performEvent.bind(this);
     this.attack = attack.bind(this);
     this.useTraitorPower = useTraitorPower.bind(this);

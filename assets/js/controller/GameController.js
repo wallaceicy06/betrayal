@@ -245,8 +245,8 @@ define([
         that._view.loadRoom(roomConfig);
       },
 
-      loadMap: function(mapConfig) {
-        that._view.loadMap(mapConfig);
+      updateMap: function(allRooms) {
+        that._view.loadMap(allRooms);
       },
 
       reset: function() {
@@ -288,8 +288,8 @@ define([
       /*
        * Received a chat or event message that needs to be displayed
        */
-      messageReceived: function(playerID, message) {
-        that._view.appendChatMessage(playerID, message);
+      messageReceived: function(player, message) {
+        that._view.appendChatMessage(player, message);
       },
 
       displayTextOverlay: function(title, flavorText, text, timeout, dismissable, cb) {
@@ -338,14 +338,6 @@ define([
 
       onSendChatMessage: function(message) {
         return that._model.sendChatMessage(message);
-      },
-
-      onEnableMap: function() {
-        return that._model.assembleMap();
-      },
-
-      onDisableMap: function() {
-        return that._model.reloadRoom();
       },
 
       attack: function() {
