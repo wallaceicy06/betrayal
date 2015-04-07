@@ -59,11 +59,16 @@ define([
     });
 
     Object.defineProperty(this, 'color', {
+      value: color,
+      writable: false
+    });
+
+    Object.defineProperty(this, 'sprite', {
       get: function() {
-        return this._color;
+        return this._sprite;
       },
-      set: function(newColor) {
-        this._color = newColor;
+      set: function(newSprite) {
+        this._sprite = newSprite;
       }
     });
 
@@ -192,7 +197,7 @@ define([
     this.destroy = destroy.bind(this);
     this.useItem = useItem.bind(this);
 
-    this._color = color;
+    this._sprite = color; //Initially sprite is the same as color
     this._isTraitor = false;
     this._speed = 5;
     this._maxHealth = 3;

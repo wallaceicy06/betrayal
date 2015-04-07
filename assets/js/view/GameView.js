@@ -87,8 +87,8 @@ define([
         this.animate('PlayerMovingRight', -1);
       },
 
-      setColor: function(colorString) {
-        var row = COLOR_TO_ROW[colorString];
+      setSprite: function(spriteString) {
+        var row = COLOR_TO_ROW[spriteString];
         this.sprite(0, row, 1, 1);
         this.reel('PlayerMovingRight',600, 0, row, 1);
         this.reel('PlayerMovingUp',   600, 1, row, 1);
@@ -378,8 +378,8 @@ define([
       that._player = Crafty.e('Player').attr({x: that._playerModelAdpt.getX(),
                                               y: that._playerModelAdpt.getY(),
                                               doorLock: false})
-                                       .setColor(that._playerModelAdpt
-                                                     .getColor());
+                                       .setSprite(that._playerModelAdpt
+                                                     .getSprite());
       if (oldPlayerEntity !== null) {
         that._player.animate(oldPlayerEntity.getReel().id, -1);
       }
@@ -390,7 +390,7 @@ define([
           makePlayerHusk.call(that, otherPlayer.getID(),
                               otherPlayer.getX(),
                               otherPlayer.getY(),
-                              otherPlayer.getColor());
+                              otherPlayer.getSprite());
         }
       }
 
@@ -601,7 +601,7 @@ define([
     this._playerModelAdpt = playerModelAdpt;
 
     this._player = Crafty.e('Player');
-    this._player.setColor(this._playerModelAdpt.getColor());
+    this._player.setSprite(this._playerModelAdpt.getSprite());
 
     addPlayerToList.call(this, playerModelAdpt);
     $('#' + playerModelAdpt.getID() + '.player-list-item').addClass('my-stats');
@@ -705,10 +705,10 @@ define([
     $('#player-list').append(rendered);
   }
 
-  function makePlayerHusk(id, x, y, color) {
+  function makePlayerHusk(id, x, y, sprite) {
      if (Crafty._current === 'room') {
        var husk = Crafty.e('PlayerHusk').attr({x: x, y: y});
-       husk.setColor(color);
+       husk.setSprite(sprite);
        this._husks[id] = husk;
      }
    }
@@ -836,7 +836,7 @@ define([
         if (visible === true) {
           makePlayerHusk.call(that, playerModelAdpt.getID(),
                               playerModelAdpt.getX(), playerModelAdpt.getY(),
-                              playerModelAdpt.getColor());
+                              playerModelAdpt.getSprite());
         } else {
           removeHusk.call(that, playerModelAdpt.getID());
         }
@@ -859,9 +859,9 @@ define([
     }
   }
 
-  function setHuskColor(id, colorString) {
+  function setHuskSprite(id, newSprite) {
     if (this._husks[id] !== undefined) {
-      this._husks[id].setColor(colorString);
+      this._husks[id].setSprite(newSprite);
     }
   }
 
@@ -870,7 +870,7 @@ define([
                         this._spriteMap[spriteName].gridY,
                         1, 1);
     this._player.unbind('NewDirection');
-    this._playerModelAdpt.setColor(spriteName);
+    this._playerModelAdpt.setSprite(spriteName);
 
   }
 
@@ -1217,7 +1217,7 @@ define([
     this.reset = reset.bind(this);
     this.addGameOption = addGameOption.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
-    this.setHuskColor = setHuskColor.bind(this);
+    this.setHuskSprite = setHuskSprite.bind(this);
     this.start = start.bind(this);
   }
 });
