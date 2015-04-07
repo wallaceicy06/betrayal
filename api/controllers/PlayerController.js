@@ -177,21 +177,21 @@ module.exports = {
               && otherPlayer.locX > attackRegion.minX
               && otherPlayer.locY < attackRegion.maxY
               && otherPlayer.locY > attackRegion.minY) {
+            /* Roll dice for combat based on weapon strength */
             var damage;
-            if (!player.isTraitor) {
-              /* Roll dice for combat based on weapon strength */
-              var myRoll = 0;
-              for (var j = 0; j < player.weapon; j++) {
-                myRoll += Math.floor(Math.random() * 3); //0, 1, or 2
-              }
-              var otherRoll = 0;
-              for (var j = 0; j < otherPlayer.weapon; j++) {
-                otherRoll += Math.floor(Math.random() * 3);
-              }
-              damage = myRoll - otherRoll;
-            } else {
-              /* One-hit kills for traitor */
-              damage = 7;
+            var myRoll = 0;
+            for (var j = 0; j < player.weapon; j++) {
+              myRoll += Math.floor(Math.random() * 3); //0, 1, or 2
+            }
+            var otherRoll = 0;
+            for (var j = 0; j < otherPlayer.weapon; j++) {
+              otherRoll += Math.floor(Math.random() * 3);
+            }
+            damage = myRoll - otherRoll;
+
+            /* No matter what, the traitor deals damage. */
+            if (player.isTraitor && damage <= 0) {
+              damage = 1;
             }
 
             if (damage <= 0) {

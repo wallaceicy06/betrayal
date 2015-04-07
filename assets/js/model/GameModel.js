@@ -198,16 +198,6 @@ define([
             onDestroy: function() {
               playerViewAdpt.destroy();
               delete that._otherPlayers[v.id];
-              if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
-                that._viewAdpt.displayTextOverlay("You Won!", "You have "
-                  + "successfully murdered all your friends. Congratulations!", "",
-                  10000, false, function() {
-
-                  destroyGame.call(that);
-                  reset.call(that);
-                  that._viewAdpt.reset();
-                });
-              }
             }
           });
 
@@ -535,15 +525,6 @@ define([
           onDestroy: function() {
             playerViewAdpt.destroy();
             delete that._otherPlayers[player.id];
-            if (jQuery.isEmptyObject(that._otherPlayers) && that._player.isTraitor) {
-              that._viewAdpt.displayTextOverlay("You Won!", "You have "
-                + "successfully murdered all your friends. Congratulations!", "",
-                10000, false, function() {
-                reset.call(that);
-                that._viewAdpt.reset();
-              });
-            }
-
           }
         });
 
@@ -649,7 +630,7 @@ define([
         } else if (o.data.verb === 'traitorWon') {
           if (that._player.isTraitor) {
             that._viewAdpt.displayTextOverlay("You Won!", "You have successfully " +
-                                              "kept the heroes from escaping. " +
+                                              "kept all the heroes from escaping. " +
                                               "Congratulations!", "", 10000, false, function() {
               reset.call(that);
               that._viewAdpt.reset();
