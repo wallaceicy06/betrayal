@@ -394,7 +394,6 @@ define([
         }
       }
 
-      // that._mapEnabled = false;
 
       if (roomConfig.event !== undefined && roomConfig.event !== -1) {
         /*
@@ -406,80 +405,11 @@ define([
       }
     });
 
-    // Crafty.defineScene('map', function(mapConfig) {
-      // that._miniMap.drawMap();
-
-      // Crafty.background('black');
-
-      // var toVisit = [{room: mapConfig,
-                      // x: that._gameModelAdpt.getDimensions().width / 2
-                         // - (TILE_WIDTH / 2),
-                      // y: that._gameModelAdpt.getDimensions().height / 2
-                         // - (TILE_WIDTH / 2)}];
-
-      // while (toVisit.length > 0) {
-        // var curNode;
-
-        // curNode = toVisit.shift();
-
-        // Crafty.e('MapRoom').attr({x: curNode.x, y: curNode.y})
-
-        // [> If other players in room, draw them. <]
-        // for(var id in that._otherPlayerModelAdpts) {
-          // var otherPlayer = that._otherPlayerModelAdpts[id];
-          // if (curNode.room.id === otherPlayer.getRoom()
-            // && !otherPlayer.isTraitor()) {
-            // Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
-                                  // .setColor(otherPlayer.getColor());
-          // }
-        // }
-
-        // [> Draw ourselves after other players so we are on top. <]
-        // if (curNode.room.id === that._playerModelAdpt.getRoom()) {
-          // Crafty.e('PlayerHusk').attr({x: curNode.x, y: curNode.y})
-                                // .setColor(that._playerModelAdpt.getColor());
-        // }
-
-
-        // if (curNode.room.hasGateway('north')) {
-          // toVisit.push({room: curNode.room.getGateway('north'),
-                        // x: curNode.x, y: curNode.y - TILE_WIDTH});
-        // }
-
-        // if (curNode.room.hasGateway('east')) {
-          // toVisit.push({room: curNode.room.getGateway('east'),
-                        // x: curNode.x + TILE_WIDTH, y: curNode.y});
-        // }
-
-        // if (curNode.room.hasGateway('south')) {
-          // toVisit.push({room: curNode.room.getGateway('south'),
-                        // x: curNode.x, y: curNode.y + TILE_WIDTH});
-        // }
-
-        // if (curNode.room.hasGateway('west')) {
-          // toVisit.push({room: curNode.room.getGateway('west'),
-                        // x: curNode.x - TILE_WIDTH, y: curNode.y});
-        // }
-      // }
-
-      // that._mapEnabled = true;
-    // });
-
     Crafty.bind('KeyDown', function(e) {
       var inputInFocus = $('input').is(':focus');
 
       if (!inputInFocus) {
-        switch(e.key) {
-          // case Crafty.keys.Q:
-            // if (that._mapEnabled) {
-              // that._gameModelAdpt.onDisableMap();
-              // that._player.enableControl();
-            // } else {
-              // that._gameModelAdpt.onEnableMap();
-              // that._player.disableControl();
-            // }
-            // break;
-
+        switch (e.key) {
           case Crafty.keys.SPACE:
             that._gameModelAdpt.attack();
             break;
@@ -1047,35 +977,6 @@ define([
     setTimeout(function() {
       chatOverlay.fadeOut('slow');
     }, 3000);
-
-
-    // var sender;
-    // if (playerID == undefined) {
-      // sender = null;
-    // } else if (playerID === this._playerModelAdpt.getID()) {
-      // sender = this._playerModelAdpt;
-    // } else {
-      // for (var id in this._otherPlayerModelAdpts) {
-        // if (playerID == id) {
-          // sender = this._otherPlayerModelAdpts[id];
-          // break;
-        // }
-      // }
-    // }
-
-    // var messageElement = document.createElement('p');
-    // if (sender !== null) {
-      // messageElement.style.cssText = 'color: ' + sender.getColor() + ';';
-      // messageElement.appendChild(
-        // document.createTextNode(sender.getName() + ': ' + message));
-    // } else {
-      // messageElement.appendChild(document.createTextNode(message));
-    // }
-
-    // $('#chatroom').find('div.messages').append(messageElement);
-    // // Auto scroll to bottom
-    // var messages = document.getElementById("message-list");
-    // messages.scrollTop = messages.scrollHeight;
   }
 
   /**

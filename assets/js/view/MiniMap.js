@@ -6,8 +6,8 @@ define([
   'use strict';
 
   var TILE_WIDTH = 32;
-  var CANVAS_WIDTH = 256;
-  var CANVAS_HEIGHT = 256;
+  var CANVAS_WIDTH = 254;
+  var CANVAS_HEIGHT = 254;
 
   function initCanvas() {
     this._stage = new Easel.Stage(this._viewAdpt.getMiniMapID());
