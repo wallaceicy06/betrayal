@@ -116,7 +116,7 @@ module.exports.gameconfig = {
   },
   rooms: {
     'entryway': {
-      floor: '#F0DEC7',
+      floor: '#6C5033',
       gateways: {
         north: true,
         east: true,
