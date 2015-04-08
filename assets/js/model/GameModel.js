@@ -547,9 +547,9 @@ define([
             that._otherPlayers[o.id].room = o.data.room;
             that._viewAdpt.updateMap(that._roomCache);
           }
-        } else if (o.data.color !== undefined && o.id !== that._player.id) {
-          that._otherPlayers[o.id].color = o.data.color;
-          that._viewAdpt.setHuskColor(o.id, o.data.color);
+        } else if (o.data.sprite !== undefined && o.id !== that._player.id) {
+          that._otherPlayers[o.id].sprite = o.data.sprite;
+          that._viewAdpt.setHuskSprite(o.id, o.data.sprite);
         } else { /* Stat update */
           if (o.id !== that._player.id) {
             for (var key in o.data) {
@@ -679,7 +679,7 @@ define([
           var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
             changeSprite: function(spriteName) {
               that._viewAdpt.changePlayerSprite(spriteName);
-              io.socket.put('/player/' + that._player.id, {color: spriteName},
+              io.socket.put('/player/' + that._player.id, {sprite: spriteName},
                 function(err, player) {});
             }
           });

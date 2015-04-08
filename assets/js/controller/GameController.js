@@ -74,8 +74,12 @@ define([
             return playerModel.color;
           },
 
-          setColor: function(newColor) {
-            playerModel.color = newColor;
+          setSprite: function(newSprite) {
+            playerModel.sprite = newSprite;
+          },
+
+          getSprite: function() {
+            return playerModel.sprite;
           },
 
           setPosition: function(x, y) {
@@ -181,6 +185,10 @@ define([
             return playerModel.color;
           },
 
+          getSprite: function() {
+            return playerModel.sprite;
+          },
+
           isTraitor: function() {
             return playerModel.isTraitor;
           },
@@ -257,8 +265,8 @@ define([
         that._view.removeAllHusks();
       },
 
-      setHuskColor: function(id, colorString) {
-        that._view.setHuskColor(id, colorString);
+      setHuskSprite: function(id, newSprite) {
+        that._view.setHuskSprite(id, newSprite);
       },
 
       changePlayerSprite: function(spriteName) {

@@ -17,6 +17,7 @@ module.exports = {
                    locY: 64,
                    socket: req.socket.id,
                    color: req.body.color,
+                   sprite: req.body.color,
                    maxHealth: 3,
                    curHealth: 3,
                    speed: 5,
