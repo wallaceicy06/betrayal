@@ -1,10 +1,31 @@
+$spooky_woods: '../images/spooky-woods.jpg';
+$full_heart: '/images/game/full_heart.png';
+$empty_heart: '/images/game/empty_heart.png';
+$small_lightning: '/images/game/small_lightning.png';
+$small_sword: '/images/game/small_sword.png';
+$small_flame: '/images/game/small_flame.png';
+$small_jewel: '/images/game/small_jewel.png';
+$small_key: '/images/game/small_key.png';
+
 html {
   height: 100%;
 }
 
 body {
-  background-image: url('../images/spooky-woods.jpg');
+  background-image: url($spooky_woods);
   height: 100%
+}
+
+body:before {
+    display: none;
+    content: url($spooky_woods)
+             url($full_heart)
+             url($empty_heart)
+             url($small_lightning)
+             url($small_sword)
+             url($small_flame)
+             url($small_jewel)
+             url($small_key);
 }
 
 .main {
@@ -108,31 +129,31 @@ img {
 }
 
 img.full_heart {
-  content:url("/images/game/full_heart.png");
+  content:url($full_heart);
 }
 
 img.empty_heart {
-  content:url("/images/game/empty_heart.png");
+  content:url($empty_heart);
 }
 
 img.small_lightning {
-  content:url("/images/game/small_lightning.png");
+  content:url($small_lightning);
 }
 
 img.small_sword {
-  content:url("/images/game/small_sword.png");
+  content:url($small_sword);
 }
 
 img.small_flame {
-  content:url("/images/game/small_flame.png");
+  content:url($small_flame);
 }
 
 img.small_jewel {
-  content:url("/images/game/small_jewel.png");
+  content:url($small_jewel);
 }
 
 img.small_key {
-  content:url("/images/game/small_key.png");
+  content:url($small_key);
 }
 
 .player-list-item {

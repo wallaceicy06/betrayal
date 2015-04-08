@@ -1187,10 +1187,10 @@ define([
       }
     });
 
-    /* Only show the GUI after the document has loaded. */
-    $(document).ready(function() {
-      $('div.main').removeClass('hidden');
-    });
+    // Only show the GUI after the document has loaded.
+    // $(document).ready(function() {
+      // $('div.main').removeClass('hidden');
+    // });
   }
 
   return function GameView(gameModelAdpt) {
