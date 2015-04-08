@@ -196,6 +196,7 @@ define([
             },
 
             onDestroy: function() {
+              that._viewAdpt.messageReceived(player, 'died');
               playerViewAdpt.destroy();
               delete that._otherPlayers[v.id];
             }
@@ -260,17 +261,51 @@ define([
   }
 
   function onDoorVisit(doorID, cb) {
+    var gateway;
     var newRoomID;
 
-    for (var i = 0; i < this._currentRoom.gatewaysOut.length; i++) {
-      if (this._currentRoom.gatewaysOut[i].direction === doorID) {
-        /* get ID of room player is going to */
-        newRoomID = this._currentRoom.gatewaysOut[i].roomTo;
-        break;
+    var that = this;
+
+    _.each(_.keys(this._currentRoom.gatewaysOut), function(direction) {
+      if (direction === doorID) {
+        gateway = that._currentRoom.gatewaysOut[direction];
+        return;
       }
+    });
+
+    /* If the gateway is locked, try to unlock. */
+    if (gateway.locked) {
+
+      if (this._player.keys === 0) {
+
+        this._viewAdpt.displayTextOverlay('', '',
+                                          'This door is locked.', 0, true, function() {});
+
+        cb();
+
+        return;
+      }
+
+      io.socket.put('/gateway/update/' + gateway.id, { locked: false },
+                      function(gateways) {
+        if (_.has(gateways, 'error')) {
+          cb();
+
+          return;
+        }
+
+        /*
+         * If none of the gateways were updated, then someone else unlocked the
+         * door in the middle of our request and we don't need to decrement our
+         * keys.
+         */
+        if (!_.isEmpty(gateways)) {
+          that._player.keys -= 1;
+        }
+      });
     }
 
-    var that = this;
+    newRoomID = gateway.roomTo;
 
     io.socket.put('/player/changeRoom/' + that._player.id,
                   {room: newRoomID}, function (playersInRoom) {
@@ -362,15 +397,10 @@ define([
     });
   }
 
+  /* TODO might want to remove this now. */
   function prepareRoomConfig(room) {
-    var doors = {};
-    for (var i = 0; i < room.gatewaysOut.length; i++) {
-      var gateway = room.gatewaysOut[i];
-      doors[gateway.direction] = gateway.roomTo;
-    }
-
     return {background: room.background,
-            doors: doors,
+            doors: room.gatewaysOut,
             items: room.items,
             furniture: room.objects};
   }
@@ -382,8 +412,8 @@ define([
       cb(that._roomCache[roomID]);
     } else {
       io.socket.get('/room/' + roomID, function (room) {
-        var newRoom = new Room(room.id, room.gatewaysOut, room.gatewaysIn,
-                               room.background, room.items, room.objects, {
+        var newRoom = new Room(room.id, room.gatewaysOut, room.background,
+                               room.items, room.objects, {
           /* Room -> GameModel Adapter */
           onAddItem: function(item) {
             /*
@@ -397,6 +427,12 @@ define([
 
           onRemoveItem: function(itemID) {
             that._viewAdpt.removeItem(itemID);
+          },
+
+          onGatewayChange: function(direction, locked) {
+            if (that._currentRoom.id == room.id) {
+              that._viewAdpt.loadRoom(prepareRoomConfig.call(this, newRoom));
+            }
           }
         });
 
@@ -523,6 +559,7 @@ define([
           },
 
           onDestroy: function() {
+            that._viewAdpt.messageReceived(player, 'died');
             playerViewAdpt.destroy();
             delete that._otherPlayers[player.id];
           }
@@ -712,6 +749,13 @@ define([
           }
       }
     });
+
+    io.socket.on('gateway', function(o) {
+      console.log(o);
+      if (o.verb === 'updated') {
+        that._roomCache[o.data.roomFrom].setLocked(o.data.direction, o.data.locked);
+      }
+    });
   }
 
   function destroyGame() {
@@ -734,6 +778,8 @@ define([
 
 
   return function GameModel(viewAdpt) {
+    window.test = this;
+
     this._viewAdpt = viewAdpt;
     this._roomCache = {};
 

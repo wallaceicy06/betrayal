@@ -31,7 +31,6 @@ define([
                      y: CANVAS_HEIGHT / 2 - (TILE_WIDTH / 2) }];
     var visited = {};
 
-    console.log('BEGIN DRAW');
     while (toVisit.length > 0) {
       var curNode;
 
@@ -43,8 +42,6 @@ define([
       rect.graphics.beginFill(curNode.room.background).drawRect(curNode.x, curNode.y, TILE_WIDTH, TILE_WIDTH);
       rect.graphics.beginStroke('black').drawRect(curNode.x, curNode.y, TILE_WIDTH, TILE_WIDTH);
       this._stage.addChild(rect);
-
-      console.log('drawing at ' + curNode.x + ', ' + curNode.y);
 
       /* If other players in room, draw them. */
       _.each(this._viewAdpt.getOtherPlayerAdpts(), function(playerAdpt) {
@@ -67,12 +64,14 @@ define([
         this._stage.addChild(dot);
       }
 
-      _.each(curNode.room.gatewaysOut, function(gateway) {
+      _.each(_.keys(curNode.room.gatewaysOut), function(direction) {
+        var gateway = curNode.room.gatewaysOut[direction];
+
         if (visited[gateway.roomTo] === undefined && gateway.roomTo in allRooms) {
           var newX = curNode.x;
           var newY = curNode.y;
 
-          switch (gateway.direction) {
+          switch (direction) {
             case 'north':
               newY -= TILE_WIDTH;
               break;
@@ -96,34 +95,8 @@ define([
 
       });
 
-      this._stage.update(); // TODO remove later
-
-      // _.each(curNode.room.gatewaysOut, function(roomID) {
-        // toVisit.push({room: allRooms[roomID]});
-      // });
-
-      // if (curNode.room.hasGateway('north')) {
-        // toVisit.push({room: curNode.room.getGateway('north'),
-                      // x: curNode.x, y: curNode.y - TILE_WIDTH});
-      // }
-
-      // if (curNode.room.hasGateway('east')) {
-        // toVisit.push({room: curNode.room.getGateway('east'),
-                      // x: curNode.x + TILE_WIDTH, y: curNode.y});
-      // }
-
-      // if (curNode.room.hasGateway('south')) {
-        // toVisit.push({room: curNode.room.getGateway('south'),
-                      // x: curNode.x, y: curNode.y + TILE_WIDTH});
-      // }
-
-      // if (curNode.room.hasGateway('west')) {
-        // toVisit.push({room: curNode.room.getGateway('west'),
-                      // x: curNode.x - TILE_WIDTH, y: curNode.y});
-      // }
+      this._stage.update();
     }
-    console.log('END DRAW');
-
 
     this._stage.update();
   }
