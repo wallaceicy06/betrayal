@@ -273,8 +273,8 @@ define([
         that._view.changePlayerSprite(spriteName);
       },
 
-      attackAnimation: function() {
-        that._view.attackAnimation();
+      attackAnimation: function(x, y) {
+        that._view.attackAnimation(x, y);
       },
 
       removeItem: function(id) {

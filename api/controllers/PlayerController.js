@@ -155,6 +155,11 @@ module.exports = {
         return Room.findOne(player.room).populate('players');
       })
       .then(function(room) {
+        /* Inform other players in roomthat we are attacking, so they can draw the attack animation */
+        Room.message(room, { id: player.id,
+                              verb: 'playerAttacked',
+                              data: {id: player.id, locX: player.locX, locY: player.locY} });
+
         var attackRegion = Player.attackRegion(player.locX, player.locY);
         for (var i = 0; i < room.players.length; i++) {
           var otherPlayer = room.players[i];

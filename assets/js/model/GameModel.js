@@ -478,7 +478,6 @@ define([
     var curTime = new Date().getTime();
     if (curTime - this._lastAttack > ATTACK_COOLDOWN) {
       this._lastAttack = curTime;
-      this._viewAdpt.attackAnimation();
       io.socket.put('/player/attack/' + this._player.id, {},
                     function(redData, jwr) {});
     }
@@ -621,6 +620,13 @@ define([
 
         that._otherPlayers[o.data.id].setPosition(o.data.data.locX,
                                                   o.data.data.locY);
+      }
+      /* Show attack animation */
+      if (o.verb === 'messaged' && o.data.verb === 'playerAttacked'
+          && (o.data.id in that._otherPlayers || o.data.id === that._player.id)
+          && o.id === that._currentRoom.id) {
+
+        that._viewAdpt.attackAnimation(o.data.data.locX, o.data.data.locY);
       }
     });
 

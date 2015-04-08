@@ -893,9 +893,9 @@ define([
     }
   }
 
-  function attackAnimation() {
+  function attackAnimation(locX, locY) {
     var attack = Crafty.e('Attack')
-      .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH*2, y: this._playerModelAdpt.getY() - TILE_WIDTH*2});
+      .attr({x: locX - TILE_WIDTH*2, y: locY - TILE_WIDTH*2});
     attack.animate('AttackAnimation', 1);
     var that = this;
     setTimeout(function() {
