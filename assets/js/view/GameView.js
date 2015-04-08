@@ -1200,7 +1200,6 @@ define([
     this._otherPlayerModelAdpts = {};
     this._husks = {};
     this._items = {};
-    // this._mapEnabled = false;
     this._spriteMap = null;
     this._miniMap = null;
 
