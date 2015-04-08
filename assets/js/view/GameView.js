@@ -147,6 +147,7 @@ define([
         Crafty('Furniture').each(function(f) {
           if (player.intersect(this.interactRect())) {
             that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
+            return;
           }
         });
       },
