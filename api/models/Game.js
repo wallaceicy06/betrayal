@@ -161,16 +161,18 @@ module.exports = {
     var entrywayLayout = Room.layouts['entryway'];
     var exitLayout = Room.layouts['exit'];
 
-    var x = 7;
-    var y = 6;
+    var i = 7;
+    var j = 6;
 
-    houseGrid[x][y] = 'entryway';
+    houseGrid[i][j] = 'entryway';
     openGridLocs.push([6,6], [7,5], [7,7]);
     roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor});
 
     exitLayout = Room.layouts['exit'];
-    houseGrid[x][y + 1] = 'exit';
+    houseGrid[i + 1][j] = 'exit';
     roomsToCreate.push({game: game.id, name: 'exit', background: exitLayout.floor});
+
+    console.log(houseGrid);
 
     gatewaysToCreate.push({roomFrom: 'entryway',
                            roomTo: 'exit',
@@ -186,18 +188,56 @@ module.exports = {
 
     while (allRooms.length > 0) {
       var randLoc = Math.floor(Math.random() * openGridLocs.length);
-      var randRoom = Math.floor(Math.random() * allRooms.length);
+
       var itemsToCreate = [];
 
-      x = openGridLocs[randLoc][0];
-      y = openGridLocs[randLoc][1];
+      i = openGridLocs[randLoc][0];
+      j = openGridLocs[randLoc][1];
 
-      roomID = allRooms.pop();
+      roomID = allRooms.shift();
       room = Room.layouts[roomID];
-      houseGrid[x][y] = roomID;
+
+      var fits = false;
+
+      var roomNorthID = (i == 0 ? null : houseGrid[i - 1][j]);
+      var roomEastID = (j == houseGrid[0].length - 1
+                        ? null : houseGrid[i][j + 1]);
+      var roomSouthID = (i == houseGrid.length - 1
+                         ? null : houseGrid[i + 1][j]);
+      var roomWestID = (j == 0 ? null : houseGrid[i][j - 1]);
+
+      var roomNorth = Room.layouts[roomNorthID];
+      var roomEast = Room.layouts[roomEastID];
+      var roomSouth = Room.layouts[roomSouthID];
+      var roomWest = Room.layouts[roomWestID];
+
+      if (roomNorth != null && room.gateways.north
+          && roomNorth.gateways.south) {
+        fits = true;
+      }
+      if (roomEast != null && room.gateways.east
+          && roomEast.gateways.west) {
+        fits = true;
+      }
+      if (roomSouth != null && room.gateways.south
+          && roomSouth.gateways.north) {
+        fits = true;
+      }
+      if (roomWest != null && room.gateways.west
+          && roomWest.gateways.east) {
+        fits = true;
+      }
+
+      if (!fits) {
+        allRooms.push(roomID);
+        continue;
+      }
+
+
+      houseGrid[i][j] = roomID;
 
       openGridLocs = _.filter(openGridLocs, function(loc) {
-        return !(_.isEqual(loc, [x, y]));
+        return !(_.isEqual(loc, [i, j]));
       });
 
       var possibleLocs = Room.layouts[roomID].itemLocs.slice(0);
@@ -220,19 +260,21 @@ module.exports = {
                           background: room.floor,
                           items: itemsToCreate});
 
-      if (room.gateways.north && houseGrid[x - 1][y] == undefined) {
-        openGridLocs.push([x - 1, y]);
+      if (room.gateways.north && houseGrid[i - 1][j] == undefined) {
+        openGridLocs.push([i - 1, j]);
       }
-      if (room.gateways.east && houseGrid[x][y + 1] == undefined) {
-        openGridLocs.push([x, y + 1]);
+      if (room.gateways.east && houseGrid[i][j + 1] == undefined) {
+        openGridLocs.push([i, j + 1]);
       }
-      if (room.gateways.south && houseGrid[x + 1][y] == undefined) {
-        openGridLocs.push([x + 1, y]);
+      if (room.gateways.south && houseGrid[i + 1][j] == undefined) {
+        openGridLocs.push([i + 1, j]);
       }
-      if (room.gateways.west && houseGrid[x][y - 1] == undefined) {
-        openGridLocs.push([x, y - 1]);
+      if (room.gateways.west && houseGrid[i][j - 1] == undefined) {
+        openGridLocs.push([i, j - 1]);
       }
     }
+
+    console.log(houseGrid);
 
     var interactableObjects = [];
 

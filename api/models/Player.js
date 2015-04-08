@@ -26,6 +26,8 @@ module.exports = {
              required: true},
     color: {type: 'string',
              required: true},
+    sprite: {type: 'string',
+             required: true},
     maxHealth: {type: 'integer',
                 required: true},
     curHealth: {type: 'integer',
