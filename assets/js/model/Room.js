@@ -14,12 +14,26 @@ define([
     this._gameModelAdpt.onRemoveItem(itemID);
   }
 
-  return function Room(id, gatewaysOut, gatewaysIn, background, items, objects,
+  function setLocked(direction, locked) {
+    this.gatewaysOut[direction].locked = locked;
+
+    this._gameModelAdpt.onGatewayChange(direction, locked);
+  }
+
+  return function Room(id, gatewaysOut, background, items, objects,
                        gameModelAdpt) {
     var that = this;
 
     this._items = {};
     this._gameModelAdpt = gameModelAdpt;
+
+    var shortenedGateways = {};
+
+    _.each(gatewaysOut, function(gateway) {
+      shortenedGateways[gateway.direction] = { id: gateway.id,
+                                               roomTo: gateway.roomTo,
+                                               locked: gateway.locked };
+    });
 
     Object.defineProperty(this, 'id', {
       value: id,
@@ -27,12 +41,7 @@ define([
     })
 
     Object.defineProperty(this, 'gatewaysOut', {
-      value: gatewaysOut,
-      writable: false
-    });
-
-    Object.defineProperty(this, 'gatewaysIn', {
-      value: gatewaysIn,
+      value: shortenedGateways,
       writable: false
     });
 
@@ -54,6 +63,7 @@ define([
 
     this.addItem = addItem.bind(this);
     this.removeItem = removeItem.bind(this);
+    this.setLocked = setLocked.bind(this);
 
     _.each(items, function(i) {
       that.addItem(i);

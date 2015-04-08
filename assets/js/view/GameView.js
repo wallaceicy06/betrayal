@@ -247,6 +247,12 @@ define([
       }
     });
 
+    Crafty.c('LockedDoor', {
+      init: function() {
+        this.requires('Door, SpriteLockedDoor');
+      }
+    });
+
     Crafty.c('Furniture', {
       init: function() {
         this.requires('2D, Canvas, RoomItem, SpriteFurniture');
@@ -366,7 +372,7 @@ define([
     Crafty.defineScene('purgatory', function() {
       Crafty.background('black');
 
-      var waitImage = Crafty.e('2D, DOM, Image')
+      var waitImage = Crafty.e('2D, Canvas, Image')
         .image("images/game/wait_screen.png")
         .attr({x: 576/2 - 200, y: 512/2 - 200, w: 400, h: 400});
 
@@ -732,7 +738,6 @@ define([
      */
     return {
       destroy: function() {
-        appendChatMessage.call(that, playerModelAdpt, 'has died');
         removeHusk.call(that, playerModelAdpt.getID());
         delete that._otherPlayerModelAdpts[playerModelAdpt.getID()];
         $('#' + playerModelAdpt.getID() + '.player-list-item').remove();
@@ -925,24 +930,41 @@ define([
     var widthInTiles = this._gameModelAdpt.getDimensions().width/TILE_WIDTH;
     var heightInTiles = this._gameModelAdpt.getDimensions().height/TILE_WIDTH;
 
+    console.log(gateways);
+
     for (var j = 0; j < widthInTiles; j++) {
       if(!('north' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
 
         Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: 0});
+      } else {
+        var door;
+
+        if (gateways.north.locked) {
+          door = Crafty.e('LockedDoor');
+        } else {
+          door = Crafty.e('Door');
+        }
+
+        door.attr( {x: j * TILE_WIDTH, y: 0, doorID: 'north' });
       }
-      else {
-        Crafty.e('Door').attr({x: j * TILE_WIDTH, y: 0, doorID: 'north'});
-      }
+
       if(!('south' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
         Crafty.e('Wall').attr({x: j * TILE_WIDTH,
                                y: (heightInTiles - 1) * TILE_WIDTH});
-      }
-      else {
-        Crafty.e('Door').attr({x: j * TILE_WIDTH,
-                               y: (heightInTiles - 1) * TILE_WIDTH,
-                               doorID: 'south'});
+      } else {
+        var door;
+
+        if (gateways.south.locked) {
+          door = Crafty.e('LockedDoor');
+        } else {
+          door = Crafty.e('Door');
+        }
+
+        door.attr({ x: j * TILE_WIDTH,
+                    y: (heightInTiles - 1) * TILE_WIDTH,
+                    doorID: 'south' });
       }
     }
 
@@ -952,22 +974,35 @@ define([
 
         Crafty.e('Wall').attr({x: 0,
                                y: i * TILE_WIDTH});
+      } else {
+        var door;
+
+        if (gateways.west.locked) {
+          door = Crafty.e('LockedDoor');
+        } else {
+          door = Crafty.e('Door');
+        }
+
+        door.attr({ x: 0, y: i * TILE_WIDTH, doorID: 'west' });
       }
-      else {
-        Crafty.e('Door').attr({x: 0,
-                               y: i * TILE_WIDTH,
-                               doorID: 'west'});
-      }
+
       if(!('east' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
         Crafty.e('Wall').attr({x: (widthInTiles - 1) * TILE_WIDTH,
                                y: i * TILE_WIDTH});
-      }
-      else {
-        Crafty.e('Door').attr({x: (widthInTiles - 1) * TILE_WIDTH,
-                               y: i * TILE_WIDTH,
-                               doorID: 'east'});
+      } else {
+        var door;
+
+        if (gateways.east.locked) {
+          door = Crafty.e('LockedDoor');
+        } else {
+          door = Crafty.e('Door');
+        }
+
+        door.attr({ x: (widthInTiles - 1) * TILE_WIDTH,
+                    y: i * TILE_WIDTH,
+                    doorID: 'east' });
       }
     }
 

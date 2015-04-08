@@ -25,6 +25,9 @@ module.exports = {
         /* Subscribe the requester to items that they see in this room. */
         Item.subscribe(req, room.items);
 
+        /* Subscribe the requester to the gateways in this room. */
+        Gateway.subscribe(req, room.gatewaysOut, ['update']);
+
         /* Make sure the requester watches for new items created. */
         Item.watch(req);
 

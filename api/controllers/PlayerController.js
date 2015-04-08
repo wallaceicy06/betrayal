@@ -48,19 +48,19 @@ module.exports = {
   },
 
   update: function(req, res) {
-    Player.update(req.param('id'), req.body)
+    Player.update(req.params.id, req.body)
       .then(function(players) {
-        var updatedPlayer = players[0];
+        _.each(players, function(player) {
+          if (req.body.locX !== undefined && req.body.locY !== undefined) {
+            Room.message(player.room, { id: player.id,
+                                        verb: 'playerUpdated',
+                                        data: req.body });
+          } else {
+            Player.publishUpdate(player.id, req.body);
+          }
+        });
 
-        if (req.body.locX !== undefined && req.body.locY !== undefined) {
-          Room.message(updatedPlayer.room, {id: updatedPlayer.id,
-                                            verb: 'playerUpdated',
-                                            data: req.body});
-        } else {
-          Player.publishUpdate(updatedPlayer.id, req.body, req);
-        }
-
-        res.json();
+        res.json(players);
       })
       .catch(function(err) {
         sails.log.error(err);
@@ -69,16 +69,6 @@ module.exports = {
   },
 
   destroy: function(req, res) {
-    Player.findOne(req.param('id'))
-      .then(function(player) {
-      if (!player.isTraitor) {
-        Game.message(player.game, {verb: 'traitorWon'});
-      } else {
-        Game.message(player.game, {verb: 'heroesWon'});
-      }
-
-    });
-
     Player.destroy(req.params.id)
       .then(function(players) {
         _.each(players, function(player) {
@@ -102,11 +92,6 @@ module.exports = {
         Player.findOne(req.params.id).populate('room')
       ])
       .spread(function(roomTo, player) {
-
-        if (roomTo.name === 'exit' && player.keys === 0) {
-          res.json({error: 'Cannot exit house without keys'});
-          throw new sails.promise.CancellationError();
-        }
 
         oldRoom = player.room;
 
