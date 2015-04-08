@@ -196,6 +196,7 @@ define([
             },
 
             onDestroy: function() {
+              that._viewAdpt.messageReceived(player, 'died');
               playerViewAdpt.destroy();
               delete that._otherPlayers[v.id];
             }
@@ -401,7 +402,8 @@ define([
     var doors = {};
     for (var i = 0; i < room.gatewaysOut.length; i++) {
       var gateway = room.gatewaysOut[i];
-      doors[gateway.direction] = gateway.roomTo;
+      doors[gateway.direction] = { roomTo: gateway.roomTo,
+                                   locked: gateway.locked };
     }
 
     return {background: room.background,
@@ -558,6 +560,7 @@ define([
           },
 
           onDestroy: function() {
+            that._viewAdpt.messageReceived(player, 'died');
             playerViewAdpt.destroy();
             delete that._otherPlayers[player.id];
           }

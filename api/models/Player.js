@@ -58,43 +58,29 @@ module.exports = {
 
     _.each(players, function(player) {
 
-      Player.count({game: player.game})
+      Game.findOne(player.game)
+        .then(function(game) {
+          if (game.haunt !== undefined && !player.isTraitor) {
+            Game.message(player.game, {verb: 'traitorWon'});
+          }
+
+          return Player.count({game: player.game});
+        })
         .then(function(count) {
           if (count == 0) {
-            Game.destroy(player.game)
-              .then(function(destroyed) {
-                _.each(destroyed, function(game) {
-                  Game.publishDestroy(game.id);
-                });
-              })
-              .catch(function(err) {
-                sails.log.error(err);
-              });
+            return Game.destroy(player.game);
+          } else {
+            return [];
           }
+        })
+        .then(function(destroyed) {
+          _.each(destroyed, function(game) {
+            Game.publishDestroy(game.id);
+          });
         })
         .catch(function(err) {
           sails.log.error(err);
         });
-
-      _.times(player.keys, function(i) {
-
-
-        sails.log.info('creating spawned key death thing');
-        Item.create({type: 'key',
-                     stat: 'keys',
-                     amount: 1,
-                     room: player.room,
-                     gridX: Math.round(player.locX/tileW),
-                     gridY: Math.round(player.locY/tileW),
-                     game: player.game})
-          .then(function(item) {
-            Item.publishCreate(item);
-          })
-          .catch(function(err) {
-            sails.log.error(err);
-          });
-
-      });
     });
 
     cb();
