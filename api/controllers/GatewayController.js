@@ -23,7 +23,7 @@ module.exports = {
       })
       .then(function(gateways) {
         _.each(gateways, function(gateway) {
-          Gateway.publishUpdate(gateway.id, { locked: gateway.locked }, req);
+          Gateway.publishUpdate(gateway.id, gateway, req);
         });
 
         res.json(gateways);

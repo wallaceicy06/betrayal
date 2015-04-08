@@ -266,13 +266,12 @@ define([
 
     var that = this;
 
-    for (var i = 0; i < this._currentRoom.gatewaysOut.length; i++) {
-      if (this._currentRoom.gatewaysOut[i].direction === doorID) {
-        /* get ID of room player is going to */
-        gateway = this._currentRoom.gatewaysOut[i];
-        break;
+    _.each(_.keys(this._currentRoom.gatewaysOut), function(direction) {
+      if (direction === doorID) {
+        gateway = that._currentRoom.gatewaysOut[direction];
+        return;
       }
-    }
+    });
 
     /* If the gateway is locked, try to unlock. */
     if (gateway.locked) {
@@ -398,16 +397,10 @@ define([
     });
   }
 
+  /* TODO might want to remove this now. */
   function prepareRoomConfig(room) {
-    var doors = {};
-    for (var i = 0; i < room.gatewaysOut.length; i++) {
-      var gateway = room.gatewaysOut[i];
-      doors[gateway.direction] = { roomTo: gateway.roomTo,
-                                   locked: gateway.locked };
-    }
-
     return {background: room.background,
-            doors: doors,
+            doors: room.gatewaysOut,
             items: room.items,
             furniture: room.objects};
   }
@@ -419,8 +412,8 @@ define([
       cb(that._roomCache[roomID]);
     } else {
       io.socket.get('/room/' + roomID, function (room) {
-        var newRoom = new Room(room.id, room.gatewaysOut, room.gatewaysIn,
-                               room.background, room.items, room.objects, {
+        var newRoom = new Room(room.id, room.gatewaysOut, room.background,
+                               room.items, room.objects, {
           /* Room -> GameModel Adapter */
           onAddItem: function(item) {
             /*
@@ -434,6 +427,12 @@ define([
 
           onRemoveItem: function(itemID) {
             that._viewAdpt.removeItem(itemID);
+          },
+
+          onGatewayChange: function(direction, locked) {
+            if (that._currentRoom.id == room.id) {
+              that._viewAdpt.loadRoom(prepareRoomConfig.call(this, newRoom));
+            }
           }
         });
 
@@ -748,6 +747,13 @@ define([
               that._viewAdpt.reset();
             });
           }
+      }
+    });
+
+    io.socket.on('gateway', function(o) {
+      console.log(o);
+      if (o.verb === 'updated') {
+        that._roomCache[o.data.roomFrom].setLocked(o.data.direction, o.data.locked);
       }
     });
   }

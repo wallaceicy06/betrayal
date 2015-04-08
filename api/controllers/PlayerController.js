@@ -92,11 +92,6 @@ module.exports = {
       ])
       .spread(function(roomTo, player) {
 
-        if (roomTo.name === 'exit' && player.keys === 0) {
-          res.json({error: 'Cannot exit house without keys'});
-          throw new sails.promise.CancellationError();
-        }
-
         oldRoom = player.room;
 
         return [roomTo, Player.update(player.id, {room: req.body.room})];
