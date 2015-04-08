@@ -174,7 +174,8 @@ module.exports = {
 
     gatewaysToCreate.push({roomFrom: 'entryway',
                            roomTo: 'exit',
-                           direction: 'south'});
+                           direction: 'south',
+                           locked: true});
 
     gatewaysToCreate.push({roomFrom: 'exit',
                            roomTo: 'entryway',

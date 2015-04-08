@@ -9,13 +9,18 @@ module.exports = {
 
   autoWatch: false,
 
+  autosubscribe: ['update'],
+
   attributes: {
     roomFrom: {model: 'room',
                required: true},
     roomTo: {model: 'room',
              required: true},
     direction: {type: 'string',
-			   required: true}
+			          required: true},
+    locked: {type: 'boolean',
+             required: true,
+             defaultsTo: false}
   }
 };
 

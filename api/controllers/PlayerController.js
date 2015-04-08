@@ -47,7 +47,7 @@ module.exports = {
   },
 
   update: function(req, res) {
-    Player.update(req.param('id'), req.body)
+    Player.update(req.params.id, req.body)
       .then(function(players) {
         var updatedPlayer = players[0];
 
@@ -55,11 +55,11 @@ module.exports = {
           Room.message(updatedPlayer.room, {id: updatedPlayer.id,
                                             verb: 'playerUpdated',
                                             data: req.body});
+          res.json(players);
         } else {
           Player.publishUpdate(updatedPlayer.id, req.body);
+          res.json(players);
         }
-
-        res.json();
       })
       .catch(function(err) {
         sails.log.error(err);
@@ -134,6 +134,8 @@ module.exports = {
   adjustStat: function(req, res) {
     var updateObj = {};
     updateObj[req.body.stat] = req.body.newValue;
+
+    sails.log.warn('adjustStat called!');
 
     Player.update(req.params.id, updateObj, function (err, updatedPlayers) {
       if (err) {

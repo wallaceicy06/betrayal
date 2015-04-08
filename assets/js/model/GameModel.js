@@ -270,17 +270,52 @@ define([
   }
 
   function onDoorVisit(doorID, cb) {
+    var gateway;
     var newRoomID;
+
+    var that = this;
 
     for (var i = 0; i < this._currentRoom.gatewaysOut.length; i++) {
       if (this._currentRoom.gatewaysOut[i].direction === doorID) {
         /* get ID of room player is going to */
-        newRoomID = this._currentRoom.gatewaysOut[i].roomTo;
+        gateway = this._currentRoom.gatewaysOut[i];
         break;
       }
     }
 
-    var that = this;
+    /* If the gateway is locked, try to unlock. */
+    if (gateway.locked) {
+
+      if (this._player.keys === 0) {
+
+        this._viewAdpt.displayTextOverlay('', '',
+                                          'This door is locked.', 0, true, function() {});
+
+        cb();
+
+        return;
+      }
+
+      io.socket.put('/gateway/update/' + gateway.id, { locked: false },
+                      function(gateways) {
+        if (_.has(gateways, 'error')) {
+          cb();
+
+          return;
+        }
+
+        /*
+         * If none of the gateways were updated, then someone else unlocked the
+         * door in the middle of our request and we don't need to decrement our
+         * keys.
+         */
+        if (!_.isEmpty(gateways)) {
+          that._player.keys -= 1;
+        }
+      });
+    }
+
+    newRoomID = gateway.roomTo;
 
     io.socket.put('/player/changeRoom/' + that._player.id,
                   {room: newRoomID}, function (playersInRoom) {
@@ -736,6 +771,8 @@ define([
 
 
   return function GameModel(viewAdpt) {
+    window.test = this;
+
     this._viewAdpt = viewAdpt;
     this._roomCache = {};
 
