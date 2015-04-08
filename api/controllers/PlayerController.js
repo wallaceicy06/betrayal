@@ -57,7 +57,7 @@ module.exports = {
                                             verb: 'playerUpdated',
                                             data: req.body});
         } else {
-          Player.publishUpdate(updatedPlayer.id, req.body);
+          Player.publishUpdate(updatedPlayer.id, req.body, req);
         }
 
         res.json();
@@ -69,6 +69,16 @@ module.exports = {
   },
 
   destroy: function(req, res) {
+    Player.findOne(req.param('id'))
+      .then(function(player) {
+      if (!player.isTraitor) {
+        Game.message(player.game, {verb: 'traitorWon'});
+      } else {
+        Game.message(player.game, {verb: 'heroesWon'});
+      }
+
+    });
+
     Player.destroy(req.params.id)
       .then(function(players) {
         _.each(players, function(player) {
@@ -169,6 +179,7 @@ module.exports = {
               && otherPlayer.locY < attackRegion.maxY
               && otherPlayer.locY > attackRegion.minY) {
             /* Roll dice for combat based on weapon strength */
+            var damage;
             var myRoll = 0;
             for (var j = 0; j < player.weapon; j++) {
               myRoll += Math.floor(Math.random() * 3); //0, 1, or 2
@@ -177,7 +188,13 @@ module.exports = {
             for (var j = 0; j < otherPlayer.weapon; j++) {
               otherRoll += Math.floor(Math.random() * 3);
             }
-            var damage = myRoll - otherRoll;
+            damage = myRoll - otherRoll;
+
+            /* No matter what, the traitor deals damage. */
+            if (player.isTraitor && damage <= 0) {
+              damage = 1;
+            }
+
             if (damage <= 0) {
               Game.message(player.game,
                            {playerID: player.id,

@@ -34,6 +34,7 @@ define([
         'map': {'SpriteFurniture': [0,0],
                 'SpriteWall': [7, 13],
                 'SpriteDoor': [6,13],
+                'SpriteLockedDoor': [10, 13],
                 'SpriteWhiteRoom': [8, 13],
                 'SpriteSpeedInc': [0, 14],
                 'SpriteMaxHealth': [1, 14],
@@ -143,8 +144,14 @@ define([
       interact: function() {
         var player = this; /* the player */
 
+        var interacted = false;
         Crafty('Furniture').each(function(f) {
+          if (interacted) {
+            return;
+          }
+
           if (player.intersect(this.interactRect())) {
+            interacted = true;
             that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
           }
         });
@@ -999,6 +1006,8 @@ define([
 
 
     if (secondsLeft > 0) {
+      that._player.disableControl();
+
       $('#game-stage').fadeTo('fast', 0.2);
       var timer = setInterval(function() {
         secondsLeft--;
@@ -1176,10 +1185,10 @@ define([
       }
     });
 
-    /* Only show the GUI after the document has loaded. */
-    $(document).ready(function() {
-      $('div.main').removeClass('hidden');
-    });
+    // Only show the GUI after the document has loaded.
+    // $(document).ready(function() {
+      // $('div.main').removeClass('hidden');
+    // });
   }
 
   return function GameView(gameModelAdpt) {
@@ -1189,7 +1198,6 @@ define([
     this._otherPlayerModelAdpts = {};
     this._husks = {};
     this._items = {};
-    // this._mapEnabled = false;
     this._spriteMap = null;
     this._miniMap = null;
 
