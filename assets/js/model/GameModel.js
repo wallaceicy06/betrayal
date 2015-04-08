@@ -178,7 +178,7 @@ define([
             },
 
             onKeysChange: function(newKeys) {
-              playerViewAdpt.onKeysChange(newKeys);
+              /* Do nothing so that other players don't see you have keys */
             },
 
             onPositionChange: function(newX, newY) {
@@ -540,7 +540,7 @@ define([
           },
 
           onKeysChange: function(newKeys) {
-            playerViewAdpt.onKeysChange(newKeys);
+            /* Do nothing, so that other players don't see that you have keys */
           },
 
           onPositionChange: function(newX, newY) {

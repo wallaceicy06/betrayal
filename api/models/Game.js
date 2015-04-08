@@ -172,8 +172,6 @@ module.exports = {
     houseGrid[i + 1][j] = 'exit';
     roomsToCreate.push({game: game.id, name: 'exit', background: exitLayout.floor});
 
-    console.log(houseGrid);
-
     gatewaysToCreate.push({roomFrom: 'entryway',
                            roomTo: 'exit',
                            direction: 'south',
@@ -273,8 +271,6 @@ module.exports = {
         openGridLocs.push([i, j - 1]);
       }
     }
-
-    console.log(houseGrid);
 
     var interactableObjects = [];
 

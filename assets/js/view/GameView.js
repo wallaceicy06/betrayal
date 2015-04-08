@@ -878,12 +878,10 @@ define([
   }
 
   function changePlayerSprite(spriteName) {
-    this._player.sprite(this._spriteMap[spriteName].gridX,
-                        this._spriteMap[spriteName].gridY,
-                        1, 1);
-    this._player.unbind('NewDirection');
+    var reel = this._player.getReel().id;
+    this._player.setSprite(spriteName);
+    this._player.reel(reel);
     this._playerModelAdpt.setSprite(spriteName);
-
   }
 
   function removeItem(itemID) {
@@ -1222,10 +1220,10 @@ define([
       }
     });
 
-    /* Only show the GUI after the document has loaded. */
-    $(document).ready(function() {
-      $('div.main').removeClass('hidden');
-    });
+    // Only show the GUI after the document has loaded.
+    // $(document).ready(function() {
+      // $('div.main').removeClass('hidden');
+    // });
   }
 
   return function GameView(gameModelAdpt) {

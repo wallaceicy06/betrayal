@@ -19,7 +19,10 @@ require.config({
   }
 });
 
-require(['controller/GameController', 'bootstrap'], function(GameController, Bootstrap) {
-  (new GameController()).start();
+require(['controller/GameController', 'jquery', 'bootstrap'], function(GameController, $, Bootstrap) {
+  $(document).ready(function() {
+    console.log('start');
+    (new GameController()).start();
+  });
 });
 
