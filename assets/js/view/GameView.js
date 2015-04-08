@@ -144,10 +144,15 @@ define([
       interact: function() {
         var player = this; /* the player */
 
+        var interacted = false;
         Crafty('Furniture').each(function(f) {
-          if (player.intersect(this.interactRect())) {
-            that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
+          if (interacted) {
             return;
+          }
+
+          if (player.intersect(this.interactRect())) {
+            interacted = true;
+            that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
           }
         });
       },
@@ -1003,6 +1008,8 @@ define([
 
 
     if (secondsLeft > 0) {
+      that._player.disableControl();
+
       $('#game-stage').fadeTo('fast', 0.2);
       var timer = setInterval(function() {
         secondsLeft--;
