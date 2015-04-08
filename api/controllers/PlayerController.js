@@ -56,7 +56,7 @@ module.exports = {
                                             verb: 'playerUpdated',
                                             data: req.body});
         } else {
-          Player.publishUpdate(updatedPlayer.id, req.body);
+          Player.publishUpdate(updatedPlayer.id, req.body, req);
         }
 
         res.json();
