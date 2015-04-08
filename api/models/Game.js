@@ -239,7 +239,7 @@ module.exports = {
       });
 
       var possibleLocs = Room.layouts[roomID].itemLocs.slice(0);
-      _.times(Math.min(2, possibleLocs.length), function(n) {
+      _.times(Math.min(1, possibleLocs.length), function(n) {
         var item = itemBank.pop();
 
         var index = Math.floor(Math.random() * possibleLocs.length);
