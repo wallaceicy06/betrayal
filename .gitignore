@@ -119,4 +119,3 @@ nbproject
 *.swp
 .sass-cache
 assets/js/templates.js
-views/layout.ejs
