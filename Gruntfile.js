@@ -71,9 +71,7 @@ module.exports = function(grunt) {
 
 	// (ensure that a default task exists)
 	if (!registerDefinitions.default) {
-		registerDefinitions.default = function (grunt) {
-      grunt.registerTask('heroku:production', []);
-    };
+		registerDefinitions.default = function (grunt) { grunt.registerTask('default', []); };
 	}
 
 	// Run task functions to configure Grunt.
