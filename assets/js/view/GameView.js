@@ -878,12 +878,16 @@ define([
   }
 
   function changePlayerSprite(spriteName) {
-    this._player.sprite(this._spriteMap[spriteName].gridX,
-                        this._spriteMap[spriteName].gridY,
-                        1, 1);
-    this._player.unbind('NewDirection');
+    var reel = this._player.getReel().id;
+    this._player.setSprite(spriteName);
+    /* TODO: Find a non-jank way to do this.
+       The player reel wasn't being changed because it was
+       always the same as the current reel. By changing it
+       to right, it will actually set the reel properly,
+       unless trying to set it to right, but that's the default. */
+    this._player.reel('PlayerMovingRight');
+    this._player.reel(reel);
     this._playerModelAdpt.setSprite(spriteName);
-
   }
 
   function removeItem(itemID) {
@@ -893,9 +897,9 @@ define([
     }
   }
 
-  function attackAnimation() {
+  function attackAnimation(locX, locY) {
     var attack = Crafty.e('Attack')
-      .attr({x: this._playerModelAdpt.getX() - TILE_WIDTH*2, y: this._playerModelAdpt.getY() - TILE_WIDTH*2});
+      .attr({x: locX - TILE_WIDTH*2, y: locY - TILE_WIDTH*2});
     attack.animate('AttackAnimation', 1);
     var that = this;
     setTimeout(function() {
