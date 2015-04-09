@@ -14,6 +14,7 @@
 
 module.exports = function(grunt) {
 
+  grunt.registerTask('heroku:production', []);
 
 	// Load the include-all library in order to require all of our grunt
 	// configurations and task registrations dynamically.
@@ -72,7 +73,7 @@ module.exports = function(grunt) {
 	// (ensure that a default task exists)
 	if (!registerDefinitions.default) {
 		registerDefinitions.default = function (grunt) {
-      grunt.registerTask('heroku:production', []);
+      grunt.registerTask('default', []);
     };
 	}
 
