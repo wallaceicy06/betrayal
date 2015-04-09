@@ -880,6 +880,12 @@ define([
   function changePlayerSprite(spriteName) {
     var reel = this._player.getReel().id;
     this._player.setSprite(spriteName);
+    /* TODO: Find a non-jank way to do this.
+       The player reel wasn't being changed because it was
+       always the same as the current reel. By changing it
+       to right, it will actually set the reel properly,
+       unless trying to set it to right, but that's the default. */
+    this._player.reel('PlayerMovingRight');
     this._player.reel(reel);
     this._playerModelAdpt.setSprite(spriteName);
   }
