@@ -92,7 +92,14 @@ module.exports = {
 
         var numKeysToPlace = 2 * (game.players.length - 1);
 
-        var allRooms = game.rooms.slice(2); //Rooms, excluding entryway and exit
+        var allRooms = _.keys(_.omit(Room.layouts, ['entryway', 'exithallway', 'exit']));
+
+        var exithallwaysToCreate = [];
+        _.times(numKeysToPlace, function(i) {
+          exithallwaysToCreate.push({ game: updatedGame.id,
+                                      name: 'exithallway',
+                                      background: Room.layouts.exithallway.floor });
+        });
 
         while (numKeysToPlace > 0) {
           var chosenRoom = allRooms[Math.floor(Math.random() * allRooms.length)];
@@ -112,12 +119,54 @@ module.exports = {
           numKeysToPlace--;
         }
 
-        return Item.create(itemsToCreate);
-      })
-      .then(function(items) {
+        sails.log.info('exit hallways to create');
+        sails.log.info(exithallwaysToCreate);
+
+        return [Item.create(itemsToCreate),
+                Room.findOne({ game: game.id, name: 'exithallway' }),
+                exithallwaysToCreate];
+      }).spread(function(items, firstExit, exitHallwaysToCreate) {
         _.each(items, function(item) {
           Item.publishCreate(item);
         });
+
+        var exit = {game: game.id, name: 'exit', background: Room.layouts.exit.floor};
+
+        return [firstExit, Room.create(exitHallwaysToCreate), Room.create(exit)];
+      })
+      .spread(function(firstExit, exitHallways, exit) {
+        var gatewaysToCreate = [];
+        var prevRoomID = firstExit.id;
+
+        _.each(exitHallways, function (room) {
+
+          gatewaysToCreate.push({ roomFrom: prevRoomID,
+                                  roomTo: room.id,
+                                  direction: 'south',
+                                  locked: true })
+          gatewaysToCreate.push({ roomFrom: room.id,
+                                  roomTo: prevRoomID,
+                                  direction: 'north' })
+          prevRoomID = room.id;
+        });
+
+        gatewaysToCreate.push({ roomFrom: prevRoomID,
+                                roomTo: exit.id,
+                                direction: 'south',
+                                locked: true });
+
+        gatewaysToCreate.push({ roomFrom: exit.id,
+                                roomTo: prevRoomID,
+                                direction: 'north' });
+
+        sails.log.info('about to create gateways');
+        sails.log.info(gatewaysToCreate);
+
+        return Gateway.create(gatewaysToCreate);
+      })
+      .then(function(gateways) {
+        sails.log.info('gateways created');
+        sails.log.info(gateways);
       })
       .catch(function(err) {
         sails.log.error(err);
@@ -130,7 +179,7 @@ module.exports = {
     var openGridLocs = [];
 
     /* Put all rooms except the entryway, exit into allRooms and shuffle. */
-    var allRooms = Object.keys(Room.layouts).slice(2);
+    var allRooms = _.keys(_.omit(Room.layouts, ['entryway', 'exithallway', 'exit']));
     allRooms = _.shuffle(allRooms);
 
     /* Sums the total abundance to make percentages of items relative. */
@@ -140,6 +189,7 @@ module.exports = {
     });
 
 
+    sails.log.info(allRooms);
 
     /* Add 2 items per room per the abundance specifications. */
     var itemBank = [];
@@ -158,8 +208,8 @@ module.exports = {
       houseGrid[i] = new Array(16);
     }
 
-    var entrywayLayout = Room.layouts['entryway'];
-    var exitLayout = Room.layouts['exit'];
+    var entrywayLayout = Room.layouts.entryway;
+    var exitLayout = Room.layouts.exithallway;
 
     var i = 7;
     var j = 6;
@@ -168,16 +218,15 @@ module.exports = {
     openGridLocs.push([6,6], [7,5], [7,7]);
     roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor});
 
-    exitLayout = Room.layouts['exit'];
-    houseGrid[i + 1][j] = 'exit';
-    roomsToCreate.push({game: game.id, name: 'exit', background: exitLayout.floor});
+    houseGrid[i + 1][j] = 'exithallway';
+    roomsToCreate.push({game: game.id, name: 'exithallway', background: exitLayout.floor});
 
     gatewaysToCreate.push({roomFrom: 'entryway',
-                           roomTo: 'exit',
+                           roomTo: 'exithallway',
                            direction: 'south',
                            locked: true});
 
-    gatewaysToCreate.push({roomFrom: 'exit',
+    gatewaysToCreate.push({roomFrom: 'exithallway',
                            roomTo: 'entryway',
                            direction: 'north'});
 

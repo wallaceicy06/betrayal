@@ -148,8 +148,19 @@ module.exports.gameconfig = {
         }
       }
     },
-    'exit': {
+    'exithallway': {
       floor: '#FFFFFF',
+      gateways: {
+        north: true,
+        east: false,
+        south: true,
+        west: false
+      },
+      itemLocs: [],
+      objects: {}
+    },
+    'exit': {
+      floor: 'green',
       gateways: {
         north: true,
         east: false,

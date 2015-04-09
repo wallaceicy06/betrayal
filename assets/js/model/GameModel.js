@@ -303,6 +303,8 @@ define([
           that._player.keys -= 1;
         }
       });
+
+      gateway.locked = false;
     }
 
     newRoomID = gateway.roomTo;
