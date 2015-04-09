@@ -159,6 +159,17 @@ module.exports.gameconfig = {
       itemLocs: [],
       objects: {}
     },
+    'dummy': {
+      floor: '',
+      gateways: {
+        north: false,
+        east: false,
+        south: false,
+        west: false
+      },
+      itemLocs: [],
+      objects: {}
+    },
     'exit': {
       floor: 'green',
       gateways: {

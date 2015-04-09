@@ -92,10 +92,10 @@ module.exports = {
 
         var numKeysToPlace = 2 * (game.players.length - 1);
 
-        var allRooms = _.keys(_.omit(Room.layouts, ['entryway', 'exithallway', 'exit']));
+        var allRooms = game.rooms.slice(0);
 
         var exithallwaysToCreate = [];
-        _.times(numKeysToPlace, function(i) {
+        _.times(numKeysToPlace - 2, function(i) {
           exithallwaysToCreate.push({ game: updatedGame.id,
                                       name: 'exithallway',
                                       background: Room.layouts.exithallway.floor });
@@ -179,7 +179,7 @@ module.exports = {
     var openGridLocs = [];
 
     /* Put all rooms except the entryway, exit into allRooms and shuffle. */
-    var allRooms = _.keys(_.omit(Room.layouts, ['entryway', 'exithallway', 'exit']));
+    var allRooms = _.keys(_.omit(Room.layouts, ['entryway', 'exithallway', 'exit', 'dummy']));
     allRooms = _.shuffle(allRooms);
 
     /* Sums the total abundance to make percentages of items relative. */
@@ -220,6 +220,10 @@ module.exports = {
 
     houseGrid[i + 1][j] = 'exithallway';
     roomsToCreate.push({game: game.id, name: 'exithallway', background: exitLayout.floor});
+
+    for (var k = i + 2; k < houseGrid.length; k++) {
+      houseGrid[k][j] = 'dummy';
+    }
 
     gatewaysToCreate.push({roomFrom: 'entryway',
                            roomTo: 'exithallway',
