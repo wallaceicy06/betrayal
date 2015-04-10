@@ -1092,7 +1092,7 @@ module.exports.gameconfig = {
       heroFlavor: 'One of your comrades has turned against you. Escape the '
                   + 'house before it\'s too late!',
       heroText: 'Collect keys to unlock the series of doors heading south '
-                + 'from the entryway (brown room). Get to the garden with all '
+                + 'from the entryway (red room). Get to the garden with all '
                 + 'the other heroes to win.',
       traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
                    + 'from inside the walls. It promises you great power; '
