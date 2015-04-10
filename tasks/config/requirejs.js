@@ -7,7 +7,8 @@ module.exports = function(grunt) {
         mainConfigFile: 'assets/js/main.js',
         out: '.tmp/public/js/main.js',
         optimize: 'uglify2',
-        removeCombined: true
+        removeCombined: true,
+        useStrict: true
       },
     }
   });
