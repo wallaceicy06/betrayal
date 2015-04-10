@@ -6,6 +6,7 @@
   "keywords": [],
   "dependencies": {
     "bluebird": "^2.9.24",
+    "connect-redis": "^1.4.5",
     "ejs": "~0.8.4",
     "grunt": "0.4.2",
     "grunt-contrib-clean": "~0.5.0",
@@ -24,8 +25,7 @@
     "rc": "~0.5.0",
     "sails": "~0.11.0",
     "sails-disk": "~0.10.7",
-    "sails-mongo": "^0.10.6",
-    "sails-postgresql": "^0.10.14"
+    "sails-mongo": "^0.10.6"
   },
   "scripts": {
     "start": "node app.js",

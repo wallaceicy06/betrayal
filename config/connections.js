@@ -56,17 +56,9 @@ module.exports.connections = {
   * Run: npm install sails-mongo                                             *
   *                                                                          *
   ***************************************************************************/
-  localMongo: {
-    adapter: 'sails-mongo',
-    host: 'localhost',
-    port: 27017,
-    database: 'betrayal'
-  },
-
   mongo: {
     adapter: 'sails-mongo',
-    url: process.env.DB_URL,
-    schema: true
+    url: process.env.DB_URL
   },
 
   /***************************************************************************
