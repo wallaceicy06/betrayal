@@ -129,7 +129,7 @@ module.exports.gameconfig = {
   },
   rooms: {
     'entryway': {
-      floor: '#6C5033',
+      floor: '#AD3B2A',
       gateways: {
         north: true,
         east: true,
@@ -349,6 +349,208 @@ module.exports.gameconfig = {
           rotation: 0,
           gridX: 11,
           gridY: 1
+        },
+      }
+    },
+    'bathroom': {
+      floor: '#A3CBCC',
+      gateways: {
+        north: true,
+        east: true,
+        south: true,
+        west: true
+      },
+      itemLocs: [
+        {x: 4, y: 13},
+        {x: 15, y: 2},
+        {x: 5, y: 5},
+        {x: 14, y: 14}
+      ],
+      objects: {
+        bathtub1: {
+          type: 'bathtub',
+          solid: true,
+          rotation: 0,
+          gridX: 13,
+          gridY: 1
+        },
+        sink1: {
+            type: 'sink',
+            solid: true,
+            rotation: -90,
+            gridX: 11,
+            gridY: 13
+        },
+        toilet1: {
+            type: 'toilet',
+            solid: true,
+            rotation: 90,
+            gridX: 17,
+            gridY: 11
+        },
+        couch1: {
+            type: 'couch',
+            solid: true,
+            rotation: -90,
+            gridX: 1,
+            gridY: 5
+        },
+        wall1: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 1
+        },
+        wall2: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 2
+        },
+        wall3: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 3
+        },
+        wall4: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 4
+        },
+        wall5: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 5
+        },
+        wall6: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 10
+        },
+        wall7: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 11
+        },
+        wall8: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 12
+        },
+        wall9: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 13
+        },
+        wall10: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 14
+        },
+      }
+    },
+    'arborium': {
+      floor: '#F0DEC7',
+      gateways: {
+        north: true,
+        east: true,
+        south: true,
+        west: true
+      },
+      itemLocs: [
+        {x: 2, y: 2},
+        {x: 14, y: 5},
+        {x: 4, y: 12},
+        {x: 12, y: 12}
+      ],
+      objects: {
+        graniteCounter1: {
+          type: 'graniteCounter',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 6
+        },
+        chair1: {
+          type: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 9,
+          gridY: 9
+        },
+        plant1: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 4
+        },
+        plant2: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 4,
+          gridY: 3
+        },
+        plant3: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 13,
+          gridY: 3
+        },
+        plant4: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 14,
+          gridY: 4
+        },
+        plant5: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 11
+        },
+        plant6: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 4,
+          gridY: 12
+        },
+        plant7: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 13,
+          gridY: 12
+        },
+        plant8: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 14,
+          gridY: 11
         },
       }
     },
