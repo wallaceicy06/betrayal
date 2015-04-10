@@ -1,11 +1,15 @@
 module.exports = function(grunt) {
   grunt.config.set('requirejs', {
-    dev: {
+    prod: {
       options: {
         baseUrl: 'assets/js',
         name: 'main',
         mainConfigFile: 'assets/js/main.js',
-        out: 'assets/js/main_compiled.js'
+        out: '.tmp/public/js/main.js',
+        optimize: 'uglify2',
+        removeCombined: true,
+        useStrict: true,
+        mangle: true
       },
     }
   });

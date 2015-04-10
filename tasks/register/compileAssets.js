@@ -5,7 +5,6 @@ module.exports = function (grunt) {
 		'less:dev',
     'sass:dev',
 		'copy:dev',
-		'coffee:dev',
-    'requirejs:dev'
+		'coffee:dev'
 	]);
 };
