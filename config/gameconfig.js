@@ -82,6 +82,19 @@ module.exports.gameconfig = {
     'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
     'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1}
   },
+  playerDefaults: {
+    locX: 64,
+    locY: 64,
+    color: 'blue',
+    sprite: 'blue',
+    maxHealth: 3,
+    curHealth: 2,
+    weapon: 1,
+    relics: 0,
+    keys: 0,
+    speed: 4,
+    isTraitor: false
+  },
   dimensions: {
     tileW: 32,
     gridW: 18,

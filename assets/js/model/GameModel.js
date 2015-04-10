@@ -46,7 +46,6 @@ define([
 
       io.socket.post('/player', {name: playerName,
                                  game: game.id,
-                                 room: game.startingRoom,
                                  color: color}, function (player) {
 
         that._player = new Player(player.id, player.name, player.color,
