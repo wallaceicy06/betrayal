@@ -31,7 +31,7 @@ module.exports = {
   },
 
 	create: function(req, res) {
-    Game.create({name: req.body.name},
+    Game.create({name: _.escape(req.body.name)},
                  function(err, game) {
 
       if (err) {
