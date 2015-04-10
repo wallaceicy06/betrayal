@@ -8,8 +8,7 @@ module.exports = function(grunt) {
         out: '.tmp/public/js/main.js',
         optimize: 'uglify2',
         removeCombined: true,
-        useStrict: true,
-        mangle: true
+        useStrict: true
       },
     }
   });
