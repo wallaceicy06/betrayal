@@ -10,21 +10,19 @@ module.exports = {
 	create: function(req, res) {
     var newPlayer;
 
-    Player.create({name: req.body.name,
-                   game: req.body.game,
-                   room: req.body.room,
-                   locX: 64,
-                   locY: 64,
-                   socket: req.socket.id,
-                   color: req.body.color,
-                   sprite: req.body.color,
-                   maxHealth: 3,
-                   curHealth: 3,
-                   speed: 5,
-                   weapon: 1,
-                   relics: 0,
-                   keys: 0,
-                   isTraitor: false})
+    Room.findOne({game: req.body.game, name: 'entryway'})
+      .then(function(entryway) {
+        if (_.isEmpty(entryway)) {
+          throw new Error('Entryway was not created for this house.');
+        }
+
+        return Player.create({name: _.escape(req.body.name),
+                              game: req.body.game,
+                              room: entryway,
+                              socket: req.socket.id,
+                              color: req.body.color,
+                              sprite: req.body.color})
+      })
       .then(function(player) {
         newPlayer = player;
 

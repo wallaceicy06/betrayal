@@ -82,6 +82,19 @@ module.exports.gameconfig = {
     'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
     'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1}
   },
+  playerDefaults: {
+    locX: 64,
+    locY: 64,
+    color: 'blue',
+    sprite: 'blue',
+    maxHealth: 3,
+    curHealth: 2,
+    weapon: 1,
+    relics: 0,
+    keys: 0,
+    speed: 4,
+    isTraitor: false
+  },
   dimensions: {
     tileW: 32,
     gridW: 18,
@@ -116,7 +129,7 @@ module.exports.gameconfig = {
   },
   rooms: {
     'entryway': {
-      floor: '#6C5033',
+      floor: '#AD3B2A',
       gateways: {
         north: true,
         east: true,
@@ -336,6 +349,208 @@ module.exports.gameconfig = {
           rotation: 0,
           gridX: 11,
           gridY: 1
+        },
+      }
+    },
+    'bathroom': {
+      floor: '#A3CBCC',
+      gateways: {
+        north: true,
+        east: true,
+        south: true,
+        west: true
+      },
+      itemLocs: [
+        {x: 4, y: 13},
+        {x: 15, y: 2},
+        {x: 5, y: 5},
+        {x: 14, y: 14}
+      ],
+      objects: {
+        bathtub1: {
+          type: 'bathtub',
+          solid: true,
+          rotation: 0,
+          gridX: 13,
+          gridY: 1
+        },
+        sink1: {
+            type: 'sink',
+            solid: true,
+            rotation: -90,
+            gridX: 11,
+            gridY: 13
+        },
+        toilet1: {
+            type: 'toilet',
+            solid: true,
+            rotation: 90,
+            gridX: 17,
+            gridY: 11
+        },
+        couch1: {
+            type: 'couch',
+            solid: true,
+            rotation: -90,
+            gridX: 1,
+            gridY: 5
+        },
+        wall1: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 1
+        },
+        wall2: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 2
+        },
+        wall3: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 3
+        },
+        wall4: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 4
+        },
+        wall5: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 5
+        },
+        wall6: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 10
+        },
+        wall7: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 11
+        },
+        wall8: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 12
+        },
+        wall9: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 13
+        },
+        wall10: {
+            type: 'wall',
+            solid: true,
+            rotation: 0,
+            gridX: 10,
+            gridY: 14
+        },
+      }
+    },
+    'arborium': {
+      floor: '#F0DEC7',
+      gateways: {
+        north: true,
+        east: true,
+        south: true,
+        west: true
+      },
+      itemLocs: [
+        {x: 2, y: 2},
+        {x: 14, y: 5},
+        {x: 4, y: 12},
+        {x: 12, y: 12}
+      ],
+      objects: {
+        graniteCounter1: {
+          type: 'graniteCounter',
+          solid: true,
+          rotation: 0,
+          gridX: 7,
+          gridY: 6
+        },
+        chair1: {
+          type: 'chair',
+          solid: true,
+          rotation: 180,
+          gridX: 9,
+          gridY: 9
+        },
+        plant1: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 4
+        },
+        plant2: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 4,
+          gridY: 3
+        },
+        plant3: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 13,
+          gridY: 3
+        },
+        plant4: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 14,
+          gridY: 4
+        },
+        plant5: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 3,
+          gridY: 11
+        },
+        plant6: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 4,
+          gridY: 12
+        },
+        plant7: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 13,
+          gridY: 12
+        },
+        plant8: {
+          type: 'plant',
+          solid: true,
+          rotation: 0,
+          gridX: 14,
+          gridY: 11
         },
       }
     },
@@ -874,12 +1089,14 @@ module.exports.gameconfig = {
   haunts: {
     'plant': {
       title: 'Shapeshifter',
-      heroFlavor: 'One of your comrades has turned against you.',
-      heroText: 'Collect all the keys and get to the entryway before it\'s '
-                + 'too late!',
+      heroFlavor: 'One of your comrades has turned against you. Escape the '
+                  + 'house before it\'s too late!',
+      heroText: 'Collect keys to unlock the series of doors heading south '
+                + 'from the entryway (red room). Get to the garden with all '
+                + 'the other heroes to win.',
       traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
-                   + 'from inside the walls. It promises you great power '
-                   + 'The power to transform into any shape you wish. All '
+                   + 'from inside the walls. It promises you great power; '
+                   + 'the power to transform into any shape you wish. All '
                    + 'you must do is destroy those fools who came here with '
                    + 'you.',
       traitorText: 'Press \'e\' to alter your appearance. Press space '

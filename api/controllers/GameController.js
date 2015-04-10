@@ -24,14 +24,14 @@ module.exports = {
   },
 
   sendChatMessage: function(req, res) {
-    Game.message(req.params.id, {message: req.body.message,
+    Game.message(req.params.id, {message: _.escape(req.body.message),
                                  verb: 'chat',
                                  playerID: req.body.playerID});
     res.json();
   },
 
 	create: function(req, res) {
-    Game.create({name: req.body.name},
+    Game.create({name: _.escape(req.body.name)},
                  function(err, game) {
 
       if (err) {

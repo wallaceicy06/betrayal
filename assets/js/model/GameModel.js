@@ -46,7 +46,6 @@ define([
 
       io.socket.post('/player', {name: playerName,
                                  game: game.id,
-                                 room: game.startingRoom,
                                  color: color}, function (player) {
 
         that._player = new Player(player.id, player.name, player.color,
@@ -677,6 +676,7 @@ define([
             that._viewAdpt.displayTextOverlay("You Won!", "You have successfully " +
                                               "kept all the heroes from escaping. " +
                                               "Congratulations!", "", 10000, false, function() {
+              destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
@@ -685,6 +685,7 @@ define([
             that._viewAdpt.displayTextOverlay("Game Over!", "You and your " +
                                               "friends have failed to all " +
                                               "escape the house.", "", 10000, false, function() {
+              destroyGame.call(that);
               reset.call(that);
               that._viewAdpt.reset();
             });
