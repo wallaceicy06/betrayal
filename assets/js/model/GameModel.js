@@ -787,8 +787,6 @@ define([
 
 
   return function GameModel(viewAdpt) {
-    window.test = this;
-
     this._viewAdpt = viewAdpt;
     this._roomCache = {};
 
