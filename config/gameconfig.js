@@ -80,7 +80,8 @@ module.exports.gameconfig = {
     'sword': {gridX: 3, gridY: 14, gridW: 1, gridH: 1},
     'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1},
     'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
-    'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1}
+    'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
+    'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10}
   },
   playerDefaults: {
     locX: 64,
@@ -162,7 +163,7 @@ module.exports.gameconfig = {
       }
     },
     'exithallway': {
-      floor: '#FFFFFF',
+      floor: '#F0D7BD',
       gateways: {
         north: true,
         east: false,
@@ -170,7 +171,15 @@ module.exports.gameconfig = {
         west: false
       },
       itemLocs: [],
-      objects: {}
+      objects: {
+        exitRug1: {
+          type: 'exitRug',
+          solid: false,
+          rotation: 0,
+          gridX: 7,
+          gridY: 3
+        }
+      }
     },
     'dummy': {
       floor: '',
