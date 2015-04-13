@@ -151,8 +151,7 @@ define([
           }
 
           if (player.intersect(this.interactRect())) {
-            interacted = true;
-            that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
+            interacted = that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
           }
         });
       },
