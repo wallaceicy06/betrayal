@@ -360,7 +360,7 @@ define([
 
     var obj = this._currentRoom.objects[furnitureID];
     if (!obj.interactable) {
-      return;
+      return false;
     }
 
     io.socket.post('/room/interact/' + this._currentRoom.id,
@@ -385,6 +385,8 @@ define([
       }
 
     });
+
+    return true;
   }
 
   function removeItem(itemID, success) {
