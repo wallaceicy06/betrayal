@@ -32,7 +32,8 @@ define([
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteFurniture': [0,0],
-                'SpriteWall': [7, 13],
+                'SpriteGrayWall': [7, 13],
+                'SpriteGreenWall': [8, 13],
                 'SpriteDoor': [6,13],
                 'SpriteLockedDoor': [10, 13],
                 'SpriteWhiteRoom': [8, 13],
@@ -236,7 +237,7 @@ define([
 
     Crafty.c('Wall', {
       init: function() {
-        this.requires('2D, Canvas, Solid, SpriteWall, RoomItem');
+        this.requires('2D, Canvas, Solid, RoomItem');
       }
     });
 
@@ -380,7 +381,7 @@ define([
     Crafty.defineScene('room', function(roomConfig) {
       Crafty.background(roomConfig.background);
 
-      setupBarriers.call(that, roomConfig.doors);
+      setupBarriers.call(that, roomConfig.doors, roomConfig.wallSprite);
       placeItems.call(that, roomConfig.items);
       placeFurniture.call(that, roomConfig.furniture);
 
@@ -931,7 +932,7 @@ define([
     });
   }
 
-  function setupBarriers(gateways) {
+  function setupBarriers(gateways, wallSprite) {
     var widthInTiles = this._gameModelAdpt.getDimensions().width/TILE_WIDTH;
     var heightInTiles = this._gameModelAdpt.getDimensions().height/TILE_WIDTH;
 
@@ -941,7 +942,7 @@ define([
       if(!('north' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: 0});
+        Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH, y: 0});
       } else {
         var door;
 
@@ -956,7 +957,7 @@ define([
 
       if(!('south' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
-        Crafty.e('Wall').attr({x: j * TILE_WIDTH,
+        Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH,
                                y: (heightInTiles - 1) * TILE_WIDTH});
       } else {
         var door;
@@ -977,7 +978,7 @@ define([
       if(!('west' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: 0,
+        Crafty.e('Wall', wallSprite).attr({x: 0,
                                y: i * TILE_WIDTH});
       } else {
         var door;
@@ -994,7 +995,7 @@ define([
       if(!('east' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: (widthInTiles - 1) * TILE_WIDTH,
+        Crafty.e('Wall', wallSprite).attr({x: (widthInTiles - 1) * TILE_WIDTH,
                                y: i * TILE_WIDTH});
       } else {
         var door;

@@ -403,6 +403,7 @@ define([
   /* TODO might want to remove this now. */
   function prepareRoomConfig(room) {
     return {background: room.background,
+            wallSprite: room.wallSprite,
             doors: room.gatewaysOut,
             items: room.items,
             furniture: room.objects};
@@ -416,7 +417,7 @@ define([
     } else {
       io.socket.get('/room/' + roomID, function (room) {
         var newRoom = new Room(room.id, room.gatewaysOut, room.background,
-                               room.items, room.objects, {
+                               room.wallSprite, room.items, room.objects, {
           /* Room -> GameModel Adapter */
           onAddItem: function(item) {
             /*

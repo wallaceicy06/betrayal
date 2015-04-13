@@ -98,7 +98,8 @@ module.exports = {
         _.times(numKeysToPlace - 2, function(i) {
           exithallwaysToCreate.push({ game: updatedGame.id,
                                       name: 'exithallway',
-                                      background: Room.layouts.exithallway.floor });
+                                      background: Room.layouts.exithallway.floor,
+                                      wallSprite: Room.layouts.exithallway.wallSprite });
         });
 
         while (numKeysToPlace > 0) {
@@ -130,7 +131,8 @@ module.exports = {
           Item.publishCreate(item);
         });
 
-        var exit = {game: game.id, name: 'exit', background: Room.layouts.exit.floor};
+        var exit = {game: game.id, name: 'exit', background: Room.layouts.exit.floor,
+                    wallSprite: Room.layouts.exit.wallSprite};
 
         return [firstExit, Room.create(exitHallwaysToCreate), Room.create(exit)];
       })
@@ -216,10 +218,10 @@ module.exports = {
 
     houseGrid[i][j] = 'entryway';
     openGridLocs.push([6,6], [7,5], [7,7]);
-    roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor});
+    roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor, wallSprite: entrywayLayout.wallSprite});
 
     houseGrid[i + 1][j] = 'exithallway';
-    roomsToCreate.push({game: game.id, name: 'exithallway', background: exitLayout.floor});
+    roomsToCreate.push({game: game.id, name: 'exithallway', background: exitLayout.floor, wallSprite: entrywayLayout.wallSprite});
 
     for (var k = i + 2; k < houseGrid.length; k++) {
       houseGrid[k][j] = 'dummy';
@@ -309,6 +311,7 @@ module.exports = {
       roomsToCreate.push({game: game.id,
                           name: roomID,
                           background: room.floor,
+                          wallSprite: room.wallSprite,
                           items: itemsToCreate});
 
       if (room.gateways.north && houseGrid[i - 1][j] == undefined) {
