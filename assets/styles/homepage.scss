@@ -57,6 +57,10 @@ body:before {
   background: rgba(255, 255, 255, 0.4);
 }
 
+.join-pane {
+  min-height: 120px;
+}
+
 .center {
   margin-left: auto;
   margin-right: auto;
@@ -121,6 +125,10 @@ div .mini-map {
 .form-spaced {
   margin-left: 7px;
   margin-right: 7px;
+}
+
+form div {
+  margin-top: 5px;
 }
 
 img {

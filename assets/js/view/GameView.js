@@ -349,10 +349,6 @@ define([
         var overlayTitle = Crafty.e('OverlayTitle').setText(titleText);
         var overlayFlavor = Crafty.e('OverlayFlavor').setText(flavorText);
         var overlayBody = Crafty.e('OverlayBody').setText(bodyText);
-        // var overlayText = Crafty.e('HTML').setText(
-          // .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
-          // .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
-
 
         this.attach(overlayTitle);
         this.attach(overlayFlavor);
@@ -1122,16 +1118,16 @@ define([
       displayStartGameButton.call(this, true);
 
       if (formData.playerName === '') {
-        $(this).children('.alert').text('Player name cannot be blank.').show();
+        $(this).children('.alert').text('Player name cannot be blank.').removeClass('invisible');
         return;
       }
 
       if (formData.gameName === '') {
-        $(this).children('.alert').text('Game name cannot be blank.').show();
+        $(this).children('.alert').text('Game name cannot be blank.').removeClass('invisible');
         return;
       }
 
-      $(this).children('.alert').hide();
+      $(this).children('.alert').addClass('invisible');
 
       that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
     });
@@ -1144,16 +1140,16 @@ define([
       displayStartGameButton.call(this, false);
 
       if (formData.playerName === '') {
-        $(this).children('.alert').text('Player name cannot be blank.').show();
+        $(this).children('.alert').text('Player name cannot be blank.').removeClass('invisible');
         return;
       }
 
       if (formData.gameID === undefined) {
-        $(this).children('.alert').text('You must select a game.').show();
+        $(this).children('.alert').text('You must select a game.').removeClass('invisible');
         return;
       }
 
-      $(this).children('.alert').hide();
+      $(this).children('.alert').addClass('invisible');
 
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
 
