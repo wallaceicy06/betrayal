@@ -19,7 +19,14 @@ define([
           usePower: function() {
             that._gameModelAdpt.changeSprite(this.spriteList[this.nextSprite]);
             this.nextSprite = (this.nextSprite + 1) % this.spriteList.length;
-            }
+          }
+        };
+        break;
+      case 'poisonItems':
+        return {
+          usePower: function() {
+            that._gameModelAdpt.dropItem('poisonLightning');
+          }
         };
         break;
       default:

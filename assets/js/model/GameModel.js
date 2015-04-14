@@ -724,11 +724,25 @@ define([
 
           that._viewAdpt.hideRelicsShowKeys();
 
-          var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
+          var factory = new HauntFactory({
+            /* Haunt to Game Model Adapter */
+
             changeSprite: function(spriteName) {
               that._viewAdpt.changePlayerSprite(spriteName);
               io.socket.put('/player/' + that._player.id, {sprite: spriteName},
                 function(err, player) {});
+            },
+
+            dropItem: function(type) {
+              io.socket.post('/item/create', { type: type,
+                                               gridX: that._player.x / 32,
+                                               gridY: that._player.y / 32,
+                                               room: that._player.room,
+                                               game: that._gameID,
+                                               heroesOnly: true
+                                             }, function(err, item) {
+                console.log(item);
+              });
             }
           });
           that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);

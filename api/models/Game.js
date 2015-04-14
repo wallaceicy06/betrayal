@@ -112,9 +112,14 @@ module.exports = {
 
           var loc = possibleLocs[Math.floor(Math.random() * possibleLocs.length)];
 
-          itemsToCreate.push({type: 'key', stat: 'keys', amount: 1,
-                              gridX: loc.x, gridY: loc.y, room: chosenRoom,
-                              game: game.id});
+          itemsToCreate.push({ type: 'key',
+                               stat: 'keys',
+                               amount: 1,
+                               gridX: loc.x,
+                               gridY: loc.y,
+                               room: chosenRoom,
+                               game: game.id,
+                               heroesOnly: true});
 
           numKeysToPlace--;
         }
@@ -184,7 +189,7 @@ module.exports = {
 
     /* Sums the total abundance to make percentages of items relative. */
     var totalAbundance = 0;
-    _.each(_.values(Game.items), function(i) {
+    _.each(_.values(Item.kinds), function(i) {
       totalAbundance += i.abundance;
     });
 
@@ -193,8 +198,8 @@ module.exports = {
 
     /* Add 2 items per room per the abundance specifications. */
     var itemBank = [];
-    for (i in Game.items) {
-      _.times(Math.round(Game.items[i].abundance / totalAbundance
+    for (i in Item.kinds) {
+      _.times(Math.round(Item.kinds[i].abundance / totalAbundance
                          * allRooms.length * 2), function(n) {
         itemBank.push(i);
       });
@@ -299,8 +304,8 @@ module.exports = {
         var loc = possibleLocs[index];
         possibleLocs.splice(index, 1);
         itemsToCreate.push({type: item,
-                            stat: Game.items[item].stat,
-                            amount: Game.items[item].amount,
+                            stat: Item.kinds[item].stat,
+                            amount: Item.kinds[item].amount,
                             gridX: loc.x,
                             gridY: loc.y,
                             game: game.id});
@@ -432,8 +437,6 @@ module.exports = {
         cb(databaseID['entryway']);
       });
   },
-
-  items: sails.config.gameconfig.items,
 
   sprites: sails.config.gameconfig.sprites,
 

@@ -110,6 +110,7 @@ define([
         this.onHit('Solid', this.stopMovement);
         this.onHit('Door', this.useDoor);
         this.onHit('Item', this.pickUpItem);
+        this.onHit('HeroItem', this.pickUpHeroItem);
 
         this.bind('NewDirection', function(data) {
           if (data.x > 0) {
@@ -189,17 +190,22 @@ define([
           return;
         }
 
-        /* Don't allow the traitor to pick up keys */
-        if (that._playerModelAdpt.isTraitor() && theItem.type === 'key') {
-          return;
-        }
-
         theItem.attr({'itemLock' : true});
         that._playerModelAdpt.useItem(theItem.itemID, theItem.stat,
                                       theItem.amount);
         Crafty.audio.play('powerup');
 
       },
+
+      /* TODO: Change this later to two Player entities. */
+      pickUpHeroItem: function(item) {
+        if (that._playerModelAdpt.isTraitor()) {
+          return this;
+        }
+
+        return this.pickUpItem(item);
+      },
+
 
       fixMovement: function(increaseBy) {
         /* Increase absolute value of movement in both x and y by the amount
@@ -229,6 +235,12 @@ define([
     });
 
     Crafty.c('Item', {
+      init: function() {
+        this.requires('2D, Canvas, RoomItem, SpriteFurniture');
+      },
+    });
+
+    Crafty.c('HeroItem', {
       init: function() {
         this.requires('2D, Canvas, RoomItem, SpriteFurniture');
       },
@@ -553,16 +565,18 @@ define([
   }
 
   function placeItem(item) {
-    var newItem = Crafty.e('Item').attr({x: item.gridX * TILE_WIDTH,
-                                         y: item.gridY * TILE_WIDTH,
-                                         type: item.type,
-                                         stat: item.stat,
-                                         amount: item.amount,
-                                         itemID: item.id})
-                                  .sprite(this._spriteMap[item.type].gridX,
-                                          this._spriteMap[item.type].gridY,
-                                          this._spriteMap[item.type].gridW,
-                                          this._spriteMap[item.type].gridH);
+    var type = (item.heroesOnly ? 'HeroItem' : 'Item');
+
+    var newItem = Crafty.e(type).attr({ x: item.gridX * TILE_WIDTH,
+                                        y: item.gridY * TILE_WIDTH,
+                                        type: item.type,
+                                        stat: item.stat,
+                                        amount: item.amount,
+                                        itemID: item.id})
+                                .sprite(this._spriteMap[item.type].gridX,
+                                        this._spriteMap[item.type].gridY,
+                                        this._spriteMap[item.type].gridW,
+                                        this._spriteMap[item.type].gridH);
 
     this._items[item.id] = newItem;
   }
@@ -1262,4 +1276,5 @@ define([
     this.setHuskSprite = setHuskSprite.bind(this);
     this.start = start.bind(this);
   }
+
 });
