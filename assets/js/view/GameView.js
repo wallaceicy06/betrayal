@@ -1016,7 +1016,7 @@ define([
                                                            message: message
     }));
 
-    $('#overlay-stack').append(chatOverlay);
+    $('#chat-stack').append(chatOverlay);
 
     chatOverlay.fadeIn('slow');
     setTimeout(function() {
@@ -1059,6 +1059,11 @@ define([
           cb();
         }
       }, 1000);
+    }
+
+    /* If this message is important, clear all others. */
+    if (!dismissable) {
+      $('#overlay-stack').empty();
     }
 
     $('#overlay-stack').append(overlay);
