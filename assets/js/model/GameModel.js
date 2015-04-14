@@ -132,6 +132,10 @@ define([
           },
 
           onDirectionChange: function(newDirection) {
+          },
+
+          lockDoor: function() {
+            return playerViewAdpt.lockDoor();
           }
         });
 
@@ -727,6 +731,28 @@ define([
               that._viewAdpt.changePlayerSprite(spriteName);
               io.socket.put('/player/' + that._player.id, {sprite: spriteName},
                 function(err, player) {});
+            },
+
+            /* Returns true if this player successfully locked a door */
+            lockDoor: function() {
+              var doorID = that._player.lockDoor();
+              if(doorID != undefined) {
+                var gateway;
+
+                _.each(_.keys(that._currentRoom.gatewaysOut), function(direction) {
+                  if (direction === doorID) {
+                    gateway = that._currentRoom.gatewaysOut[direction];
+                    return;
+                  }
+                });
+                if (!gateway.locked) {
+                  that._roomCache[that._currentRoom.id].setLocked(doorID, true);
+                  io.socket.put('/gateway/update/' + gateway.id, { locked: true },
+                      function(gateways) {});
+                  return true;
+                }
+              }
+              return false;
             }
           });
           that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);

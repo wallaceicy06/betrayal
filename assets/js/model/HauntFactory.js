@@ -22,6 +22,20 @@ define([
             }
         };
         break;
+      case 'lockedDoors':
+        return {
+          locksRemaining: 3,
+          
+          usePower: function() {
+            if (this.locksRemaining < 1) {
+              console.log("Out of locks");
+              return;
+            }
+            if (that._gameModelAdpt.lockDoor()) {
+              this.locksRemaining--;
+            }
+          }
+        }
       default:
         return "Not a valid haunt";
     }

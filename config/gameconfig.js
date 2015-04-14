@@ -1087,8 +1087,8 @@ module.exports.gameconfig = {
   },
 
   haunts: {
+    /*
     'plant': {
-      title: 'Shapeshifter',
       heroFlavor: 'One of your comrades has turned against you. Escape the '
                   + 'house before it\'s too late!',
       heroText: 'Collect keys to unlock the series of doors heading south '
@@ -1101,6 +1101,22 @@ module.exports.gameconfig = {
                    + 'you.',
       traitorText: 'Press \'e\' to alter your appearance. Press space '
                    + 'to attack. Kill one of the heroes to win.'
+    },
+    */
+    'lockedDoors': {
+      heroFlavor: 'One of your comrades has turned against you. Escape the '
+                  + 'house before it\'s too late!',
+      heroText: 'Collect keys to unlock the series of doors heading south '
+                + 'from the entryway (red room). Get to the garden with all '
+                + 'the other heroes to win.',
+      traitorFlavor: 'A strange coldness washes over you. You are suddenly '
+                     + 'terrified of being alone, and certain that the others '
+                     + 'are trying to escape without you. You look down and '
+                     + 'see that you are holding a key. . .',
+      traitorText: 'Press \'e\' to lock a door you are standing next to. '
+                   + 'You can move through locked doors, but the heroes need '
+                   + 'a key to do so. You can only lock up to three doors. '
+                   + 'Press space to attack. Kill one of the heroes to win.'
     }
   }
 }

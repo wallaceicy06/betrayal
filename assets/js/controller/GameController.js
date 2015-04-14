@@ -129,6 +129,10 @@ define([
 
           onMaxHealthChange: function(newMaxHealth) {
             playerView.setMaxHealth(newMaxHealth);
+          },
+
+          lockDoor: function() {
+            return playerView.lockDoor();
           }
         }
       },

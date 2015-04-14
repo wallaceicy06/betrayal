@@ -218,6 +218,21 @@ define([
         if(this._movement.y < 0) {
           this._movement.y = this._movement.y - increaseBy;
         }
+      },
+
+      /* Only called if this player is the traitor in the locked doors haunt.
+         Returns the string doorID (direction) of the door or undefined
+         if no door is found. */
+      lockDoor: function() {
+        var player = this; /* the player */
+        var doorID;
+
+        Crafty('Door').each(function(f) {
+          if (player.intersect(this.interactRect())) {
+            doorID = this.doorID;
+          }
+        });
+        return doorID; //We did not find a door to lock
       }
 
     });
@@ -241,9 +256,22 @@ define([
       }
     });
 
+    Crafty.c('Interactable', {
+      interactRect: function() {
+        var mbr = this.mbr();
+
+        return {
+          x: mbr._x - 1 * TILE_WIDTH,
+          y: mbr._y - 1 * TILE_WIDTH,
+          w: mbr._w + 2 * TILE_WIDTH,
+          h: mbr._h + 2 * TILE_WIDTH
+        };
+      }
+    });
+
     Crafty.c('Door', {
       init: function() {
-        this.requires('2D, Canvas, SpriteDoor, RoomItem');
+        this.requires('2D, Canvas, SpriteDoor, RoomItem, Interactable');
       }
     });
 
@@ -255,18 +283,7 @@ define([
 
     Crafty.c('Furniture', {
       init: function() {
-        this.requires('2D, Canvas, RoomItem, SpriteFurniture');
-      },
-
-      interactRect: function() {
-        var mbr = this.mbr();
-
-        return {
-          x: mbr._x - 1 * TILE_WIDTH,
-          y: mbr._y - 1 * TILE_WIDTH,
-          w: mbr._w + 2 * TILE_WIDTH,
-          h: mbr._h + 2 * TILE_WIDTH
-        };
+        this.requires('2D, Canvas, RoomItem, SpriteFurniture, Interactable');
       }
     });
 
@@ -698,6 +715,10 @@ define([
 
       fixMovement: function(increaseBy) {
         that._player.fixMovement(increaseBy);
+      },
+
+      lockDoor: function() {
+        return that._player.lockDoor();
       }
     }
   }

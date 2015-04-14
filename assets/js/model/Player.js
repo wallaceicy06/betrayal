@@ -47,6 +47,10 @@ define([
     });
   }
 
+  function lockDoor() {
+    return this._gameModelAdpt.lockDoor();
+  }
+
   return function Player(id, name, color, room, initPos) {
     Object.defineProperty(this, 'id', {
       value: id,
@@ -196,6 +200,7 @@ define([
     this.setPosition = setPosition.bind(this);
     this.destroy = destroy.bind(this);
     this.useItem = useItem.bind(this);
+    this.lockDoor = lockDoor.bind(this);
 
     this._sprite = color; //Initially sprite is the same as color
     this._isTraitor = false;
