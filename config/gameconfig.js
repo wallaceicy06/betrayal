@@ -77,11 +77,14 @@ module.exports.gameconfig = {
     'lightning': {gridX: 0, gridY: 14, gridW: 1, gridH: 1},
     'poisonLightning': {gridX: 0, gridY: 14, gridW: 1, gridH: 1},
     'heart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
+    'poisonHeart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
     'firstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
+    'poisonFirstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
     'sword': {gridX: 3, gridY: 14, gridW: 1, gridH: 1},
     'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1},
     'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
     'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
+    'poisonFlame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
     'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10}
   },
   playerDefaults: {
