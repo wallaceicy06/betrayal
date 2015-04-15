@@ -15,27 +15,7 @@
             <h3 class="modal-title" id="myModalLabel">How to play</h3>
           </div>
           <div class="modal-body">
-            <h4>Goal</h4>
-              <p>You and your friends have been trapped in a haunted house. Unknowest to you, one of your friends will turn against you. Your mission is to escape the house before the traitor kills you!</p>
-            <h4>Getting Around</h4>
-              <p>Use <strong>W</strong>, <strong>A</strong>, <strong>S</strong>, <strong>D</strong> or the <strong>arrow keys</strong> to move.</p>
-              <p>Press the <strong>/ (slash)</strong> key to chat with other players.</strong>
-            <h4>Items</h4>
-              <p>Pick up items by running over them.</p>
-              <ul>
-                <li><span><img src="images/medkit.png" alt="Health Packs" title="Health Packs"></img></span> increase your <strong>health</strong>, and <span><img src="images/heart.png" alt="Hearts" title="Hearts"></img></span> increase your <strong>maximum health</strong>.</li>
-                <li><span><img src="images/lightning.png" alt="Lightning" title="Lightning"></img></span> increases your <strong>speed</strong>.</li>
-                <li><span><img src="images/flame.png" alt="Fire balls" title="Fire balls"></img></span> increase your <strong>attack strength</strong>.</li>
-                <li><span><img src="images/jewel.png" alt="Relics" title="Relics"></img></span> when all found, the <strong>haunt</strong> begins!</li>
-              </ul>
-            <h4>Events</h4>
-              <p>Critical to your survival is discovering things hidden in furniture. To interact with a piece of furniture, press the <strong>F</strong> key.</p>
-            <h4>The Haunt</h4>
-            <p>When you and your friends discover all the relics, the haunt will begin. One of you will become the <strong>traitor</strong> and the rest of you will become <strong>heroes</strong>.</p>
-            <p>The goal of the <strong>heroes</strong> is to <strong>find</strong> all the <span><img src="images/key.png" alt="keys" title="Keys"></img></span> and escape the house.</p>
-            <p>The goal of the <strong>traitor</strong> is to <strong>kill</strong> the heroes before they escape.</p>
-
-            <p>Press the <strong>space bar</strong> to attack using your weapon.
+            <%- include howtoplay.ejs %>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -52,7 +32,7 @@
       <div id="game-container" class="game-pane">
         <div id="game-stage" class="game-containted"></div>
         <div class="game-contained">
-          <div id="overlay-stack" class="overlay-container"></div>
+          <div id="overlay-stack" class="overlay-container overlay-game-container"></div>
           <div id="omni-box" class="omni-box" style="display: none">
             <div class="message-input">
               <form id="form-send-message">
@@ -87,6 +67,8 @@
         <div class="mini-map">
           <canvas id="mini-map"></canvas>
         </div>
+
+        <div id="chat-stack" class="overlay-container overlay-chat-container"></div>
       </div>
     </div>
 
@@ -94,25 +76,25 @@
       <img style="display: block; margin: auto;" src="images/game/intro_image.png">
     </div>
 
-    <div id="join-pane" align="center" class="center">
+    <div id="join-pane" align="center" class="center join-pane">
       <div id='join-options' style="display: inline-block">
         <button id="btn-goto-new" class="btn btn-default form-spaced">Create new game</button>
         <button id="btn-goto-existing" class="btn btn-default form-spaced">Join existing game</button>
         <button type="button" class="btn btn-default form-spaced" data-toggle="modal" data-target="#tutorialModal">How to play</button>
       </div>
       <form id='form-join-existing' class="hidden form-inline" style="display: inline-block">
-        <div class="alert alert-danger" style="display: none" role="alert">...</div>
         <input name="playerName" type="text" class="form-control" placeholder="player name">
         <select id="select-game" name="gameID" class="form-control" style="width: 150px"></select>
         <button id="btn-join" type="submit" class="btn btn-primary" disabled="disabled">Join</button>
         <button type="button" class="btn btn-default cancel">Cancel</button>
+        <div class="alert alert-danger invisible" style="display: none" role="alert">...</div>
       </form>
       <form id='form-join-new' class= "hidden form-inline" style="display: inline-block">
-        <div class="alert alert-danger" style="display: none" role="alert">...</div>
         <input name="playerName" type="text" class="form-control" placeholder="player name">
         <input name="gameName" type="text" class="form-control" placeholder="new game name">
         <button id="btn-create-game" type="submit" class="btn btn-primary">Create Game</button>
         <button type="button" class="btn btn-default cancel">Cancel</button>
+        <div class="alert alert-danger invisible" role="alert">...</div>
       </form>
     </div>
   </div>

@@ -248,9 +248,10 @@ define([
         that._view.displayGamePane(true);
       },
 
-      startGame: function(roomConfig) {
+      startGame: function(roomConfig, allRooms) {
         that._view.enableGame(true);
         that._view.loadRoom(roomConfig);
+        that._view.loadMap(allRooms);
       },
 
       loadRoom: function(roomConfig) {
@@ -308,8 +309,8 @@ define([
         that._view.displayTextOverlay(title, flavorText, text, timeout, dismissable, cb);
       },
 
-      hideRelicsShowKeys: function() {
-        that._view.hideRelicsShowKeys();
+      onHauntStart: function() {
+        that._view.onHauntStart();
       }
     });
 

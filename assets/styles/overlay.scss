@@ -1,14 +1,46 @@
 .overlay-container {
-  position: absolute;
   width: 100%;
+}
+
+.overlay-game-container {
+  position: absolute;
   top: 0;
+}
+
+.overlay-chat-container {
 }
 
 .overlay {
   background: white;
   opacity: .6;
-  margin: 10px;
   padding: 10px;
+}
+
+.overlay-game {
+  margin: 10px;
+}
+
+.overlay-chat {
+  padding: 4px;
+}
+
+div.overlay-chat {
+  overflow: hidden;
+  height: 26px;
+}
+
+.overlay-chat div.name {
+  overflow: hidden;
+  display: inline-block;
+  width: 64px;
+  height: 100%;
+}
+
+.overlay-chat div.msg-body {
+  display: inline-block;
+  overflow: hidden;
+  width: 172px;
+  height: 100%
 }
 
 .overlay .title {
@@ -27,6 +59,10 @@
 
 .overlay .countdown {
   font-size: 10px;
+}
+
+.overlay .msg-body {
+  font-size: 12px;
 }
 
 .overlay .name {

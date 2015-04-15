@@ -98,7 +98,8 @@ module.exports = {
         _.times(numKeysToPlace - 2, function(i) {
           exithallwaysToCreate.push({ game: updatedGame.id,
                                       name: 'exithallway',
-                                      background: Room.layouts.exithallway.floor });
+                                      background: Room.layouts.exithallway.floor,
+                                      wallSprite: Room.layouts.exithallway.wallSprite });
         });
 
         while (numKeysToPlace > 0) {
@@ -112,9 +113,14 @@ module.exports = {
 
           var loc = possibleLocs[Math.floor(Math.random() * possibleLocs.length)];
 
-          itemsToCreate.push({type: 'key', stat: 'keys', amount: 1,
-                              gridX: loc.x, gridY: loc.y, room: chosenRoom,
-                              game: game.id});
+          itemsToCreate.push({ type: 'key',
+                               stat: 'keys',
+                               amount: 1,
+                               gridX: loc.x,
+                               gridY: loc.y,
+                               room: chosenRoom,
+                               game: game.id,
+                               heroesOnly: true});
 
           numKeysToPlace--;
         }
@@ -130,7 +136,8 @@ module.exports = {
           Item.publishCreate(item);
         });
 
-        var exit = {game: game.id, name: 'exit', background: Room.layouts.exit.floor};
+        var exit = {game: game.id, name: 'exit', background: Room.layouts.exit.floor,
+                    wallSprite: Room.layouts.exit.wallSprite};
 
         return [firstExit, Room.create(exitHallwaysToCreate), Room.create(exit)];
       })
@@ -184,7 +191,7 @@ module.exports = {
 
     /* Sums the total abundance to make percentages of items relative. */
     var totalAbundance = 0;
-    _.each(_.values(Game.items), function(i) {
+    _.each(_.values(Item.kinds), function(i) {
       totalAbundance += i.abundance;
     });
 
@@ -193,8 +200,8 @@ module.exports = {
 
     /* Add 2 items per room per the abundance specifications. */
     var itemBank = [];
-    for (i in Game.items) {
-      _.times(Math.round(Game.items[i].abundance / totalAbundance
+    for (i in Item.kinds) {
+      _.times(Math.round(Item.kinds[i].abundance / totalAbundance
                          * allRooms.length * 2), function(n) {
         itemBank.push(i);
       });
@@ -216,10 +223,10 @@ module.exports = {
 
     houseGrid[i][j] = 'entryway';
     openGridLocs.push([6,6], [7,5], [7,7]);
-    roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor});
+    roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor, wallSprite: entrywayLayout.wallSprite});
 
     houseGrid[i + 1][j] = 'exithallway';
-    roomsToCreate.push({game: game.id, name: 'exithallway', background: exitLayout.floor});
+    roomsToCreate.push({game: game.id, name: 'exithallway', background: exitLayout.floor, wallSprite: entrywayLayout.wallSprite});
 
     for (var k = i + 2; k < houseGrid.length; k++) {
       houseGrid[k][j] = 'dummy';
@@ -299,8 +306,8 @@ module.exports = {
         var loc = possibleLocs[index];
         possibleLocs.splice(index, 1);
         itemsToCreate.push({type: item,
-                            stat: Game.items[item].stat,
-                            amount: Game.items[item].amount,
+                            stat: Item.kinds[item].stat,
+                            amount: Item.kinds[item].amount,
                             gridX: loc.x,
                             gridY: loc.y,
                             game: game.id});
@@ -309,6 +316,7 @@ module.exports = {
       roomsToCreate.push({game: game.id,
                           name: roomID,
                           background: room.floor,
+                          wallSprite: room.wallSprite,
                           items: itemsToCreate});
 
       if (room.gateways.north && houseGrid[i - 1][j] == undefined) {
@@ -432,8 +440,6 @@ module.exports = {
         cb(databaseID['entryway']);
       });
   },
-
-  items: sails.config.gameconfig.items,
 
   sprites: sails.config.gameconfig.sprites,
 

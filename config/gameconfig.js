@@ -1,26 +1,25 @@
 module.exports.gameconfig = {
   interactable: {
     rug: {
-      prefix: 'You pulled back a corner of the rug.'
+      prefix: 'You pull back a corner of the rug.'
     },
     couch: {
-      prefix: 'You lifted a couch cushion.'
+      prefix: 'You lift a couch cushion.'
     },
     armchair: {
-      prefix: 'You looked behind the armchair.'
+      prefix: 'You look behind the armchair.'
     },
     woodTable: {
-      prefix: 'You peeked under the table.'
+      prefix: 'You peek under the table.'
     },
     kitchenSink: {
-      prefix: 'There is a cupboard underneath the sink. You opened it.'
+      prefix: 'You open the cupboard under the sink.'
     },
     plant: {
       prefix: 'You open the plant leaves.'
     },
     chair: {
-      prefix: 'You sit down in the chair. You feel something underneath the '
-              + 'cushion.'
+      prefix: 'You sit down in the chair.'
     },
     loveseat: {
       prefix: 'You look behind the loveseat.'
@@ -32,17 +31,25 @@ module.exports.gameconfig = {
       prefix: 'You open the drawer of the nightstand.'
     },
     bookshelf: {
-      prefix: 'You pull back a book from the shelf. Behind it is something '
-              + 'strange.'
+      prefix: 'You pull back a book from the shelf.'
     },
     sink: {
-      prefix: 'You turn on the faucet. '
+      prefix: 'You turn on the faucet.'
     },
     squareTable: {
       prefix: 'You bend over and look under the coffee table.'
     },
     piano: {
       prefix: 'You begin playing chopsticks on the piano.'
+    },
+    pianoBench: {
+      prefix: 'You look under the piano bench.'
+    },
+    bathtub: {
+      prefix: 'You slip in the tub.'
+    },
+    poolTable: {
+      prefix: 'You meet a ghost and take it up on game of pool.'
     }
   },
   sprites: {
@@ -61,6 +68,7 @@ module.exports.gameconfig = {
     'rug': {gridX: 0, gridY: 3, gridW: 5, gridH: 3},
     'squareTable': {gridX: 5, gridY: 3, gridW: 3, gridH: 3},
     'piano': {gridX: 8, gridY: 3, gridW: 4, gridH: 2},
+    'pianoBench': {gridX: 8, gridY: 5, gridW: 2, gridH: 1},
     'stove': {gridX: 12, gridY: 3, gridW: 2, gridH: 2},
     'blueBed': {gridX: 0, gridY: 6, gridW: 3, gridH: 4},
     'redBed': {gridX: 3, gridY: 6, gridW: 3, gridH: 4},
@@ -75,12 +83,18 @@ module.exports.gameconfig = {
     'woodFloor': {gridX: 5, gridY: 13, gridW: 1, gridH: 1},
     'wall': {gridX: 7, gridY: 13, gridW: 1, gridH: 1},
     'lightning': {gridX: 0, gridY: 14, gridW: 1, gridH: 1},
+    'poisonLightning': {gridX: 0, gridY: 14, gridW: 1, gridH: 1},
     'heart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
+    'poisonHeart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
     'firstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
+    'poisonFirstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
     'sword': {gridX: 3, gridY: 14, gridW: 1, gridH: 1},
     'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1},
     'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
-    'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1}
+    'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
+    'poisonFlame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
+    'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10},
+    'grass': {gridX: 4, gridY: 15, gridW: 1, gridH: 1}
   },
   playerDefaults: {
     locX: 64,
@@ -125,11 +139,32 @@ module.exports.gameconfig = {
       stat: 'relics',
       amount: 1,
       abundance: 0
+    },
+    'poisonLightning': {
+      stat: 'speed',
+      amount: -1,
+      abundance: 0
+    },
+    'poisonHeart': {
+      stat: 'maxHealth',
+      amount: -1,
+      abundance: 0
+    },
+    'poisonFirstAid': {
+      stat: 'curHealth',
+      amount: -1,
+      abundance: 0
+    },
+    'poisonFlame': {
+      stat: 'weapon',
+      amount: -1,
+      abundance: 0
     }
   },
   rooms: {
     'entryway': {
       floor: '#AD3B2A',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -162,7 +197,8 @@ module.exports.gameconfig = {
       }
     },
     'exithallway': {
-      floor: '#FFFFFF',
+      floor: '#F0D7BD',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: false,
@@ -170,10 +206,19 @@ module.exports.gameconfig = {
         west: false
       },
       itemLocs: [],
-      objects: {}
+      objects: {
+        exitRug1: {
+          type: 'exitRug',
+          solid: false,
+          rotation: 0,
+          gridX: 7,
+          gridY: 3
+        }
+      }
     },
     'dummy': {
       floor: '',
+      wallSprite: '',
       gateways: {
         north: false,
         east: false,
@@ -184,7 +229,8 @@ module.exports.gameconfig = {
       objects: {}
     },
     'exit': {
-      floor: 'green',
+      floor: '#4AB54A',
+      wallSprite: 'SpriteGreenWall',
       gateways: {
         north: true,
         east: false,
@@ -192,10 +238,26 @@ module.exports.gameconfig = {
         west: false
       },
       itemLocs: [],
-      objects: {}
+      objects: {
+        grass1: {
+          type: 'grass',
+          solid: false,
+          rotation: 0,
+          gridX: 4,
+          gridY: 5
+        },
+        grass2: {
+          type: 'grass',
+          solid: false,
+          rotation: 0,
+          gridX: 13,
+          gridY: 12,
+        }
+      }
     },
     'livingRoom': {
       floor: '#EBACA4',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -241,6 +303,7 @@ module.exports.gameconfig = {
     },
     'gameRoom': {
       floor: '#A3CBCC',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -272,6 +335,7 @@ module.exports.gameconfig = {
     },
     'pianoRoom': {
       floor: '#A3CBCC',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -291,6 +355,13 @@ module.exports.gameconfig = {
           gridX: 7,
           gridY: 15
         },
+        pianobench1: {
+          type: 'pianoBench',
+          solid: true,
+          rotation: 0,
+          gridX: 4,
+          gridY: 10
+        },
         loveseat1: {
           type: 'loveseat',
           solid: true,
@@ -309,6 +380,7 @@ module.exports.gameconfig = {
     },
     'office': {
       floor: '#EBACA4',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: false,
         east: true,
@@ -354,6 +426,7 @@ module.exports.gameconfig = {
     },
     'bathroom': {
       floor: '#A3CBCC',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -469,6 +542,7 @@ module.exports.gameconfig = {
     },
     'arborium': {
       floor: '#F0DEC7',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -556,6 +630,7 @@ module.exports.gameconfig = {
     },
     'kitchen': {
       floor: '#F0DEC7',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -636,6 +711,7 @@ module.exports.gameconfig = {
     },
     'dining room': {
       floor: '#E3CD86',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -716,6 +792,7 @@ module.exports.gameconfig = {
     },
     'bedroom': {
       floor: '#A3CBCC',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -820,7 +897,7 @@ module.exports.gameconfig = {
           gridX: 4,
           gridY: 9
         },
-        wall11: {
+        toilet: {
           type: 'toilet',
           solid: true,
           rotation: 0,
@@ -845,6 +922,7 @@ module.exports.gameconfig = {
     },
     'bedroom2': {
       floor: '#E3CD86',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -1118,5 +1196,21 @@ module.exports.gameconfig = {
                    + 'a key to do so. You can only lock up to three doors. '
                    + 'Press space to attack. Kill one of the heroes to win.'
     }
+    /*
+    'poisonItems': {
+      heroFlavor: 'One of your comrades has turned against you. Escape the '
+                  + 'house before it\'s too late!',
+      heroText: 'Collect keys to unlock the series of doors heading south '
+                + 'from the entryway (red room). Get to the garden with all '
+                + 'the other heroes to win.',
+      traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
+                     + 'from inside the walls. It promises you great power; '
+                     + 'the power to drop poisonous items throughout the '
+                     + 'house. All you must do is destroy those foos who came '
+                     + 'here with you.',
+      traitorText: 'Press \'e\' to drop poisonous items. Press space '
+                   + 'to attack. Kill one of the heroes to win.'
+    }
+    */
   }
 }

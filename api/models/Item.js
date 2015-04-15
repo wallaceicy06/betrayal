@@ -25,7 +25,10 @@ module.exports = {
     room: {model: 'room',
            required: true},
     game: {model: 'game',
-           required: true}
-  }
-};
+           required: true},
+    heroesOnly: {type: 'boolean',
+                 defaultsTo: false}
+  },
 
+  kinds: sails.config.gameconfig.items
+};

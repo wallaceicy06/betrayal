@@ -7,6 +7,24 @@
 
 module.exports = {
 
+  create: function(req, res) {
+    var attrs = req.body;
+
+    attrs.stat = Item.kinds[attrs.type].stat;
+    attrs.amount = Item.kinds[attrs.type].amount;
+
+    Item.create(attrs)
+      .then(function(item) {
+        Item.subscribe(req, item.id);
+        Item.publishCreate(item);
+        res.json(item);
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+        res.json({ error: err });
+      });
+  },
+
   subscribe: function(req, res) {
     Item.findOne(req.params.id)
       .then(function(item) {
@@ -17,7 +35,7 @@ module.exports = {
         sails.log.error(err);
         res.json(err);
       });
-    },
+  },
 
 	destroy: function(req, res) {
     Item.destroy(req.params.id)

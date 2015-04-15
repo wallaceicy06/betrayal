@@ -24,15 +24,17 @@ define([
         'powerup': ['sounds/powerup.wav'],
         'game_start': ['sounds/game_start.mp3'],
         'die': ['sounds/die.wav'],
-        'slider': ['sounds/01_Slider.mp3'],
-        'tossed': ['sounds/02_Tossed.mp3']
+        'thunder': ['sounds/thunder.mp3'],
+        'slider': ['sounds/slider.mp3'],
+        'tossed': ['sounds/tossed.mp3']
     },
     'sprites': {
       'images/game/sprites.png': {
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteFurniture': [0,0],
-                'SpriteWall': [7, 13],
+                'SpriteGrayWall': [7, 13],
+                'SpriteGreenWall': [8, 13],
                 'SpriteDoor': [6,13],
                 'SpriteLockedDoor': [10, 13],
                 'SpriteWhiteRoom': [8, 13],
@@ -68,6 +70,8 @@ define([
   var PLAYER_LIST_ITEM_TEMPLATE = 'assets/templates/playerlistitem.html';
   var OVERLAY_TEMPLATE = 'assets/templates/overlay.html';
   var OVERLAY_CHAT_TEMPLATE = 'assets/templates/overlay_chat.html';
+
+  var MIN_DOOR_WAIT = 500;
 
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
@@ -110,6 +114,7 @@ define([
         this.onHit('Solid', this.stopMovement);
         this.onHit('Door', this.useDoor);
         this.onHit('Item', this.pickUpItem);
+        this.onHit('HeroItem', this.pickUpHeroItem);
 
         this.bind('NewDirection', function(data) {
           if (data.x > 0) {
@@ -151,34 +156,28 @@ define([
           }
 
           if (player.intersect(this.interactRect())) {
-            interacted = true;
-            that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
+            interacted = that._gameModelAdpt.onFurnitureInteract(this.furnitureID);
           }
         });
       },
 
       useDoor: function(doorParts) {
-        /*
-         * If the door lock has been enabled, this will prevent a door from
-         * being used twice for the same room.
-         */
-        if (this.attr('doorLock')) {
-          return;
-        }
-
         this.stopMovement();
 
-        /* Lock the door to prevent double usages. */
-        this.attr({'doorLock': true});
+        var curTime = new Date().getTime();
+        if (curTime - that._lastDoorVisit < MIN_DOOR_WAIT) {
+          return;
+        }
 
         /* Player cannot move as they go through a door */
         this.disableControl();
 
+        that._lastDoorVisit = curTime;
+
+
         var thatPlayer = this;
 
         that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID, function() {
-          thatPlayer.attr({'doorLock': false});
-
           thatPlayer.enableControl();
         });
       },
@@ -190,17 +189,22 @@ define([
           return;
         }
 
-        /* Don't allow the traitor to pick up keys */
-        if (that._playerModelAdpt.isTraitor() && theItem.type === 'key') {
-          return;
-        }
-
         theItem.attr({'itemLock' : true});
         that._playerModelAdpt.useItem(theItem.itemID, theItem.stat,
                                       theItem.amount);
         Crafty.audio.play('powerup');
 
       },
+
+      /* TODO: Change this later to two Player entities. */
+      pickUpHeroItem: function(item) {
+        if (that._playerModelAdpt.isTraitor()) {
+          return this;
+        }
+
+        return this.pickUpItem(item);
+      },
+
 
       fixMovement: function(increaseBy) {
         /* Increase absolute value of movement in both x and y by the amount
@@ -250,9 +254,15 @@ define([
       },
     });
 
+    Crafty.c('HeroItem', {
+      init: function() {
+        this.requires('2D, Canvas, RoomItem, SpriteFurniture');
+      },
+    });
+
     Crafty.c('Wall', {
       init: function() {
-        this.requires('2D, Canvas, Solid, SpriteWall, RoomItem');
+        this.requires('2D, Canvas, Solid, RoomItem');
       }
     });
 
@@ -366,10 +376,6 @@ define([
         var overlayTitle = Crafty.e('OverlayTitle').setText(titleText);
         var overlayFlavor = Crafty.e('OverlayFlavor').setText(flavorText);
         var overlayBody = Crafty.e('OverlayBody').setText(bodyText);
-        // var overlayText = Crafty.e('HTML').setText(
-          // .replace('<p><i>' + flavorText + '</i><br><br>' + text + '</p>')
-          // .css({'font-size': '14px', 'text-align': 'center', 'top': '50px'});
-
 
         this.attach(overlayTitle);
         this.attach(overlayFlavor);
@@ -398,7 +404,7 @@ define([
     Crafty.defineScene('room', function(roomConfig) {
       Crafty.background(roomConfig.background);
 
-      setupBarriers.call(that, roomConfig.doors);
+      setupBarriers.call(that, roomConfig.doors, roomConfig.wallSprite);
       placeItems.call(that, roomConfig.items);
       placeFurniture.call(that, roomConfig.furniture);
 
@@ -575,16 +581,18 @@ define([
   }
 
   function placeItem(item) {
-    var newItem = Crafty.e('Item').attr({x: item.gridX * TILE_WIDTH,
-                                         y: item.gridY * TILE_WIDTH,
-                                         type: item.type,
-                                         stat: item.stat,
-                                         amount: item.amount,
-                                         itemID: item.id})
-                                  .sprite(this._spriteMap[item.type].gridX,
-                                          this._spriteMap[item.type].gridY,
-                                          this._spriteMap[item.type].gridW,
-                                          this._spriteMap[item.type].gridH);
+    var type = (item.heroesOnly ? 'HeroItem' : 'Item');
+
+    var newItem = Crafty.e(type).attr({ x: item.gridX * TILE_WIDTH,
+                                        y: item.gridY * TILE_WIDTH,
+                                        type: item.type,
+                                        stat: item.stat,
+                                        amount: item.amount,
+                                        itemID: item.id})
+                                .sprite(this._spriteMap[item.type].gridX,
+                                        this._spriteMap[item.type].gridY,
+                                        this._spriteMap[item.type].gridW,
+                                        this._spriteMap[item.type].gridH);
 
     this._items[item.id] = newItem;
   }
@@ -953,7 +961,7 @@ define([
     });
   }
 
-  function setupBarriers(gateways) {
+  function setupBarriers(gateways, wallSprite) {
     var widthInTiles = this._gameModelAdpt.getDimensions().width/TILE_WIDTH;
     var heightInTiles = this._gameModelAdpt.getDimensions().height/TILE_WIDTH;
 
@@ -963,7 +971,7 @@ define([
       if(!('north' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: 0});
+        Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH, y: 0});
       } else {
         var door;
 
@@ -978,7 +986,7 @@ define([
 
       if(!('south' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
-        Crafty.e('Wall').attr({x: j * TILE_WIDTH,
+        Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH,
                                y: (heightInTiles - 1) * TILE_WIDTH});
       } else {
         var door;
@@ -999,7 +1007,7 @@ define([
       if(!('west' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: 0,
+        Crafty.e('Wall', wallSprite).attr({x: 0,
                                y: i * TILE_WIDTH});
       } else {
         var door;
@@ -1016,7 +1024,7 @@ define([
       if(!('east' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: (widthInTiles - 1) * TILE_WIDTH,
+        Crafty.e('Wall', wallSprite).attr({x: (widthInTiles - 1) * TILE_WIDTH,
                                y: i * TILE_WIDTH});
       } else {
         var door;
@@ -1041,12 +1049,12 @@ define([
                                                            message: message
     }));
 
-    $('#overlay-stack').append(chatOverlay);
+    $('#chat-stack').append(chatOverlay);
 
     chatOverlay.fadeIn('slow');
     setTimeout(function() {
-      chatOverlay.fadeOut('slow');
-    }, 3000);
+      chatOverlay.fadeOut('slow', function() {this.remove()});
+    }, 2500);
   }
 
   /**
@@ -1064,6 +1072,7 @@ define([
     var overlay = $(Templates[OVERLAY_TEMPLATE]({ title: titleText,
                                                   flavor: flavorText,
                                                   body: bodyText,
+                                                  dismissable: dismissable,
                                                   seconds: secondsLeft}));
 
 
@@ -1086,17 +1095,22 @@ define([
       }, 1000);
     }
 
+    $('#overlay-stack .dismissable').fadeOut('fast', function() {this.remove()});
+
     $('#overlay-stack').append(overlay);
 
     overlay.fadeIn('slow');
     setTimeout(function() {
-      overlay.fadeOut('slow');
+      overlay.fadeOut('slow', function() {this.remove()});
     }, timeout + 3000);
   }
 
-  function hideRelicsShowKeys() {
+  function onHauntStart() {
+    /* Hide relics, show keys */
     $('.player-relics').addClass('hidden');
     $('.player-keys').removeClass('hidden');
+    /* Play thunder sound */
+    Crafty.audio.play('thunder');
   }
 
   function formToJSON(inputArray) {
@@ -1143,16 +1157,16 @@ define([
       displayStartGameButton.call(this, true);
 
       if (formData.playerName === '') {
-        $(this).children('.alert').text('Player name cannot be blank.').show();
+        $(this).children('.alert').text('Player name cannot be blank.').removeClass('invisible');
         return;
       }
 
       if (formData.gameName === '') {
-        $(this).children('.alert').text('Game name cannot be blank.').show();
+        $(this).children('.alert').text('Game name cannot be blank.').removeClass('invisible');
         return;
       }
 
-      $(this).children('.alert').hide();
+      $(this).children('.alert').addClass('invisible');
 
       that._gameModelAdpt.onCreateGameClick(formData.playerName, formData.gameName);
     });
@@ -1165,16 +1179,16 @@ define([
       displayStartGameButton.call(this, false);
 
       if (formData.playerName === '') {
-        $(this).children('.alert').text('Player name cannot be blank.').show();
+        $(this).children('.alert').text('Player name cannot be blank.').removeClass('invisible');
         return;
       }
 
       if (formData.gameID === undefined) {
-        $(this).children('.alert').text('You must select a game.').show();
+        $(this).children('.alert').text('You must select a game.').removeClass('invisible');
         return;
       }
 
-      $(this).children('.alert').hide();
+      $(this).children('.alert').addClass('invisible');
 
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
 
@@ -1262,6 +1276,7 @@ define([
     this._items = {};
     this._spriteMap = null;
     this._miniMap = null;
+    this._lastDoorVisit = new Date().getTime();
 
     initGUI.call(this);
     initCrafty.call(this);
@@ -1273,7 +1288,7 @@ define([
     this.displayGamePane = displayGamePane.bind(this);
     this.enableGame = enableGame.bind(this);
     this.displayTextOverlay = displayTextOverlay.bind(this);
-    this.hideRelicsShowKeys = hideRelicsShowKeys.bind(this);
+    this.onHauntStart = onHauntStart.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);
     this.loadPurgatory = loadPurgatory.bind(this);
     this.loadRoom = loadRoom.bind(this);
@@ -1288,4 +1303,5 @@ define([
     this.setHuskSprite = setHuskSprite.bind(this);
     this.start = start.bind(this);
   }
+
 });

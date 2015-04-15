@@ -20,7 +20,7 @@ define([
     this._gameModelAdpt.onGatewayChange(direction, locked);
   }
 
-  return function Room(id, gatewaysOut, background, items, objects,
+  return function Room(id, gatewaysOut, background, wallSprite, items, objects,
                        gameModelAdpt) {
     var that = this;
 
@@ -47,6 +47,11 @@ define([
 
     Object.defineProperty(this, 'background', {
       value: background,
+      writable: false
+    });
+
+    Object.defineProperty(this, 'wallSprite', {
+      value: wallSprite,
       writable: false
     });
 
