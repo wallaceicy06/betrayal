@@ -23,16 +23,16 @@ define([
     this._gameModelAdpt.acquireItem(itemID, function() {
       switch(stat) {
         case 'speed':
-          that.speed = that.speed + amount;
+          that.speed = Math.max(0, that.speed + amount);
           break;
         case 'maxHealth':
-          that.maxHealth = that.maxHealth + amount;
+          that.maxHealth = Math.max(0, that.maxHealth + amount);
           break;
         case 'curHealth':
-          that.curHealth = that.curHealth + amount;
+          that.curHealth = Math.max(0, that.curHealth + amount);
           break;
         case 'weapon':
-          that.weapon = that.weapon + amount;
+          that.weapon = Math.max(0, that.weapon + amount);
           break;
         case 'relics':
           that.relics = that.relics + amount;

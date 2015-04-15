@@ -8,7 +8,6 @@ define([
    */
   function makeHauntAdapter(hauntName) {
     var that = this;
-    //var hauntAdpt;
 
     switch(hauntName) {
       case 'plant':
