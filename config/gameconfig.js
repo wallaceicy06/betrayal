@@ -44,6 +44,9 @@ module.exports.gameconfig = {
     },
     pianoBench: {
       prefix: 'You look under the piano bench.'
+    },
+    bathtub: {
+      prefix: 'You slip in the tub.'
     }
   },
   sprites: {
