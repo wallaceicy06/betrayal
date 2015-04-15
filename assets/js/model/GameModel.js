@@ -248,9 +248,7 @@ define([
     io.socket.put('/game/' + this._gameID, {active: true}, function(res) {
       var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
-      that._viewAdpt.startGame(roomConfig, function() {});
-
-      that._viewAdpt.updateMap(that._roomCache);
+      that._viewAdpt.startGame(roomConfig, that._roomCache);
     });
   }
 
@@ -721,7 +719,7 @@ define([
         if (o.data.active !== undefined) {
           var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
-          that._viewAdpt.startGame(roomConfig, function() {});
+          that._viewAdpt.startGame(roomConfig, that._roomCache);
 
         } else if (o.data.haunt !== undefined) {
           /*

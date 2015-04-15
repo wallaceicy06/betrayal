@@ -244,9 +244,10 @@ define([
         that._view.displayGamePane(true);
       },
 
-      startGame: function(roomConfig) {
+      startGame: function(roomConfig, allRooms) {
         that._view.enableGame(true);
         that._view.loadRoom(roomConfig);
+        that._view.loadMap(allRooms);
       },
 
       loadRoom: function(roomConfig) {
