@@ -70,6 +70,8 @@ define([
   var OVERLAY_TEMPLATE = 'assets/templates/overlay.html';
   var OVERLAY_CHAT_TEMPLATE = 'assets/templates/overlay_chat.html';
 
+  var MIN_DOOR_WAIT = 500;
+
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
   }
@@ -158,27 +160,22 @@ define([
       },
 
       useDoor: function(doorParts) {
-        /*
-         * If the door lock has been enabled, this will prevent a door from
-         * being used twice for the same room.
-         */
-        if (this.attr('doorLock')) {
-          return;
-        }
-
         this.stopMovement();
 
-        /* Lock the door to prevent double usages. */
-        this.attr({'doorLock': true});
+        var curTime = new Date().getTime();
+        if (curTime - that._lastDoorVisit < MIN_DOOR_WAIT) {
+          return;
+        }
 
         /* Player cannot move as they go through a door */
         this.disableControl();
 
+        that._lastDoorVisit = curTime;
+
+
         var thatPlayer = this;
 
         that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID, function() {
-          thatPlayer.attr({'doorLock': false});
-
           thatPlayer.enableControl();
         });
       },
@@ -1242,6 +1239,7 @@ define([
     this._items = {};
     this._spriteMap = null;
     this._miniMap = null;
+    this._lastDoorVisit = new Date().getTime();
 
     initGUI.call(this);
     initCrafty.call(this);
