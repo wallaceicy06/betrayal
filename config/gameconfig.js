@@ -891,7 +891,7 @@ module.exports.gameconfig = {
           gridX: 4,
           gridY: 9
         },
-        wall11: {
+        toilet: {
           type: 'toilet',
           solid: true,
           rotation: 0,
