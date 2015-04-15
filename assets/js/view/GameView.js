@@ -24,8 +24,8 @@ define([
         'powerup': ['sounds/powerup.wav'],
         'game_start': ['sounds/game_start.mp3'],
         'die': ['sounds/die.wav'],
-        'slider': ['sounds/01_Slider.mp3'],
-        'tossed': ['sounds/02_Tossed.mp3']
+        'slider': ['sounds/slider.mp3'],
+        'tossed': ['sounds/tossed.mp3']
     },
     'sprites': {
       'images/game/sprites.png': {
