@@ -25,8 +25,8 @@ define([
         'game_start': ['sounds/game_start.mp3'],
         'die': ['sounds/die.wav'],
         'thunder': ['sounds/thunder.mp3'],
-        'slider': ['sounds/01_Slider.mp3'],
-        'tossed': ['sounds/02_Tossed.mp3']
+        'slider': ['sounds/slider.mp3'],
+        'tossed': ['sounds/tossed.mp3']
     },
     'sprites': {
       'images/game/sprites.png': {

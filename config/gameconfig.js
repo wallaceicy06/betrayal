@@ -44,6 +44,12 @@ module.exports.gameconfig = {
     },
     pianoBench: {
       prefix: 'You look under the piano bench.'
+    },
+    bathtub: {
+      prefix: 'You slip in the tub.'
+    },
+    poolTable: {
+      prefix: 'You meet a ghost and take it up on game of pool.'
     }
   },
   sprites: {
@@ -891,7 +897,7 @@ module.exports.gameconfig = {
           gridX: 4,
           gridY: 9
         },
-        wall11: {
+        toilet: {
           type: 'toilet',
           solid: true,
           rotation: 0,
