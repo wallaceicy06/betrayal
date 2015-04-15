@@ -1031,7 +1031,7 @@ define([
 
     chatOverlay.fadeIn('slow');
     setTimeout(function() {
-      chatOverlay.fadeOut('slow');
+      chatOverlay.fadeOut('slow', function() {this.remove()});
     }, 2500);
   }
 
@@ -1050,6 +1050,7 @@ define([
     var overlay = $(Templates[OVERLAY_TEMPLATE]({ title: titleText,
                                                   flavor: flavorText,
                                                   body: bodyText,
+                                                  dismissable: dismissable,
                                                   seconds: secondsLeft}));
 
 
@@ -1072,16 +1073,13 @@ define([
       }, 1000);
     }
 
-    /* If this message is important, clear all others. */
-    if (!dismissable) {
-      $('#overlay-stack').empty();
-    }
+    $('#overlay-stack .dismissable').fadeOut('fast', function() {this.remove()});
 
     $('#overlay-stack').append(overlay);
 
     overlay.fadeIn('slow');
     setTimeout(function() {
-      overlay.fadeOut('slow');
+      overlay.fadeOut('slow', function() {this.remove()});
     }, timeout + 3000);
   }
 
