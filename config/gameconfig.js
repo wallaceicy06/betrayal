@@ -47,6 +47,9 @@ module.exports.gameconfig = {
     },
     bathtub: {
       prefix: 'You slip in the tub.'
+    },
+    poolTable: {
+      prefix: 'You meet a ghost and take it up on game of pool.'
     }
   },
   sprites: {
