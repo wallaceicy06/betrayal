@@ -1021,7 +1021,7 @@ define([
     chatOverlay.fadeIn('slow');
     setTimeout(function() {
       chatOverlay.fadeOut('slow');
-    }, 3000);
+    }, 2500);
   }
 
   /**

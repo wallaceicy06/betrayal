@@ -99,6 +99,7 @@ body:before {
   vertical-align: top;
   height: 100%;
   width: 256px;
+  overflow: hidden;
 }
 
 .chatroom div {
@@ -170,6 +171,7 @@ img.small_key {
   margin-bottom: 3px;
   margin-top: 3px;
   background: rgba(255, 255, 255, 1);
+  overflow: hidden;
 }
 
 .my-stats {
