@@ -195,7 +195,8 @@ define([
             },
 
             onDestroy: function() {
-              that._viewAdpt.messageReceived(player, 'died');
+              that._viewAdpt.displayTextOverlay("", "", player.name + " died.",
+                                                0, true, function() {});
               playerViewAdpt.destroy();
               delete that._otherPlayers[v.id];
             }
@@ -562,7 +563,8 @@ define([
           },
 
           onDestroy: function() {
-            that._viewAdpt.messageReceived(player, 'died');
+            that._viewAdpt.displayTextOverlay("", "", player.name + " died.",
+                                              0, true, function() {});
             playerViewAdpt.destroy();
             delete that._otherPlayers[player.id];
           }
@@ -703,6 +705,10 @@ define([
           }
 
           that._viewAdpt.messageReceived(player, o.data.message);
+        } else if (o.data.verb === 'info') {
+
+          that._viewAdpt.displayTextOverlay("", "", o.data.message, 0, true,
+                                            function() {});
         }
 
       } else if (o.verb === 'updated') {

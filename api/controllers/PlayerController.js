@@ -155,8 +155,8 @@ module.exports = {
       .then(function(room) {
         /* Inform other players in roomthat we are attacking, so they can draw the attack animation */
         Room.message(room, { id: player.id,
-                              verb: 'playerAttacked',
-                              data: {id: player.id, locX: player.locX, locY: player.locY} });
+                             verb: 'playerAttacked',
+                             data: {id: player.id, locX: player.locX, locY: player.locY} });
 
         var attackRegion = Player.attackRegion(player.locX, player.locY);
         for (var i = 0; i < room.players.length; i++) {
@@ -189,7 +189,7 @@ module.exports = {
                             message: player.name + " attacked "
                                      + otherPlayer.name
                                      + "! They were unharmed.",
-                            verb: 'chat'});
+                            verb: 'info'});
             }
             else {
               Game.message(player.game, {playerID: player.id,
@@ -197,7 +197,7 @@ module.exports = {
                                                   + otherPlayer.name + "! "
                                                   + otherPlayer.name + " took "
                                                   + damage + " damage.",
-                                         verb: 'chat'});
+                                         verb: 'info'});
               var updateObj = {curHealth: otherPlayer.curHealth - damage};
               Player.update(otherPlayer.id, updateObj);
               Player.publishUpdate(otherPlayer.id, updateObj);
