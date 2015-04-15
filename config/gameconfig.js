@@ -1,26 +1,25 @@
 module.exports.gameconfig = {
   interactable: {
     rug: {
-      prefix: 'You pulled back a corner of the rug.'
+      prefix: 'You pull back a corner of the rug.'
     },
     couch: {
-      prefix: 'You lifted a couch cushion.'
+      prefix: 'You lift a couch cushion.'
     },
     armchair: {
-      prefix: 'You looked behind the armchair.'
+      prefix: 'You look behind the armchair.'
     },
     woodTable: {
-      prefix: 'You peeked under the table.'
+      prefix: 'You peek under the table.'
     },
     kitchenSink: {
-      prefix: 'There is a cupboard underneath the sink. You opened it.'
+      prefix: 'You open the cupboard under the sink.'
     },
     plant: {
       prefix: 'You open the plant leaves.'
     },
     chair: {
-      prefix: 'You sit down in the chair. You feel something underneath the '
-              + 'cushion.'
+      prefix: 'You sit down in the chair.'
     },
     loveseat: {
       prefix: 'You look behind the loveseat.'
@@ -32,17 +31,19 @@ module.exports.gameconfig = {
       prefix: 'You open the drawer of the nightstand.'
     },
     bookshelf: {
-      prefix: 'You pull back a book from the shelf. Behind it is something '
-              + 'strange.'
+      prefix: 'You pull back a book from the shelf.'
     },
     sink: {
-      prefix: 'You turn on the faucet. '
+      prefix: 'You turn on the faucet.'
     },
     squareTable: {
       prefix: 'You bend over and look under the coffee table.'
     },
     piano: {
       prefix: 'You begin playing chopsticks on the piano.'
+    },
+    pianoBench: {
+      prefix: 'You look under the piano bench.'
     }
   },
   sprites: {
@@ -61,6 +62,7 @@ module.exports.gameconfig = {
     'rug': {gridX: 0, gridY: 3, gridW: 5, gridH: 3},
     'squareTable': {gridX: 5, gridY: 3, gridW: 3, gridH: 3},
     'piano': {gridX: 8, gridY: 3, gridW: 4, gridH: 2},
+    'pianoBench': {gridX: 8, gridY: 5, gridW: 2, gridH: 1},
     'stove': {gridX: 12, gridY: 3, gridW: 2, gridH: 2},
     'blueBed': {gridX: 0, gridY: 6, gridW: 3, gridH: 4},
     'redBed': {gridX: 3, gridY: 6, gridW: 3, gridH: 4},
@@ -346,6 +348,13 @@ module.exports.gameconfig = {
           rotation: 180,
           gridX: 7,
           gridY: 15
+        },
+        pianobench1: {
+          type: 'pianoBench',
+          solid: true,
+          rotation: 0,
+          gridX: 4,
+          gridY: 10
         },
         loveseat1: {
           type: 'loveseat',
