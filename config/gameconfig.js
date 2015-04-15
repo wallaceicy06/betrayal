@@ -85,7 +85,8 @@ module.exports.gameconfig = {
     'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
     'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
     'poisonFlame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
-    'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10}
+    'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10},
+    'grass': {gridX: 4, gridY: 15, gridW: 1, gridH: 1}
   },
   playerDefaults: {
     locX: 64,
@@ -155,6 +156,7 @@ module.exports.gameconfig = {
   rooms: {
     'entryway': {
       floor: '#AD3B2A',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -188,6 +190,7 @@ module.exports.gameconfig = {
     },
     'exithallway': {
       floor: '#F0D7BD',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: false,
@@ -207,6 +210,7 @@ module.exports.gameconfig = {
     },
     'dummy': {
       floor: '',
+      wallSprite: '',
       gateways: {
         north: false,
         east: false,
@@ -217,7 +221,8 @@ module.exports.gameconfig = {
       objects: {}
     },
     'exit': {
-      floor: 'green',
+      floor: '#4AB54A',
+      wallSprite: 'SpriteGreenWall',
       gateways: {
         north: true,
         east: false,
@@ -225,10 +230,26 @@ module.exports.gameconfig = {
         west: false
       },
       itemLocs: [],
-      objects: {}
+      objects: {
+        grass1: {
+          type: 'grass',
+          solid: false,
+          rotation: 0,
+          gridX: 4,
+          gridY: 5
+        },
+        grass2: {
+          type: 'grass',
+          solid: false,
+          rotation: 0,
+          gridX: 13,
+          gridY: 12,
+        }
+      }
     },
     'livingRoom': {
       floor: '#EBACA4',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -274,6 +295,7 @@ module.exports.gameconfig = {
     },
     'gameRoom': {
       floor: '#A3CBCC',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -305,6 +327,7 @@ module.exports.gameconfig = {
     },
     'pianoRoom': {
       floor: '#A3CBCC',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -342,6 +365,7 @@ module.exports.gameconfig = {
     },
     'office': {
       floor: '#EBACA4',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: false,
         east: true,
@@ -387,6 +411,7 @@ module.exports.gameconfig = {
     },
     'bathroom': {
       floor: '#A3CBCC',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -502,6 +527,7 @@ module.exports.gameconfig = {
     },
     'arborium': {
       floor: '#F0DEC7',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -589,6 +615,7 @@ module.exports.gameconfig = {
     },
     'kitchen': {
       floor: '#F0DEC7',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -669,6 +696,7 @@ module.exports.gameconfig = {
     },
     'dining room': {
       floor: '#E3CD86',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -749,6 +777,7 @@ module.exports.gameconfig = {
     },
     'bedroom': {
       floor: '#A3CBCC',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,
@@ -878,6 +907,7 @@ module.exports.gameconfig = {
     },
     'bedroom2': {
       floor: '#E3CD86',
+      wallSprite: 'SpriteGrayWall',
       gateways: {
         north: true,
         east: true,

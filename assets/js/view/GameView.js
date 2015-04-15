@@ -32,7 +32,8 @@ define([
         'tile': TILE_WIDTH,
         'tileh': TILE_WIDTH,
         'map': {'SpriteFurniture': [0,0],
-                'SpriteWall': [7, 13],
+                'SpriteGrayWall': [7, 13],
+                'SpriteGreenWall': [8, 13],
                 'SpriteDoor': [6,13],
                 'SpriteLockedDoor': [10, 13],
                 'SpriteWhiteRoom': [8, 13],
@@ -68,6 +69,8 @@ define([
   var PLAYER_LIST_ITEM_TEMPLATE = 'assets/templates/playerlistitem.html';
   var OVERLAY_TEMPLATE = 'assets/templates/overlay.html';
   var OVERLAY_CHAT_TEMPLATE = 'assets/templates/overlay_chat.html';
+
+  var MIN_DOOR_WAIT = 500;
 
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
@@ -158,27 +161,22 @@ define([
       },
 
       useDoor: function(doorParts) {
-        /*
-         * If the door lock has been enabled, this will prevent a door from
-         * being used twice for the same room.
-         */
-        if (this.attr('doorLock')) {
-          return;
-        }
-
         this.stopMovement();
 
-        /* Lock the door to prevent double usages. */
-        this.attr({'doorLock': true});
+        var curTime = new Date().getTime();
+        if (curTime - that._lastDoorVisit < MIN_DOOR_WAIT) {
+          return;
+        }
 
         /* Player cannot move as they go through a door */
         this.disableControl();
 
+        that._lastDoorVisit = curTime;
+
+
         var thatPlayer = this;
 
         that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID, function() {
-          thatPlayer.attr({'doorLock': false});
-
           thatPlayer.enableControl();
         });
       },
@@ -248,7 +246,7 @@ define([
 
     Crafty.c('Wall', {
       init: function() {
-        this.requires('2D, Canvas, Solid, SpriteWall, RoomItem');
+        this.requires('2D, Canvas, Solid, RoomItem');
       }
     });
 
@@ -388,7 +386,7 @@ define([
     Crafty.defineScene('room', function(roomConfig) {
       Crafty.background(roomConfig.background);
 
-      setupBarriers.call(that, roomConfig.doors);
+      setupBarriers.call(that, roomConfig.doors, roomConfig.wallSprite);
       placeItems.call(that, roomConfig.items);
       placeFurniture.call(that, roomConfig.furniture);
 
@@ -941,7 +939,7 @@ define([
     });
   }
 
-  function setupBarriers(gateways) {
+  function setupBarriers(gateways, wallSprite) {
     var widthInTiles = this._gameModelAdpt.getDimensions().width/TILE_WIDTH;
     var heightInTiles = this._gameModelAdpt.getDimensions().height/TILE_WIDTH;
 
@@ -951,7 +949,7 @@ define([
       if(!('north' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: j * TILE_WIDTH, y: 0});
+        Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH, y: 0});
       } else {
         var door;
 
@@ -966,7 +964,7 @@ define([
 
       if(!('south' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
-        Crafty.e('Wall').attr({x: j * TILE_WIDTH,
+        Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH,
                                y: (heightInTiles - 1) * TILE_WIDTH});
       } else {
         var door;
@@ -987,7 +985,7 @@ define([
       if(!('west' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: 0,
+        Crafty.e('Wall', wallSprite).attr({x: 0,
                                y: i * TILE_WIDTH});
       } else {
         var door;
@@ -1004,7 +1002,7 @@ define([
       if(!('east' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
-        Crafty.e('Wall').attr({x: (widthInTiles - 1) * TILE_WIDTH,
+        Crafty.e('Wall', wallSprite).attr({x: (widthInTiles - 1) * TILE_WIDTH,
                                y: i * TILE_WIDTH});
       } else {
         var door;
@@ -1029,12 +1027,12 @@ define([
                                                            message: message
     }));
 
-    $('#overlay-stack').append(chatOverlay);
+    $('#chat-stack').append(chatOverlay);
 
     chatOverlay.fadeIn('slow');
     setTimeout(function() {
       chatOverlay.fadeOut('slow');
-    }, 3000);
+    }, 2500);
   }
 
   /**
@@ -1072,6 +1070,11 @@ define([
           cb();
         }
       }, 1000);
+    }
+
+    /* If this message is important, clear all others. */
+    if (!dismissable) {
+      $('#overlay-stack').empty();
     }
 
     $('#overlay-stack').append(overlay);
@@ -1250,6 +1253,7 @@ define([
     this._items = {};
     this._spriteMap = null;
     this._miniMap = null;
+    this._lastDoorVisit = new Date().getTime();
 
     initGUI.call(this);
     initCrafty.call(this);
