@@ -1150,21 +1150,21 @@ module.exports.gameconfig = {
   },
 
   haunts: {
-    // 'plant': {
-      // title: 'Shapeshifter',
-      // heroFlavor: 'One of your comrades has turned against you. Escape the '
-                  // + 'house before it\'s too late!',
-      // heroText: 'Collect keys to unlock the series of doors heading south '
-                // + 'from the entryway (red room). Get to the garden with all '
-                // + 'the other heroes to win.',
-      // traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
-                   // + 'from inside the walls. It promises you great power; '
-                   // + 'the power to transform into any shape you wish. All '
-                   // + 'you must do is destroy those fools who came here with '
-                   // + 'you.',
-      // traitorText: 'Press \'e\' to alter your appearance. Press space '
-                   // + 'to attack. Kill one of the heroes to win.'
-    // },
+    'plant': {
+      title: 'Shapeshifter',
+      heroFlavor: 'One of your comrades has turned against you. Escape the '
+                  + 'house before it\'s too late!',
+      heroText: 'Collect keys to unlock the series of doors heading south '
+                + 'from the entryway (red room). Get to the garden with all '
+                + 'the other heroes to win.',
+      traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
+                   + 'from inside the walls. It promises you great power; '
+                   + 'the power to transform into any shape you wish. All '
+                   + 'you must do is destroy those fools who came here with '
+                   + 'you.',
+      traitorText: 'Press \'e\' to alter your appearance. Press space '
+                   + 'to attack. Kill one of the heroes to win.'
+    },
     'poisonItems': {
       title: 'Poison Items',
       heroFlavor: 'One of your comrades has turned against you. Escape the '
@@ -1172,8 +1172,13 @@ module.exports.gameconfig = {
       heroText: 'Collect keys to unlock the series of doors heading south '
                 + 'from the entryway (red room). Get to the garden with all '
                 + 'the other heroes to win.',
-      traitorFlavor: 'Some flavor text.',
-      traitorText: 'Use E and all that crap. Kill people.'
+      traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
+                     + 'from inside the walls. It promises you great power; '
+                     + 'the power to drop poisonous items throughout the '
+                     + 'house. All you must do is destroy those foos who came '
+                     + 'here with you.',
+      traitorText: 'Press \'e\' to drop poisonous items. Press space '
+                   + 'to attack. Kill one of the heroes to win.'
     }
   }
 }
