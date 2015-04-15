@@ -75,12 +75,16 @@ module.exports.gameconfig = {
     'woodFloor': {gridX: 5, gridY: 13, gridW: 1, gridH: 1},
     'wall': {gridX: 7, gridY: 13, gridW: 1, gridH: 1},
     'lightning': {gridX: 0, gridY: 14, gridW: 1, gridH: 1},
+    'poisonLightning': {gridX: 0, gridY: 14, gridW: 1, gridH: 1},
     'heart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
+    'poisonHeart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
     'firstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
+    'poisonFirstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
     'sword': {gridX: 3, gridY: 14, gridW: 1, gridH: 1},
     'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1},
     'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
     'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
+    'poisonFlame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
     'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10},
     'grass': {gridX: 4, gridY: 15, gridW: 1, gridH: 1}
   },
@@ -126,6 +130,26 @@ module.exports.gameconfig = {
     'stone': {
       stat: 'relics',
       amount: 1,
+      abundance: 0
+    },
+    'poisonLightning': {
+      stat: 'speed',
+      amount: -1,
+      abundance: 0
+    },
+    'poisonHeart': {
+      stat: 'maxHealth',
+      amount: -1,
+      abundance: 0
+    },
+    'poisonFirstAid': {
+      stat: 'curHealth',
+      amount: -1,
+      abundance: 0
+    },
+    'poisonFlame': {
+      stat: 'weapon',
+      amount: -1,
       abundance: 0
     }
   },
@@ -1139,6 +1163,21 @@ module.exports.gameconfig = {
                    + 'you must do is destroy those fools who came here with '
                    + 'you.',
       traitorText: 'Press \'e\' to alter your appearance. Press space '
+                   + 'to attack. Kill one of the heroes to win.'
+    },
+    'poisonItems': {
+      title: 'Poison Items',
+      heroFlavor: 'One of your comrades has turned against you. Escape the '
+                  + 'house before it\'s too late!',
+      heroText: 'Collect keys to unlock the series of doors heading south '
+                + 'from the entryway (red room). Get to the garden with all '
+                + 'the other heroes to win.',
+      traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
+                     + 'from inside the walls. It promises you great power; '
+                     + 'the power to drop poisonous items throughout the '
+                     + 'house. All you must do is destroy those foos who came '
+                     + 'here with you.',
+      traitorText: 'Press \'e\' to drop poisonous items. Press space '
                    + 'to attack. Kill one of the heroes to win.'
     }
   }

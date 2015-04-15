@@ -8,7 +8,6 @@ define([
    */
   function makeHauntAdapter(hauntName) {
     var that = this;
-    //var hauntAdpt;
 
     switch(hauntName) {
       case 'plant':
@@ -19,11 +18,27 @@ define([
           usePower: function() {
             that._gameModelAdpt.changeSprite(this.spriteList[this.nextSprite]);
             this.nextSprite = (this.nextSprite + 1) % this.spriteList.length;
-            }
+          }
+        };
+        break;
+      case 'poisonItems':
+        return {
+          itemList: ['poisonLightning', 'poisonFirstAid', 'poisonHeart', 'poisonFlame'],
+          nextItem: 0,
+
+          usePower: function() {
+            that._gameModelAdpt.dropItem(this.itemList[this.nextItem]);
+            this.nextItem = (this.nextItem + 1) % this.itemList.length;
+          }
         };
         break;
       default:
-        return "Not a valid haunt";
+        return {
+          /* Null adpater. */
+          usePower: function() {
+
+          }
+        }
     }
   }
 

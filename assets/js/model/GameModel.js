@@ -195,7 +195,8 @@ define([
             },
 
             onDestroy: function() {
-              that._viewAdpt.messageReceived(player, 'died');
+              that._viewAdpt.displayTextOverlay("", "", player.name + " died.",
+                                                0, true, function() {});
               playerViewAdpt.destroy();
               delete that._otherPlayers[v.id];
             }
@@ -247,9 +248,7 @@ define([
     io.socket.put('/game/' + this._gameID, {active: true}, function(res) {
       var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
-      that._viewAdpt.startGame(roomConfig, function() {});
-
-      that._viewAdpt.updateMap(that._roomCache);
+      that._viewAdpt.startGame(roomConfig, that._roomCache);
     });
   }
 
@@ -562,7 +561,8 @@ define([
           },
 
           onDestroy: function() {
-            that._viewAdpt.messageReceived(player, 'died');
+            that._viewAdpt.displayTextOverlay("", "", player.name + " died.",
+                                              0, true, function() {});
             playerViewAdpt.destroy();
             delete that._otherPlayers[player.id];
           }
@@ -703,6 +703,10 @@ define([
           }
 
           that._viewAdpt.messageReceived(player, o.data.message);
+        } else if (o.data.verb === 'info') {
+
+          that._viewAdpt.displayTextOverlay("", "", o.data.message, 0, true,
+                                            function() {});
         }
 
       } else if (o.verb === 'updated') {
@@ -715,7 +719,7 @@ define([
         if (o.data.active !== undefined) {
           var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
 
-          that._viewAdpt.startGame(roomConfig, function() {});
+          that._viewAdpt.startGame(roomConfig, that._roomCache);
 
         } else if (o.data.haunt !== undefined) {
           /*
@@ -725,11 +729,25 @@ define([
 
           that._viewAdpt.hideRelicsShowKeys();
 
-          var factory = new HauntFactory({  /* Haunt to Game Model Adapter */
+          var factory = new HauntFactory({
+            /* Haunt to Game Model Adapter */
+
             changeSprite: function(spriteName) {
               that._viewAdpt.changePlayerSprite(spriteName);
               io.socket.put('/player/' + that._player.id, {sprite: spriteName},
                 function(err, player) {});
+            },
+
+            dropItem: function(type) {
+              io.socket.post('/item/create', { type: type,
+                                               gridX: that._player.x / 32,
+                                               gridY: that._player.y / 32,
+                                               room: that._player.room,
+                                               game: that._gameID,
+                                               heroesOnly: true
+                                             }, function(err, item) {
+                console.log(item);
+              });
             }
           });
           that._hauntAdpt = factory.makeHauntAdapter(o.data.haunt);
