@@ -27,6 +27,7 @@ define([
           break;
         case 'maxHealth':
           that.maxHealth = Math.max(0, that.maxHealth + amount);
+          that.curHealth = Math.min(that.curHealth, that.maxHealth);
           break;
         case 'curHealth':
           that.curHealth = Math.max(0, that.curHealth + amount);
