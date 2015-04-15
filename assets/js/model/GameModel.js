@@ -375,7 +375,7 @@ define([
                                           resData.text, 0, true, function() {});
       } else {
         that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
-                                          resData.text, 2000, true, function() {
+                                          resData.text, 2000, false, function() {
           for (var stat in resData.effect) {
             /* For right now, event effects only alter stats. */
             that._player[stat] = that._player[stat] + resData.effect[stat];
