@@ -305,8 +305,8 @@ define([
         that._view.displayTextOverlay(title, flavorText, text, timeout, dismissable, cb);
       },
 
-      hideRelicsShowKeys: function() {
-        that._view.hideRelicsShowKeys();
+      onHauntStart: function() {
+        that._view.onHauntStart();
       }
     });
 

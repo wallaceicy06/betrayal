@@ -727,7 +727,7 @@ define([
            */
           that._combatEnabled = true;
 
-          that._viewAdpt.hideRelicsShowKeys();
+          that._viewAdpt.onHauntStart();
 
           var factory = new HauntFactory({
             /* Haunt to Game Model Adapter */

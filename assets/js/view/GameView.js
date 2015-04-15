@@ -24,6 +24,7 @@ define([
         'powerup': ['sounds/powerup.wav'],
         'game_start': ['sounds/game_start.mp3'],
         'die': ['sounds/die.wav'],
+        'thunder': ['sounds/thunder.mp3'],
         'slider': ['sounds/01_Slider.mp3'],
         'tossed': ['sounds/02_Tossed.mp3']
     },
@@ -1083,9 +1084,12 @@ define([
     }, timeout + 3000);
   }
 
-  function hideRelicsShowKeys() {
+  function onHauntStart() {
+    /* Hide relics, show keys */
     $('.player-relics').addClass('hidden');
     $('.player-keys').removeClass('hidden');
+    /* Play thunder sound */
+    Crafty.audio.play('thunder');
   }
 
   function formToJSON(inputArray) {
@@ -1263,7 +1267,7 @@ define([
     this.displayGamePane = displayGamePane.bind(this);
     this.enableGame = enableGame.bind(this);
     this.displayTextOverlay = displayTextOverlay.bind(this);
-    this.hideRelicsShowKeys = hideRelicsShowKeys.bind(this);
+    this.onHauntStart = onHauntStart.bind(this);
     this.installSpriteMap = installSpriteMap.bind(this);
     this.loadPurgatory = loadPurgatory.bind(this);
     this.loadRoom = loadRoom.bind(this);
