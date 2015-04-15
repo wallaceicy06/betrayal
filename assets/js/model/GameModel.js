@@ -277,7 +277,7 @@ define([
     });
 
     /* If the gateway is locked, try to unlock. */
-    if (gateway.locked) {
+    if (gateway.locked && !this._player.isTraitor) {
 
       if (this._player.keys === 0) {
 
