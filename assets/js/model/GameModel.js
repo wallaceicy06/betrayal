@@ -16,6 +16,13 @@ define([
   var ATTACK_COOLDOWN = 500;
   var MIN_SEND_WAIT = 32;
 
+  var OPPOSITE_DIRECTION = {
+    'north': 'south',
+    'south': 'north',
+    'east': 'west',
+    'west': 'east'
+  };
+
   function joinGame(playerName, gameID) {
     var that = this;
 
@@ -746,9 +753,10 @@ define([
                   }
                 });
                 if (!gateway.locked) {
-                  that._roomCache[that._currentRoom.id].setLocked(doorID, true);
                   io.socket.put('/gateway/update/' + gateway.id, { locked: true },
-                      function(gateways) {});
+                      function(gateways) {
+                        that._roomCache[that._currentRoom.id].setLocked(doorID, true);
+                      });
                   return true;
                 }
               }

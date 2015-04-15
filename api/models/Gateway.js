@@ -21,6 +21,27 @@ module.exports = {
     locked: {type: 'boolean',
              required: true,
              defaultsTo: false}
+  },
+
+  afterUpdate: function(gateway, cb) {
+    Gateway.findOne({roomFrom: gateway.roomTo, roomTo: gateway.roomFrom})
+      .then(function(otherGateway) {
+        if (otherGateway.locked == gateway.locked) {
+          throw new sails.promise.CancellationError();
+        }
+        return Gateway.update(otherGateway.id, {locked: gateway.locked});
+      }).then(function(updatedGateways) {
+        _.each(updatedGateways, function(updatedGateway) {
+          Gateway.publishUpdate(updatedGateway.id, updatedGateway);
+        });
+      })
+      .catch(sails.promise.CancellationError, function(err) {
+        sails.log.error(err);
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+      });
+    cb();
   }
 };
 
