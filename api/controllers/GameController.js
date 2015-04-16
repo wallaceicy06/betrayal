@@ -78,7 +78,7 @@ module.exports = {
   },
 
   update: function(req, res) {
-    Game.update(req.param('id'), req.body)
+    Game.update(req.params.id, req.body)
       .then(function(games) {
         Game.publishUpdate(games[0].id, req.body);
         res.json(games[0].toJSON());
@@ -86,6 +86,34 @@ module.exports = {
       .catch(function(err) {
         console.log(err);
         res.json(err);
+      });
+  },
+
+  start: function(req, res) {
+    Player.count({ game: req.params.id })
+      .then(function(count) {
+        if (count >= Game.minPlayers) {
+          return Game.update(req.params.id, { active: true });
+        } else {
+          throw new sails.promise.CancellationError();
+        }
+      })
+      .then(function(games) {
+        _.each(games, function(game) {
+          Game.publishUpdate(game, { active: game.active }, req);
+        });
+
+        sails.log.warn(games);
+
+        res.json(games);
+      })
+      .catch(sails.promise.CancellationError, function(err) {
+        sails.log.warn('Cannot start game with less than 2 players.');
+        res.json({ error: 'You cannot start a game with less than 2 players.'});
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+        res.json({ error: err });
       });
   },
 
