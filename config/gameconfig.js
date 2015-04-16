@@ -1170,7 +1170,6 @@ module.exports.gameconfig = {
   },
 
   haunts: {
-    /*
     'plant': {
       heroFlavor: 'One of your comrades has turned against you. Escape the '
                   + 'house before it\'s too late!',
@@ -1185,7 +1184,6 @@ module.exports.gameconfig = {
       traitorText: 'Press \'e\' to alter your appearance. Press space '
                    + 'to attack. Kill one of the heroes to win.'
     },
-    */
     'lockedDoors': {
       heroFlavor: 'One of your comrades has turned against you. Escape the '
                   + 'house before it\'s too late!',
@@ -1200,8 +1198,7 @@ module.exports.gameconfig = {
                    + 'You can move through locked doors, but the heroes need '
                    + 'a key to do so. You can only lock up to three doors. '
                    + 'Press space to attack. Kill one of the heroes to win.'
-    }
-    /*
+    },
     'poisonItems': {
       heroFlavor: 'One of your comrades has turned against you. Escape the '
                   + 'house before it\'s too late!',
@@ -1216,6 +1213,5 @@ module.exports.gameconfig = {
       traitorText: 'Press \'e\' to drop poisonous items. Press space '
                    + 'to attack. Kill one of the heroes to win.'
     }
-    */
   }
 }
