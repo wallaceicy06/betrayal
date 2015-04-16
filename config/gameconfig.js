@@ -159,6 +159,11 @@ module.exports.gameconfig = {
       stat: 'weapon',
       amount: -1,
       abundance: 0
+    },
+    'key': {
+      stat: 'keys',
+      amount: 1,
+      abundance: 0
     }
   },
   rooms: {
@@ -552,7 +557,7 @@ module.exports.gameconfig = {
       itemLocs: [
         {x: 2, y: 2},
         {x: 14, y: 5},
-        {x: 4, y: 12},
+        {x: 4, y: 13},
         {x: 12, y: 12}
       ],
       objects: {

@@ -766,6 +766,17 @@ define([
                       function(gateways) {
                         that._roomCache[that._currentRoom.id].setLocked(doorID, true);
                       });
+
+                  io.socket.put('/game/randomItemLoc/' + that._gameID, {}, function(err, result) {
+                    io.socket.post('/item/create', { type: 'key',
+                                                 gridX: result.body.locX,
+                                                 gridY: result.body.locY,
+                                                 room: result.body.room,
+                                                 game: that._gameID,
+                                                 heroesOnly: true
+                                               }, function(err, item) {});
+                  })
+
                   return true;
                 }
               }

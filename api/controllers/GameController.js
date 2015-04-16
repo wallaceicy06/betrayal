@@ -30,6 +30,28 @@ module.exports = {
     res.json();
   },
 
+  randomItemLoc: function(req, res) {
+    Game.findOne(req.params.id).populate('rooms')
+      .then(function(game) {
+        var allRooms = game.rooms;
+        var chosenRoom;
+        var possibleLocs = [];
+
+        while (possibleLocs.length == 0) {
+          chosenRoom = allRooms[Math.floor(Math.random() * allRooms.length)];
+          possibleLocs = Room.layouts[chosenRoom.name].itemLocs;
+        }
+
+        var loc = possibleLocs[Math.floor(Math.random() * possibleLocs.length)];
+
+        res.json({room: chosenRoom.id, locX: loc.x, locY: loc.y});
+      })
+      .catch(function(err) {
+        sails.log.error(err);
+        res.json(err);
+      });
+  },
+
 	create: function(req, res) {
     Game.create({name: _.escape(req.body.name)},
                  function(err, game) {

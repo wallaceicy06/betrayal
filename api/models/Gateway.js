@@ -36,7 +36,7 @@ module.exports = {
         });
       })
       .catch(sails.promise.CancellationError, function(err) {
-        sails.log.error(err);
+        /* Do nothing */
       })
       .catch(function(err) {
         sails.log.error(err);
