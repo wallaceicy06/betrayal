@@ -1209,7 +1209,7 @@ module.exports.gameconfig = {
       traitorFlavor: 'You hear a voice speaking to you. It seems to be coming '
                      + 'from inside the walls. It promises you great power; '
                      + 'the power to drop poisonous items throughout the '
-                     + 'house. All you must do is destroy those foos who came '
+                     + 'house. All you must do is destroy those fools who came '
                      + 'here with you.',
       traitorText: 'Press \'e\' to drop poisonous items. Press space '
                    + 'to attack. Kill one of the heroes to win.'
