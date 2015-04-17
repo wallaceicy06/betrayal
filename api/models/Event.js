@@ -31,7 +31,7 @@ module.exports = {
             .then(function(numRelics) {
 
               sails.log.info('relics remaining: ' + numRelics);
-              if (numRelics == 0) {
+              if (numRelics == 0 && event.game.haunt == undefined) {
                 Game.startHaunt(event.game);
               }
 
