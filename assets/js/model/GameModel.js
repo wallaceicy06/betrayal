@@ -256,10 +256,15 @@ define([
   function startGame() {
     var that = this;
 
-    io.socket.put('/game/' + this._gameID, {active: true}, function(res) {
-      var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
+    io.socket.post('/game/start/' + this._gameID, {}, function(games) {
 
-      that._viewAdpt.startGame(roomConfig, that._roomCache);
+      if (_.has(games, 'error')) {
+        that._viewAdpt.displayTextOverlay('', '', games.error, 0, true, function() {});
+      } else if (games.length > 0) {
+        var roomConfig = prepareRoomConfig.call(that, that._currentRoom);
+
+        that._viewAdpt.startGame(roomConfig, that._roomCache);
+      }
     });
   }
 

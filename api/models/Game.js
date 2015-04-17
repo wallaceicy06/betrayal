@@ -441,6 +441,8 @@ module.exports = {
       });
   },
 
+  minPlayers: sails.config.gameconfig.minPlayers,
+
   sprites: sails.config.gameconfig.sprites,
 
   cards: sails.config.gameconfig.cards,
