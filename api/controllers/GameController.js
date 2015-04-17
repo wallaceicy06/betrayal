@@ -100,7 +100,7 @@ module.exports = {
       })
       .then(function(games) {
         _.each(games, function(game) {
-          Game.publishUpdate(game, { active: game.active }, req);
+          Game.publishUpdate(game.id, { active: game.active }, req);
         });
 
         sails.log.warn(games);
