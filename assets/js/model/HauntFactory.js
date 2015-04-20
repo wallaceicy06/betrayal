@@ -22,7 +22,7 @@ define([
         };
         break;
       case 'poisonItems':
-        var MIN_POISON_DROP = 8000;
+        var MIN_POISON_DROP = 5000;
 
         return {
           itemList: ['poisonLightning', 'poisonFirstAid', 'poisonHeart', 'poisonFlame'],
