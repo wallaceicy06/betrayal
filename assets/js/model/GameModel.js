@@ -29,6 +29,7 @@ define([
     io.socket.get('/game/' + gameID, function (game) {
       that._haunts = game.haunts;
       that._viewAdpt.installSpriteMap(game.sprites);
+      that._viewAdpt.setGameName(game.name);
 
       var color;
       if (game.players.length === 0) {

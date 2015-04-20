@@ -243,6 +243,10 @@ define([
         that._view.installSpriteMap(sprites);
       },
 
+      setGameName: function(gameName) {
+        that._view.setGameName(gameName);
+      },
+
       loadGame: function() {
         that._view.loadPurgatory();
         that._view.displayGamePane(true);
