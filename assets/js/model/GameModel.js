@@ -390,6 +390,7 @@ define([
         that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
                                           resData.text, 0, true, function() {});
       } else {
+        that._viewAdpt.playSound(resData.sound);
         that._viewAdpt.displayTextOverlay(resData.title, resData.flavorText,
                                           resData.text, 2000, false, function() {
           for (var stat in resData.effect) {
@@ -440,7 +441,7 @@ define([
              * room.
              */
             if (that._currentRoom.id == item.room) {
-              that._viewAdpt.dropItem(item);
+              that._viewAdpt.addItem(item);
             }
           },
 
@@ -470,6 +471,7 @@ define([
                   function (resData, jwr) {});
   }
 
+  /* TODO deprecated? */
   function sendEventMessage(message) {
     io.socket.put('/game/sendChatMessage/' + this._gameID, {message: message,
                   playerID: undefined}, function (resData, jwr) {});
@@ -479,6 +481,7 @@ define([
    * Performs the given event, altering player stats as necessary.
    * Returns the title and text of the event to be displayed.
    */
+  /* TODO deprecated? */
   function performEvent(eventID) {
     io.socket.put('/room/removeEvent/' + this._currentRoom.id, {},
                   function(resData, jwr) {});

@@ -70,15 +70,15 @@ module.exports = {
     Game.findOne(gameID).populate('players').populate('rooms')
       .then(function(found) {
         if (found === undefined) {
-          return;
-        }
-
-        if (found.haunt !== undefined) {
-          sails.log.info("Haunt already started.");
-          return;
+          throw new Erro("Game could not be found.");
         }
 
         game = found;
+
+        if (game.haunt !== undefined) {
+          sails.log.info("Haunt already started.");
+          throw new sails.promise.CancellationError();
+        }
 
         var traitor = game.players[Math.floor(Math.random()
                                    * game.players.length)];
@@ -179,6 +179,9 @@ module.exports = {
       .then(function(gateways) {
         sails.log.info('gateways created');
         sails.log.info(gateways);
+      })
+      .catch(sails.promise.CancellationError, function(err) {
+        sails.log.warn("Haunt already started.");
       })
       .catch(function(err) {
         sails.log.error(err);

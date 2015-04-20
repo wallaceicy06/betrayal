@@ -63,10 +63,11 @@ module.exports = {
         var prefix = Room.interactable[furnitureType].prefix;
 
         if (events.length == 0) {
-          return res.json({title: '',
-                           flavorText: prefix,
-                           text: 'Nothing happened.',
-                           effect: null});
+          return res.json({ title: '',
+                            flavorText: prefix,
+                            text: 'Nothing happened.',
+                            effect: null,
+                            sound: null });
         }
 
         /* There only should be one destroyed event at maximum. */
@@ -77,7 +78,8 @@ module.exports = {
           title: card.title,
           flavorText: prefix + ' ' + card.flavorText,
           text: card.text,
-          effect: card.effect
+          effect: card.effect,
+          sound: card.sound
         });
       })
       .catch(function(err) {

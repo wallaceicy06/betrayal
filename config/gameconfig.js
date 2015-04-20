@@ -1073,21 +1073,24 @@ module.exports.gameconfig = {
                   + 'walls surrounding you. As you start to scream, they '
                   + 'vanish.',
       text: 'Lose one health.',
-      effect: {curHealth: -1}
+      effect: {curHealth: -1},
+      sound: null
     },
     smoke: {
       title: 'Smoke',
       flavorText: 'A strange smoke fills the room. You can feel it weakening '
                   + 'you with each breath.',
       text: 'Lose one speed.',
-      effect: {speed: -1}
+      effect: {speed: -1},
+      sound: null
     },
     puppet: {
       title: 'Creepy Puppet',
       flavorText: 'You see a strange doll. Suddenly, it jumps out and attacks '
                   + 'you.',
       text: 'Lose one health.',
-      effect: {curHealth: -1}
+      effect: {curHealth: -1},
+      sound: null
     },
     mirrorPast: {
       title: 'Image in the Mirror',
@@ -1095,7 +1098,8 @@ module.exports.gameconfig = {
                   + 'realize it is you from another time. It scratches into '
                   + 'the mirror "This will help" and hands you an item.',
       text: 'Gain one attack power!',
-      effect: {weapon: 1}
+      effect: {weapon: 1},
+      sound: null
     },
     mirrorFuture: {
       title: 'Image in the Mirror',
@@ -1103,7 +1107,8 @@ module.exports.gameconfig = {
                   + 'realize it is you from another time. You scratch into '
                   + 'the mirror "This will help" and hand it an item.',
       text: 'Lose one attack power.',
-      effect: {weapon: -1}
+      effect: {weapon: -1},
+      sound: null
     },
     ghost: {
       title: 'Ghost',
@@ -1111,7 +1116,8 @@ module.exports.gameconfig = {
                   + 'ghost rushes toward you! You jump back, but it passes '
                   + 'right through you, chilling you to the bone.',
       text: 'Max health decreased by one.',
-      effect: {maxHealth: -1}
+      effect: {maxHealth: -1},
+      sound: null
     },
     book: {
       title: 'Book',
@@ -1119,7 +1125,8 @@ module.exports.gameconfig = {
                   + 'together. The title has worn off, but it seems to be '
                   + 'a book of powerful spells.',
       text: 'Gain one attack power!',
-      effect: {weapon: 1}
+      effect: {weapon: 1},
+      sound: null
     },
     youthPotion: {
       title: 'Youth Potion',
@@ -1128,7 +1135,8 @@ module.exports.gameconfig = {
                   + 'moment, then pop off the cap and drink. You can\'t '
                   + 'explain it, but you feel somehow better . . . stronger.',
       text: 'Max Health increased by one!',
-      effect: {maxHealth: 1}
+      effect: {maxHealth: 1},
+      sound: null
     },
     shoes: {
       title: 'Running Shoes',
@@ -1137,14 +1145,16 @@ module.exports.gameconfig = {
                   + 'you back. You quickly take off your own shoes and slip '
                   + 'these on.',
       text: 'Gain one speed!',
-      effect: {speed: 1}
+      effect: {speed: 1},
+      sound: null
     },
     bandage: {
       title: 'Bandages',
       flavorText: 'Sitting there is a pack of bandaids. You put one on your '
                   + 'knee where you had scraped yourself earlier.',
       text: 'Gain one health!',
-      effect: {curHealth: 1}
+      effect: {curHealth: 1},
+      sound: null
     },
     relic1: {
       title: 'Relic',
@@ -1152,49 +1162,56 @@ module.exports.gameconfig = {
                   + 'pick it up. As you hold it in your hands, it seems to '
                   + 'pulse with some kind of power.',
       text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1}
+      effect: {relics: 1},
+      sound: 'organ'
     },
     relic2: {
       title: 'Relic',
       flavorText: 'You see a strange amulet before you. As you pick it up, '
                   + 'you feel some sort of power coursing through your veins.',
       text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1}
+      effect: {relics: 1},
+      sound: 'organ'
     },
     relic3: {
       title: 'Relic',
       flavorText: 'There is a small box covered in runes. You open it and '
                   + 'feel a cold breeze wash over you, but the box is empty.',
       text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1}
+      effect: {relics: 1},
+      sound: 'organ'
     },
     relic4: {
       title: 'Relic',
       flavorText: 'You uncover a crystal ball. You look deep within its glass'
                   + 'and see your future life unfold before you.',
       text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1}
+      effect: {relics: 1},
+      sound: 'organ'
     },
     relic5: {
       title: 'Relic',
       flavorText: 'You discover a battered ring with an interesting inscription'
                   + 'The bearer of the ring will possess incomprehensible power',
       text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1}
+      effect: {relics: 1},
+      sound: 'organ'
     },
     relic6: {
       title: 'Relic',
       flavorText: 'You find a spirit board that can call the dead. You hear the'
                   + 'sounds of the house\'s ghosts whispering all around you.',
       text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1}
+      effect: {relics: 1},
+      sound: 'organ'
     },
     relic7: {
       title: 'Relic',
       flavorText: 'A friendly dog! Albeit mangy, the dog seems friendly as '
                   + 'he comforts you.',
       text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1}
+      effect: {relics: 1},
+      sound: 'organ'
     }
   },
 

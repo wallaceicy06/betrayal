@@ -286,8 +286,12 @@ define([
         that._view.removeItem(id);
       },
 
-      dropItem: function(item) {
-        that._view.dropItem(item);
+      addItem: function(item) {
+        that._view.placeItem(item);
+      },
+
+      playSound: function(sound) {
+        that._view.playSound(sound);
       },
 
       addGame: function(game) {
