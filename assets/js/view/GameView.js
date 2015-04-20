@@ -400,7 +400,6 @@ define([
       var waitImage = Crafty.e('2D, Canvas, Image')
         .image("images/game/wait_screen.png")
         .attr({x: 576/2 - 200, y: 512/2 - 200, w: 400, h: 400});
-
     });
 
     Crafty.defineScene('room', function(roomConfig) {
@@ -1114,6 +1113,10 @@ define([
     }
   }
 
+  function setGameName(gameName) {
+    document.getElementById('game-name').innerHTML = gameName;
+  }
+
   function playSound(sound) {
     Crafty.audio.play(sound);
   }
@@ -1204,7 +1207,6 @@ define([
       $(this).children('.alert').addClass('invisible');
 
       that._gameModelAdpt.onJoinClick(formData.playerName, formData.gameID);
-
     });
 
     $('#ipt-message').focusout(function(e) {
@@ -1314,6 +1316,7 @@ define([
     this.reset = reset.bind(this);
     this.addGameOption = addGameOption.bind(this);
     this.setGameOptions = setGameOptions.bind(this);
+    this.setGameName = setGameName.bind(this);
     this.setHuskSprite = setHuskSprite.bind(this);
     this.start = start.bind(this);
   }
