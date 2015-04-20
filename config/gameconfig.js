@@ -51,7 +51,16 @@ module.exports.gameconfig = {
     },
     poolTable: {
       prefix: 'You meet a ghost and take it up on game of pool.'
-    }
+    },
+    blueBed : {
+      prefix: 'You look under the bed.'
+    },
+    redBed : {
+      prefix: 'You look under the bed.'
+    },
+    stove : {
+      prefix: 'You open the oven.'
+    },
   },
   sprites: {
     'couch': {gridX: 0, gridY: 0, gridW: 4, gridH: 2},
