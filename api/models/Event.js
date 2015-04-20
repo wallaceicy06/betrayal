@@ -27,14 +27,27 @@ module.exports = {
       for (var stat in Event.cards[event.card].effect) {
         if (stat === 'relics') {
 
-          Event.count({card: {'contains': 'relic'}, game: event.game})
-            .then(function(numRelics) {
+          Player.find({ game: event.game })
+            .then(function(players) {
+              /*
+               * This needs to be initialized to 1 since stat updates are
+               * currently handled client side and won't be updated until after
+               * this callback is over.
+               */
+              var relicsFound = 1;
 
-              sails.log.info('relics remaining: ' + numRelics);
-              if (numRelics == 0 && event.game.haunt == undefined) {
+              _.each(players, function(p) {
+                relicsFound += p.relics;
+              });
+
+              var hauntCutoff = Game.hauntCutoff(relicsFound, 7);
+              sails.log.info("the haunt cutoff is " + hauntCutoff);
+
+              var rand = Math.random();
+              sails.log.info("rand: " + rand);
+              if (rand < hauntCutoff) {
                 Game.startHaunt(event.game);
               }
-
             })
             .catch(function(err) {
               sails.log.error(err);

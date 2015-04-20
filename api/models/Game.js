@@ -73,6 +73,11 @@ module.exports = {
           return;
         }
 
+        if (found.haunt !== undefined) {
+          sails.log.info("Haunt already started.");
+          return;
+        }
+
         game = found;
 
         var traitor = game.players[Math.floor(Math.random()
@@ -223,10 +228,17 @@ module.exports = {
 
     houseGrid[i][j] = 'entryway';
     openGridLocs.push([6,6], [7,5], [7,7]);
-    roomsToCreate.push({game: game.id, name: 'entryway', background: entrywayLayout.floor, wallSprite: entrywayLayout.wallSprite});
+    roomsToCreate.push({ game: game.id,
+                         name: 'entryway',
+                         background: entrywayLayout.floor,
+                         wallSprite:
+                         entrywayLayout.wallSprite });
 
     houseGrid[i + 1][j] = 'exithallway';
-    roomsToCreate.push({game: game.id, name: 'exithallway', background: exitLayout.floor, wallSprite: entrywayLayout.wallSprite});
+    roomsToCreate.push({ game: game.id,
+                         name: 'exithallway',
+                         background: exitLayout.floor,
+                         wallSprite: entrywayLayout.wallSprite });
 
     for (var k = i + 2; k < houseGrid.length; k++) {
       houseGrid[k][j] = 'dummy';
@@ -441,11 +453,15 @@ module.exports = {
       });
   },
 
+  hauntCutoff: function(relicsFound, totalRelics) {
+    return Math.pow(2, (1.0 / totalRelics) * relicsFound) - 1;
+  },
+
   minPlayers: sails.config.gameconfig.minPlayers,
 
   sprites: sails.config.gameconfig.sprites,
 
   cards: sails.config.gameconfig.cards,
 
-  haunts: sails.config.gameconfig.haunts
+  haunts: sails.config.gameconfig.haunts,
 };
