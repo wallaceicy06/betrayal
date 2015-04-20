@@ -286,8 +286,8 @@ define([
         that._view.removeItem(id);
       },
 
-      placeItem: function(item) {
-        that._view.placeItem(item);
+      dropItem: function(item) {
+        that._view.dropItem(item);
       },
 
       addGame: function(game) {

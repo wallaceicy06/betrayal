@@ -26,7 +26,8 @@ define([
         'die': ['sounds/die.wav'],
         'thunder': ['sounds/thunder.mp3'],
         'slider': ['sounds/slider.mp3'],
-        'tossed': ['sounds/tossed.mp3']
+        'tossed': ['sounds/tossed.mp3'],
+        'pop': ['sounds/pop.wav']
     },
     'sprites': {
       'images/game/sprites.png': {
@@ -578,6 +579,12 @@ define([
 
   function loadMap(allRooms) {
     this._miniMap.drawMap(allRooms, this._playerModelAdpt.getRoom());
+  }
+
+  function dropItem(item) {
+    placeItem.call(this, item);
+
+    Crafty.audio.play('pop');
   }
 
   function placeItem(item) {
@@ -1301,7 +1308,7 @@ define([
     this.loadRoom = loadRoom.bind(this);
     this.loadMap = loadMap.bind(this);
     this.makePlayerView = makePlayerView.bind(this);
-    this.placeItem = placeItem.bind(this);
+    this.dropItem = dropItem.bind(this);
     this.removeAllHusks = removeAllHusks.bind(this);
     this.removeItem = removeItem.bind(this);
     this.reset = reset.bind(this);

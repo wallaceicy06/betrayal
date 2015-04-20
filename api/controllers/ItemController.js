@@ -16,7 +16,7 @@ module.exports = {
     Item.create(attrs)
       .then(function(item) {
         Item.subscribe(req, item.id);
-        Item.publishCreate(item);
+        Item.publishCreate(item, req);
         res.json(item);
       })
       .catch(function(err) {

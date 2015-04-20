@@ -440,7 +440,7 @@ define([
              * room.
              */
             if (that._currentRoom.id == item.room) {
-              that._viewAdpt.placeItem(item);
+              that._viewAdpt.dropItem(item);
             }
           },
 
@@ -751,7 +751,7 @@ define([
             changeSprite: function(spriteName) {
               that._viewAdpt.changePlayerSprite(spriteName);
               io.socket.put('/player/' + that._player.id, {sprite: spriteName},
-                function(err, player) {});
+                function(player) {});
             },
 
             /* Returns true if this player successfully locked a door */
@@ -772,14 +772,14 @@ define([
                         that._roomCache[that._currentRoom.id].setLocked(doorID, true);
                       });
 
-                  io.socket.put('/game/randomItemLoc/' + that._gameID, {}, function(err, result) {
+                  io.socket.put('/game/randomItemLoc/' + that._gameID, {}, function(result) {
                     io.socket.post('/item/create', { type: 'key',
-                                                 gridX: result.body.locX,
-                                                 gridY: result.body.locY,
-                                                 room: result.body.room,
+                                                 gridX: result.locX,
+                                                 gridY: result.locY,
+                                                 room: result.room,
                                                  game: that._gameID,
                                                  heroesOnly: true
-                                               }, function(err, item) {});
+                                               }, function(item, err) {});
                   })
 
                   return true;
@@ -795,8 +795,11 @@ define([
                                                room: that._player.room,
                                                game: that._gameID,
                                                heroesOnly: true
-                                             }, function(err, item) {
-                console.log(item);
+                                             }, function(item, err) {
+
+                if (item.room in that._roomCache) {
+                  that._roomCache[item.room].addItem(item);
+                }
               });
             }
           });
