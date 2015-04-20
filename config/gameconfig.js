@@ -1183,7 +1183,7 @@ module.exports.gameconfig = {
     },
     relic4: {
       title: 'Relic',
-      flavorText: 'You uncover a crystal ball. You look deep within its glass'
+      flavorText: 'You uncover a crystal ball. You look deep within its glass '
                   + 'and see your future life unfold before you.',
       text: 'Gain one relic! You are one step closer to the second phase.',
       effect: {relics: 1},
@@ -1191,28 +1191,20 @@ module.exports.gameconfig = {
     },
     relic5: {
       title: 'Relic',
-      flavorText: 'You discover a battered ring with an interesting inscription'
+      flavorText: 'You discover a battered ring with an interesting inscription: '
                   + 'The bearer of the ring will possess incomprehensible power',
       text: 'Gain one relic! You are one step closer to the second phase.',
       effect: {relics: 1},
       sound: 'organ'
-    },
-    relic6: {
+    }
+    /*relic6: {
       title: 'Relic',
       flavorText: 'You find a spirit board that can call the dead. You hear the'
                   + 'sounds of the house\'s ghosts whispering all around you.',
       text: 'Gain one relic! You are one step closer to the second phase.',
       effect: {relics: 1},
       sound: 'organ'
-    },
-    relic7: {
-      title: 'Relic',
-      flavorText: 'A friendly dog! Albeit mangy, the dog seems friendly as '
-                  + 'he comforts you.',
-      text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1},
-      sound: 'organ'
-    }
+    }*/
   },
 
   haunts: {
