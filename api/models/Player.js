@@ -79,10 +79,12 @@ module.exports = {
             Game.message(player.game, {verb: 'traitorWon'});
           }
 
-          return Player.count({game: player.game});
+          return [game, Player.count({game: player.game})];
         })
-        .then(function(count) {
-          if (count == 0) {
+        .spread(function(game, count) {
+          if (game.haunt === undefined && count < Game.minPlayers) {
+            return Game.destroy(player.game);
+          } else if (game.haunt !== undefined && count === 0) {
             return Game.destroy(player.game);
           } else {
             return [];
