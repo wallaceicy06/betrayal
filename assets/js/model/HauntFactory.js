@@ -22,20 +22,27 @@ define([
         };
         break;
       case 'poisonItems':
+        var MIN_POISON_DROP = 8000;
+
         return {
           itemList: ['poisonLightning', 'poisonFirstAid', 'poisonHeart', 'poisonFlame'],
           nextItem: 0,
+          lastPlace: new Date().getTime(),
 
           usePower: function() {
-            that._gameModelAdpt.dropItem(this.itemList[this.nextItem]);
-            this.nextItem = (this.nextItem + 1) % this.itemList.length;
+            var curTime = new Date().getTime();
+            if (curTime - this.lastPlace > MIN_POISON_DROP) {
+              that._gameModelAdpt.dropItem(this.itemList[this.nextItem]);
+              this.nextItem = (this.nextItem + 1) % this.itemList.length;
+              this.lastPlace = curTime;
+            }
           }
         };
         break;
       case 'lockedDoors':
         return {
           locksRemaining: 3,
-          
+
           usePower: function() {
             if (this.locksRemaining < 1) {
               console.log("Out of locks");
