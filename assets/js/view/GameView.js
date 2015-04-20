@@ -1075,6 +1075,22 @@ define([
                                                   dismissable: dismissable,
                                                   seconds: secondsLeft}));
 
+   var existingDismissable = $('#overlay-stack .dismissable');
+
+    existingDismissable.fadeOut('fast', function() {
+      this.remove();
+      $('#overlay-stack').append(overlay);
+      overlay.fadeIn('slow');
+    });
+
+    if (existingDismissable.length == 0) {
+      $('#overlay-stack').append(overlay);
+      overlay.fadeIn('slow');
+    }
+
+    setTimeout(function() {
+      overlay.fadeOut('slow', function() {this.remove()});
+    }, timeout + 3000);
 
     if (secondsLeft > 0) {
       that._player.disableControl();
@@ -1094,15 +1110,6 @@ define([
         }
       }, 1000);
     }
-
-    $('#overlay-stack .dismissable').fadeOut('fast', function() {this.remove()});
-
-    $('#overlay-stack').append(overlay);
-
-    overlay.fadeIn('slow');
-    setTimeout(function() {
-      overlay.fadeOut('slow', function() {this.remove()});
-    }, timeout + 3000);
   }
 
   function onHauntStart() {
