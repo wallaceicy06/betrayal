@@ -40,7 +40,8 @@ module.exports = {
                 relicsFound += p.relics;
               });
 
-              var hauntCutoff = Game.hauntCutoff(relicsFound, players.length);
+              var hauntCutoff = Game.hauntCutoff(relicsFound,
+                                                 players.length + 1);
               sails.log.info("the haunt cutoff is " + hauntCutoff);
 
               var rand = Math.random();
