@@ -9,7 +9,7 @@ module.exports = {
 
   autoWatch: false,
 
-  autosubscribe: ['update', 'destroy'],
+  autosubscribe: ['update', 'destroy', 'message'],
 
   attributes: {
     name: {type: 'string',
@@ -61,9 +61,20 @@ module.exports = {
 
   afterUpdate: function(player, cb) {
     if (player.curHealth < 1) {
-      sails.log.info('destroying ' + player.name);
-      Player.destroy(player.id);
-      Player.publishDestroy(player.id, {});
+      if (!player.isTraitor) { //If this is a hero, they are dead
+        sails.log.info('destroying ' + player.name);
+        Player.destroy(player.id);
+        Player.publishDestroy(player.id, {});
+      } else { //The traitor is stunned while they regenerate instead of dying
+        Player.message(player.id, {verb: 'stunned'});
+        Player.update(player.id, {curHealth: 3})
+          .then(function(updatedPlayer) {
+            Player.publishUpdate(player.id, {curHealth: 3});
+          })
+          .catch(function(err) {
+            sails.log.error(err);
+          });
+      }
     }
     cb();
   },
