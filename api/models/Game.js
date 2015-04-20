@@ -70,7 +70,7 @@ module.exports = {
     Game.findOne(gameID).populate('players').populate('rooms')
       .then(function(found) {
         if (found === undefined) {
-          throw new Erro("Game could not be found.");
+          throw new Error("Game could not be found.");
         }
 
         game = found;
