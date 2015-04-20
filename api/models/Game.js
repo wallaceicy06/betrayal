@@ -453,8 +453,8 @@ module.exports = {
       });
   },
 
-  hauntCutoff: function(relicsFound, totalRelics) {
-    return Math.pow(2, (1.0 / totalRelics) * relicsFound) - 1;
+  hauntCutoff: function(relicsFound, maxRelics) {
+    return Math.pow(2, relicsFound) / Math.pow(2, maxRelics);
   },
 
   minPlayers: sails.config.gameconfig.minPlayers,
