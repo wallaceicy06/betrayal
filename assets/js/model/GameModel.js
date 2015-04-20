@@ -441,6 +441,7 @@ define([
              * room.
              */
             if (that._currentRoom.id == item.room) {
+              that._viewAdpt.playSound('pop');
               that._viewAdpt.addItem(item);
             }
           },
