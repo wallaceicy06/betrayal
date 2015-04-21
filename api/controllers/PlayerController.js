@@ -52,9 +52,10 @@ module.exports = {
           if (req.body.locX !== undefined && req.body.locY !== undefined) {
             Room.message(player.room, { id: player.id,
                                         verb: 'playerUpdated',
-                                        data: req.body });
+                                        data: req.body },
+                         req);
           } else {
-            Player.publishUpdate(player.id, req.body);
+            Player.publishUpdate(player.id, req.body, req);
           }
         });
 

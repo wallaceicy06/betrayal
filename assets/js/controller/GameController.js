@@ -333,6 +333,10 @@ define([
         return that._model.onDoorVisit(doorID, cb);
       },
 
+      onLockedDoorVisit: function(doorID, cb) {
+        return that._model.onLockedDoorVisit(doorID, cb);
+      },
+
       onFurnitureInteract: function(furnitureID) {
         return that._model.onFurnitureInteract(furnitureID);
       },

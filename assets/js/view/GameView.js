@@ -115,6 +115,7 @@ define([
 
         this.onHit('Solid', this.stopMovement);
         this.onHit('Door', this.useDoor);
+        this.onHit('LockedDoor', this.useLockedDoor);
         this.onHit('Item', this.pickUpItem);
         this.onHit('HeroItem', this.pickUpHeroItem);
 
@@ -164,15 +165,13 @@ define([
       },
 
       useDoor: function(doorParts) {
-        this.stopMovement();
-
         var curTime = new Date().getTime();
         if (curTime - that._lastDoorVisit < MIN_DOOR_WAIT) {
           return;
         }
 
         /* Player cannot move as they go through a door */
-        this.disableControl();
+        // this.disableControl();
 
         that._lastDoorVisit = curTime;
 
@@ -180,6 +179,25 @@ define([
         var thatPlayer = this;
 
         that._gameModelAdpt.onDoorVisit(doorParts[0].obj.doorID, function() {
+          // thatPlayer.enableControl();
+        });
+      },
+
+      useLockedDoor: function(doorParts) {
+        this.stopMovement();
+
+        var thatPlayer = this;
+        thatPlayer.disableControl();
+
+        var curTime = new Date().getTime();
+        if (curTime - that._lastDoorVisit < MIN_DOOR_WAIT) {
+          this.enableControl();
+          return;
+        }
+
+        that._lastDoorVisit = curTime;
+
+        that._gameModelAdpt.onLockedDoorVisit(doorParts[0].obj.doorID, function() {
           thatPlayer.enableControl();
         });
       },
@@ -289,7 +307,7 @@ define([
 
     Crafty.c('LockedDoor', {
       init: function() {
-        this.requires('Door, SpriteLockedDoor');
+        this.requires('2D, Canvas, SpriteLockedDoor, RoomItem');
       }
     });
 
@@ -967,42 +985,41 @@ define([
     var widthInTiles = this._gameModelAdpt.getDimensions().width/TILE_WIDTH;
     var heightInTiles = this._gameModelAdpt.getDimensions().height/TILE_WIDTH;
 
-    console.log(gateways);
-
     for (var j = 0; j < widthInTiles; j++) {
       if(!('north' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
 
         Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH, y: 0});
-      } else {
-        var door;
+      } else if (gateways.north.locked) {
 
-        if (gateways.north.locked) {
-          door = Crafty.e('LockedDoor');
-        } else {
-          door = Crafty.e('Door');
-        }
-
-        door.attr( {x: j * TILE_WIDTH, y: 0, doorID: 'north' });
+        Crafty.e('LockedDoor').attr( { x: j * TILE_WIDTH,
+                                       y: 0,
+                                       doorID: 'north' });
       }
+
+      /* Always draw the adtual door behind the locked door. */
+      Crafty.e('Door').attr( { x: j * TILE_WIDTH,
+                               y: -TILE_WIDTH,
+                               doorID: 'north' });
+
 
       if(!('south' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
         Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH,
                                y: (heightInTiles - 1) * TILE_WIDTH});
-      } else {
-        var door;
 
-        if (gateways.south.locked) {
-          door = Crafty.e('LockedDoor');
-        } else {
-          door = Crafty.e('Door');
-        }
+      } else if (gateways.south.locked) {
 
-        door.attr({ x: j * TILE_WIDTH,
-                    y: (heightInTiles - 1) * TILE_WIDTH,
-                    doorID: 'south' });
+        Crafty.e('LockedDoor').attr({ x: j * TILE_WIDTH,
+                                      y: (heightInTiles - 1) * TILE_WIDTH,
+                                      doorID: 'south' });
+
       }
+
+      /* Always draw the adtual door behind the locked door. */
+      Crafty.e('Door').attr({ x: j * TILE_WIDTH,
+                              y: (heightInTiles) * TILE_WIDTH,
+                              doorID: 'south' });
     }
 
     for (var i = 0; i < heightInTiles; i++) {
@@ -1011,36 +1028,34 @@ define([
 
         Crafty.e('Wall', wallSprite).attr({x: 0,
                                y: i * TILE_WIDTH});
-      } else {
-        var door;
 
-        if (gateways.west.locked) {
-          door = Crafty.e('LockedDoor');
-        } else {
-          door = Crafty.e('Door');
-        }
+      } else if (gateways.west.locked) {
+        Crafty.e('LockedDoor').attr({ x: 0,
+                                      y: i * TILE_WIDTH - 1,
+                                      doorID: 'west' });
 
-        door.attr({ x: 0, y: i * TILE_WIDTH, doorID: 'west' });
       }
+
+      /* Always draw the adtual door behind the locked door. */
+      Crafty.e('Door').attr({ x: -TILE_WIDTH,
+                              y: i * TILE_WIDTH - 1,
+                              doorID: 'west' });
 
       if(!('east' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
         Crafty.e('Wall', wallSprite).attr({x: (widthInTiles - 1) * TILE_WIDTH,
                                y: i * TILE_WIDTH});
-      } else {
-        var door;
-
-        if (gateways.east.locked) {
-          door = Crafty.e('LockedDoor');
-        } else {
-          door = Crafty.e('Door');
-        }
-
-        door.attr({ x: (widthInTiles - 1) * TILE_WIDTH,
-                    y: i * TILE_WIDTH,
-                    doorID: 'east' });
+      } else if (gateways.east.locked) {
+        Crafty.e('LockedDoor').attr({ x: (widthInTiles - 1) * TILE_WIDTH,
+                                      y: i * TILE_WIDTH,
+                                      doorID: 'east' });
       }
+
+      /* Always draw the adtual door behind the locked door. */
+      Crafty.e('Door').attr({ x: (widthInTiles) * TILE_WIDTH,
+                              y: i * TILE_WIDTH,
+                              doorID: 'east' });
     }
 
   }
