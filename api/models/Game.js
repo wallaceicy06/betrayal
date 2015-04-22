@@ -155,10 +155,11 @@ module.exports = {
           gatewaysToCreate.push({ roomFrom: prevRoomID,
                                   roomTo: room.id,
                                   direction: 'south',
-                                  locked: true })
+                                  locked: true });
           gatewaysToCreate.push({ roomFrom: room.id,
                                   roomTo: prevRoomID,
-                                  direction: 'north' })
+                                  direction: 'north',
+                                  locked: true });
           prevRoomID = room.id;
         });
 
@@ -169,7 +170,8 @@ module.exports = {
 
         gatewaysToCreate.push({ roomFrom: exit.id,
                                 roomTo: prevRoomID,
-                                direction: 'north' });
+                                direction: 'north',
+                                locked: true });
 
         sails.log.info('about to create gateways');
         sails.log.info(gatewaysToCreate);
@@ -254,7 +256,8 @@ module.exports = {
 
     gatewaysToCreate.push({roomFrom: 'exithallway',
                            roomTo: 'entryway',
-                           direction: 'north'});
+                           direction: 'north',
+                           locked: true});
 
     var roomID;
     var room;

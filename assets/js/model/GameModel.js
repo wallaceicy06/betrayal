@@ -29,6 +29,7 @@ define([
     io.socket.get('/game/' + gameID, function (game) {
       that._haunts = game.haunts;
       that._viewAdpt.installSpriteMap(game.sprites);
+      that._viewAdpt.setGameName(game.name);
 
       var color;
       if (game.players.length === 0) {
@@ -657,6 +658,12 @@ define([
           that._player.destroy();
         } else {
           that._otherPlayers[o.id].destroy();
+        }
+      } else if (o.verb === 'messaged' && o.data.verb === 'stunned') {
+        if (o.id === that._player.id) {
+          that._viewAdpt.displayTextOverlay("Stunned", "", "", 5000, false, function() {});
+        } else {
+          that._viewAdpt.displayTextOverlay("Traitor Stunned", "", "The traitor has been stunned!", 0, false, function() {});
         }
       } else {
         console.log('unknown player message');
