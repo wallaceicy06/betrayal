@@ -107,8 +107,8 @@ module.exports.gameconfig = {
     'grass': {gridX: 4, gridY: 15, gridW: 1, gridH: 1}
   },
   playerDefaults: {
-    locX: 64,
-    locY: 64,
+    locX: 272,
+    locY: 416,
     color: 'blue',
     sprite: 'blue',
     maxHealth: 3,

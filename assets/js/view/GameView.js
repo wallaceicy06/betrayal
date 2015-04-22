@@ -92,12 +92,12 @@ define([
         this.reel('PlayerMovingLeft', 600, 2, 0, 1);
         this.reel('PlayerMovingDown', 600, 3, 0, 1);
 
-        this.animate('PlayerMovingRight', -1);
+        this.animate('PlayerMovingUp', -1);
       },
 
       setSprite: function(spriteString) {
         var row = COLOR_TO_ROW[spriteString];
-        this.sprite(0, row, 1, 1);
+        this.sprite(1, row, 1, 1);
         this.reel('PlayerMovingRight',600, 0, row, 1);
         this.reel('PlayerMovingUp',   600, 1, row, 1);
         this.reel('PlayerMovingLeft', 600, 2, row, 1);
