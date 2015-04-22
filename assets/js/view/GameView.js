@@ -74,6 +74,7 @@ define([
   var OVERLAY_CHAT_TEMPLATE = 'assets/templates/overlay_chat.html';
 
   var MIN_DOOR_WAIT = 500;
+  var MIN_LOCKED_DOOR_WAIT = 500;
 
   function installSpriteMap(sprites) {
     this._spriteMap = sprites;
@@ -190,12 +191,12 @@ define([
         thatPlayer.disableControl();
 
         var curTime = new Date().getTime();
-        if (curTime - that._lastDoorVisit < MIN_DOOR_WAIT) {
+        if (curTime - that._lastLockedDoorVisit < MIN_LOCKED_DOOR_WAIT) {
           this.enableControl();
           return;
         }
 
-        that._lastDoorVisit = curTime;
+        that._lastLockedDoorVisit = curTime;
 
         that._gameModelAdpt.onLockedDoorVisit(doorParts[0].obj.doorID, function() {
           thatPlayer.enableControl();
@@ -990,36 +991,40 @@ define([
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
 
         Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH, y: 0});
-      } else if (gateways.north.locked) {
+      } else {
 
-        Crafty.e('LockedDoor').attr( { x: j * TILE_WIDTH,
-                                       y: 0,
-                                       doorID: 'north' });
+        if (gateways.north.locked) {
+          Crafty.e('LockedDoor').attr( { x: j * TILE_WIDTH,
+                                         y: 0,
+                                         doorID: 'north' });
+        }
+
+        /* Always draw the adtual door behind the locked door. */
+        Crafty.e('Door').attr( { x: j * TILE_WIDTH,
+                                 y: -TILE_WIDTH,
+                                 doorID: 'north' });
+
       }
-
-      /* Always draw the adtual door behind the locked door. */
-      Crafty.e('Door').attr( { x: j * TILE_WIDTH,
-                               y: -TILE_WIDTH,
-                               doorID: 'north' });
-
 
       if(!('south' in gateways
            && (j == widthInTiles/2 || j == widthInTiles/2-1))) {
         Crafty.e('Wall', wallSprite).attr({x: j * TILE_WIDTH,
                                y: (heightInTiles - 1) * TILE_WIDTH});
 
-      } else if (gateways.south.locked) {
+      } else {
 
-        Crafty.e('LockedDoor').attr({ x: j * TILE_WIDTH,
-                                      y: (heightInTiles - 1) * TILE_WIDTH,
-                                      doorID: 'south' });
+        if (gateways.south.locked) {
+          Crafty.e('LockedDoor').attr({ x: j * TILE_WIDTH,
+                                        y: (heightInTiles - 1) * TILE_WIDTH,
+                                        doorID: 'south' });
+        }
 
+        /* Always draw the adtual door behind the locked door. */
+        Crafty.e('Door').attr({ x: j * TILE_WIDTH,
+                                y: (heightInTiles) * TILE_WIDTH,
+                                doorID: 'south' });
       }
 
-      /* Always draw the adtual door behind the locked door. */
-      Crafty.e('Door').attr({ x: j * TILE_WIDTH,
-                              y: (heightInTiles) * TILE_WIDTH,
-                              doorID: 'south' });
     }
 
     for (var i = 0; i < heightInTiles; i++) {
@@ -1029,33 +1034,41 @@ define([
         Crafty.e('Wall', wallSprite).attr({x: 0,
                                y: i * TILE_WIDTH});
 
-      } else if (gateways.west.locked) {
-        Crafty.e('LockedDoor').attr({ x: 0,
-                                      y: i * TILE_WIDTH - 1,
-                                      doorID: 'west' });
+      } else {
+
+        if (gateways.west.locked) {
+          Crafty.e('LockedDoor').attr({ x: 0,
+                                        y: i * TILE_WIDTH - 1,
+                                        doorID: 'west' });
+        }
+
+        /* Always draw the adtual door behind the locked door. */
+        Crafty.e('Door').attr({ x: -TILE_WIDTH,
+                                y: i * TILE_WIDTH - 1,
+                                doorID: 'west' });
 
       }
-
-      /* Always draw the adtual door behind the locked door. */
-      Crafty.e('Door').attr({ x: -TILE_WIDTH,
-                              y: i * TILE_WIDTH - 1,
-                              doorID: 'west' });
 
       if(!('east' in gateways
            && (i == heightInTiles/2 || i == heightInTiles/2-1))) {
 
         Crafty.e('Wall', wallSprite).attr({x: (widthInTiles - 1) * TILE_WIDTH,
                                y: i * TILE_WIDTH});
-      } else if (gateways.east.locked) {
-        Crafty.e('LockedDoor').attr({ x: (widthInTiles - 1) * TILE_WIDTH,
-                                      y: i * TILE_WIDTH,
-                                      doorID: 'east' });
+      } else {
+
+        if (gateways.east.locked) {
+          Crafty.e('LockedDoor').attr({ x: (widthInTiles - 1) * TILE_WIDTH,
+                                        y: i * TILE_WIDTH,
+                                        doorID: 'east' });
+        }
+
+        /* Always draw the adtual door behind the locked door. */
+        Crafty.e('Door').attr({ x: (widthInTiles) * TILE_WIDTH,
+                                y: i * TILE_WIDTH,
+                                doorID: 'east' });
+
       }
 
-      /* Always draw the adtual door behind the locked door. */
-      Crafty.e('Door').attr({ x: (widthInTiles) * TILE_WIDTH,
-                              y: i * TILE_WIDTH,
-                              doorID: 'east' });
     }
 
   }
@@ -1305,6 +1318,7 @@ define([
     this._spriteMap = null;
     this._miniMap = null;
     this._lastDoorVisit = new Date().getTime();
+    this._lastLockedDoorVisit = new Date().getTime();
 
     initGUI.call(this);
     initCrafty.call(this);
