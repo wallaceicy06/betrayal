@@ -57,7 +57,7 @@ define([
                                  color: color}, function (player) {
 
         that._player = new Player(player.id, player.name, player.color,
-                                  player.room, {x: 64, y: 64});
+                                  player.room, {x: player.locX, y: player.locY});
 
         var roomID = player.room;
 
