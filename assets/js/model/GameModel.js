@@ -541,9 +541,6 @@ define([
       if (o.verb === 'created' && o.data.game == that._gameID
           && o.id !== that._player.id) {
 
-        console.log('player created message');
-        console.log(o);
-
         var player =  new Player(o.id,
                                  o.data.name,
                                  o.data.color,
@@ -615,9 +612,6 @@ define([
 
         playerViewAdpt.setVisibility(player.room === that._currentRoom.id);
       } else if (o.verb === 'updated') {
-        console.log('player updated message');
-        console.log(o);
-
         if (o.data.locX !== undefined
           && o.data.locY !== undefined
           && o.id !== that._player.id) {
@@ -651,8 +645,6 @@ define([
           }
         }
       } else if (o.verb === 'destroyed') {
-        console.log('player destroyed message');
-        console.log(o);
 
         if (o.id === that._player.id) {
           that._player.destroy();
@@ -666,8 +658,6 @@ define([
           that._viewAdpt.displayTextOverlay("Traitor Stunned", "", "The traitor has been stunned!", 0, false, function() {});
         }
       } else {
-        console.log('unknown player message');
-        console.log(o);
       }
     });
 
@@ -677,9 +667,6 @@ define([
           && o.id === that._currentRoom.id
           && o.data.id !== that._player.id) {
 
-        console.log('room playerUpdated message');
-        console.log(o);
-
         that._otherPlayers[o.data.id].setPosition(o.data.data.locX,
                                                   o.data.data.locY);
       /* Show attack animation */
@@ -687,21 +674,8 @@ define([
           && (o.data.id in that._otherPlayers || o.data.id === that._player.id)
           && o.id === that._currentRoom.id) {
 
-        console.log('room playerAttack message');
-        console.log(o);
-
         that._viewAdpt.attackAnimation(o.data.data.locX, o.data.data.locY);
       } else {
-        console.log('unknown room message');
-        console.log(o);
-      }
-    });
-
-    io.socket.on('item', function(o) {
-      if (o.verb === 'created') {
-
-        console.log('item created message');
-        console.log(o);
 
         /* If we cached this room, add the item to the cached version. */
         if (o.data.room in that._roomCache) {
@@ -710,28 +684,20 @@ define([
 
         io.socket.get('/item/subscribe/' + o.data.id, function(res) {});
       } else if (o.verb === 'destroyed') {
-        console.log('item destroyed message');
-        console.log(o);
 
         /* If we cached this room, remove the item to the cached version. */
         if (o.previous.room in that._roomCache) {
           that._roomCache[o.previous.room].removeItem(o.previous.id);
         }
       } else {
-        console.log('unknown item message');
-        console.log(o);
       }
     });
 
     io.socket.on('game', function(o) {
       if (o.verb === 'created') {
-        console.log('game created message');
-        console.log(o);
 
         that._viewAdpt.addGame(o.data);
       } else if (o.id == that._gameID && o.verb === 'messaged') {
-        console.log('game messaged message');
-        console.log(o);
 
         if (o.data.verb === 'heroesWon') {
           var message;
@@ -789,8 +755,6 @@ define([
         }
 
       } else if (o.verb === 'updated') {
-        console.log('game updated message');
-        console.log(o);
 
         fetchGames.call(that);
 
@@ -885,8 +849,6 @@ define([
           }
         }
       } else if (o.verb === 'destroyed') {
-          console.log('game destroyed message');
-          console.log(o);
 
           fetchGames.call(that);
 
@@ -900,21 +862,14 @@ define([
             });
           }
       } else {
-        console.log('unknown game message');
-        console.log(o);
       }
     });
 
     io.socket.on('gateway', function(o) {
-      console.log(o);
       if (o.verb === 'updated') {
-        console.log('gateway updated message');
-        console.log(o);
 
         that._roomCache[o.data.roomFrom].setLocked(o.data.direction, o.data.locked);
       } else {
-        console.log('unknown gameway message');
-        console.log(o);
       }
     });
   }
