@@ -38,6 +38,6 @@ module.exports = {
   /***************************************************************************
    * Minification/uglification takes a long time. This is to prevent error.  *
    ***************************************************************************/
-  hookTimeout: 60000
+  hookTimeout: 90000
 
 };
