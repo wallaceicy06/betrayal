@@ -275,9 +275,8 @@ define([
     this._player.destroy();
   }
 
-  function onDoorVisit(doorID, cb) {
+  function onLockedDoorVisit(doorID, cb) {
     var gateway;
-    var newRoomID;
 
     var that = this;
 
@@ -288,8 +287,9 @@ define([
       }
     });
 
-    /* If the gateway is locked, try to unlock. */
-    if (gateway.locked && !this._player.isTraitor) {
+    if (this._player.isTraitor) {
+      onDoorVisit.call(this, doorID, cb);
+    } else {
 
       if (this._player.keys === 0) {
 
@@ -319,8 +319,24 @@ define([
         }
       });
 
-      gateway.locked = false;
+      that._currentRoom.setLocked(doorID, false);
+
+      cb();
     }
+  }
+
+  function onDoorVisit(doorID, cb) {
+    var gateway;
+    var newRoomID;
+
+    var that = this;
+
+    _.each(_.keys(this._currentRoom.gatewaysOut), function(direction) {
+      if (direction === doorID) {
+        gateway = that._currentRoom.gatewaysOut[direction];
+        return;
+      }
+    });
 
     newRoomID = gateway.roomTo;
 
@@ -629,6 +645,7 @@ define([
           }
         }
       } else if (o.verb === 'destroyed') {
+
         if (o.id === that._player.id) {
           that._player.destroy();
         } else {
@@ -640,6 +657,7 @@ define([
         } else {
           that._viewAdpt.displayTextOverlay("Traitor Stunned", "", "The traitor has been stunned!", 0, false, function() {});
         }
+      } else {
       }
     });
 
@@ -651,18 +669,14 @@ define([
 
         that._otherPlayers[o.data.id].setPosition(o.data.data.locX,
                                                   o.data.data.locY);
-      }
       /* Show attack animation */
-      if (o.verb === 'messaged' && o.data.verb === 'playerAttacked'
+      } else if (o.verb === 'messaged' && o.data.verb === 'playerAttacked'
           && (o.data.id in that._otherPlayers || o.data.id === that._player.id)
           && o.id === that._currentRoom.id) {
 
         that._viewAdpt.attackAnimation(o.data.data.locX, o.data.data.locY);
-      }
-    });
+      } else {
 
-    io.socket.on('item', function(o) {
-      if (o.verb === 'created') {
         /* If we cached this room, add the item to the cached version. */
         if (o.data.room in that._roomCache) {
           that._roomCache[o.data.room].addItem(o.data);
@@ -670,17 +684,21 @@ define([
 
         io.socket.get('/item/subscribe/' + o.data.id, function(res) {});
       } else if (o.verb === 'destroyed') {
+
         /* If we cached this room, remove the item to the cached version. */
         if (o.previous.room in that._roomCache) {
           that._roomCache[o.previous.room].removeItem(o.previous.id);
         }
+      } else {
       }
     });
 
     io.socket.on('game', function(o) {
       if (o.verb === 'created') {
+
         that._viewAdpt.addGame(o.data);
       } else if (o.id == that._gameID && o.verb === 'messaged') {
+
         if (o.data.verb === 'heroesWon') {
           var message;
 
@@ -737,6 +755,7 @@ define([
         }
 
       } else if (o.verb === 'updated') {
+
         fetchGames.call(that);
 
         if (o.id != that._gameID) {
@@ -830,6 +849,7 @@ define([
           }
         }
       } else if (o.verb === 'destroyed') {
+
           fetchGames.call(that);
 
           if (o.id == that._gameID) {
@@ -841,13 +861,15 @@ define([
               that._viewAdpt.reset();
             });
           }
+      } else {
       }
     });
 
     io.socket.on('gateway', function(o) {
-      console.log(o);
       if (o.verb === 'updated') {
+
         that._roomCache[o.data.roomFrom].setLocked(o.data.direction, o.data.locked);
+      } else {
       }
     });
   }
@@ -884,10 +906,13 @@ define([
       }
     });
 
+    window.test = this;
+
     this.joinGame = joinGame.bind(this);
     this.fetchGames = fetchGames.bind(this);
     this.createGame = createGame.bind(this);
     this.onDoorVisit = onDoorVisit.bind(this);
+    this.onLockedDoorVisit = onLockedDoorVisit.bind(this);
     this.onFurnitureInteract = onFurnitureInteract.bind(this);
     this.sendChatMessage = sendChatMessage.bind(this);
     this.sendEventMessage = sendEventMessage.bind(this);
