@@ -676,6 +676,11 @@ define([
 
         that._viewAdpt.attackAnimation(o.data.data.locX, o.data.data.locY);
       } else {
+      }
+    });
+
+    io.socket.on('item', function(o) {
+      if (o.verb === 'created') {
 
         /* If we cached this room, add the item to the cached version. */
         if (o.data.room in that._roomCache) {
