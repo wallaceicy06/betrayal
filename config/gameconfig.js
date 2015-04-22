@@ -96,8 +96,6 @@ module.exports.gameconfig = {
     'poisonLightning': {gridX: 0, gridY: 14, gridW: 1, gridH: 1},
     'heart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
     'poisonHeart': {gridX: 1, gridY: 14, gridW: 1, gridH: 1},
-    'firstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
-    'poisonFirstAid': {gridX: 2, gridY: 14, gridW: 1, gridH: 1},
     'sword': {gridX: 3, gridY: 14, gridW: 1, gridH: 1},
     'stone': {gridX: 4, gridY: 14, gridW: 1, gridH: 1},
     'key': {gridX: 5, gridY: 14, gridW: 1, gridH: 1},
@@ -111,8 +109,7 @@ module.exports.gameconfig = {
     locY: 416,
     color: 'blue',
     sprite: 'blue',
-    maxHealth: 3,
-    curHealth: 2,
+    health: 3,
     weapon: 1,
     relics: 0,
     keys: 0,
@@ -131,14 +128,9 @@ module.exports.gameconfig = {
       abundance: 0.3,
     },
     'heart': {
-      stat: 'maxHealth',
+      stat: 'health',
       amount: 1,
-      abundance: 0.2,
-    },
-    'firstAid': {
-      stat: 'curHealth',
-      amount: 1,
-      abundance: 0.3
+      abundance: 0.3,
     },
     'flame': {
       stat: 'weapon',
@@ -156,12 +148,7 @@ module.exports.gameconfig = {
       abundance: 0
     },
     'poisonHeart': {
-      stat: 'maxHealth',
-      amount: -1,
-      abundance: 0
-    },
-    'poisonFirstAid': {
-      stat: 'curHealth',
+      stat: 'health',
       amount: -1,
       abundance: 0
     },
@@ -1082,7 +1069,7 @@ module.exports.gameconfig = {
                   + 'walls surrounding you. As you start to scream, they '
                   + 'vanish.',
       text: 'Lose one health.',
-      effect: {curHealth: -1},
+      effect: {health: -1},
       sound: null
     },
     smoke: {
@@ -1098,7 +1085,7 @@ module.exports.gameconfig = {
       flavorText: 'You see a strange doll. Suddenly, it jumps out and attacks '
                   + 'you.',
       text: 'Lose one health.',
-      effect: {curHealth: -1},
+      effect: {health: -1},
       sound: null
     },
     mirrorPast: {
@@ -1124,8 +1111,8 @@ module.exports.gameconfig = {
       flavorText: 'A face appears before your eyes, slightly transparent. The '
                   + 'ghost rushes toward you! You jump back, but it passes '
                   + 'right through you, chilling you to the bone.',
-      text: 'Max health decreased by one.',
-      effect: {maxHealth: -1},
+      text: 'Health decreased by one.',
+      effect: {health: -1},
       sound: null
     },
     book: {
@@ -1143,8 +1130,8 @@ module.exports.gameconfig = {
                   + 'it comes from the fountain of youth. You hesitate for a '
                   + 'moment, then pop off the cap and drink. You can\'t '
                   + 'explain it, but you feel somehow better . . . stronger.',
-      text: 'Max Health increased by one!',
-      effect: {maxHealth: 1},
+      text: 'Health increased by one!',
+      effect: {health: 1},
       sound: null
     },
     shoes: {
@@ -1162,7 +1149,7 @@ module.exports.gameconfig = {
       flavorText: 'Sitting there is a pack of bandaids. You put one on your '
                   + 'knee where you had scraped yourself earlier.',
       text: 'Gain one health!',
-      effect: {curHealth: 1},
+      effect: {health: 1},
       sound: null
     },
     relic1: {
@@ -1206,14 +1193,6 @@ module.exports.gameconfig = {
       effect: {relics: 1},
       sound: 'organ'
     }
-    /*relic6: {
-      title: 'Relic',
-      flavorText: 'You find a spirit board that can call the dead. You hear the'
-                  + 'sounds of the house\'s ghosts whispering all around you.',
-      text: 'Gain one relic! You are one step closer to the second phase.',
-      effect: {relics: 1},
-      sound: 'organ'
-    }*/
   },
 
   haunts: {

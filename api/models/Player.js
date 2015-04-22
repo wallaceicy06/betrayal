@@ -32,12 +32,9 @@ module.exports = {
     sprite: {type: 'string',
              required: true,
              defaultsTo: sails.config.gameconfig.playerDefaults.sprite},
-    maxHealth: {type: 'integer',
+    health: {type: 'integer',
                 required: true,
-                defaultsTo: sails.config.gameconfig.playerDefaults.maxHealth},
-    curHealth: {type: 'integer',
-                required: true,
-                defaultsTo: sails.config.gameconfig.playerDefaults.curHealth},
+                defaultsTo: sails.config.gameconfig.playerDefaults.health},
     weapon: {type: 'integer',
              required: true,
              defaultsTo: sails.config.gameconfig.playerDefaults.weapon},
@@ -60,16 +57,16 @@ module.exports = {
   defaults: sails.config.gameconfig.playerDefaults,
 
   afterUpdate: function(player, cb) {
-    if (player.curHealth < 1) {
+    if (player.health < 1) {
       if (!player.isTraitor) { //If this is a hero, they are dead
         sails.log.info('destroying ' + player.name);
         Player.destroy(player.id);
         Player.publishDestroy(player.id, {});
       } else { //The traitor is stunned while they regenerate instead of dying
         Player.message(player.id, {verb: 'stunned'});
-        Player.update(player.id, {curHealth: 3})
+        Player.update(player.id, {health: 3})
           .then(function(updatedPlayer) {
-            Player.publishUpdate(player.id, {curHealth: 3});
+            Player.publishUpdate(player.id, {health: 3});
           })
           .catch(function(err) {
             sails.log.error(err);

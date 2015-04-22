@@ -25,12 +25,8 @@ define([
         case 'speed':
           that.speed = Math.max(0, that.speed + amount);
           break;
-        case 'maxHealth':
-          that.maxHealth = Math.max(0, that.maxHealth + amount);
-          that.curHealth = Math.min(that.curHealth, that.maxHealth);
-          break;
-        case 'curHealth':
-          that.curHealth = Math.max(0, that.curHealth + amount);
+        case 'health':
+          that.health = Math.max(0, that.health + amount);
           break;
         case 'weapon':
           that.weapon = Math.max(0, that.weapon + amount);
@@ -90,26 +86,14 @@ define([
       }
     });
 
-    Object.defineProperty(this, 'maxHealth', {
+    Object.defineProperty(this, 'health', {
       get: function() {
-        return this._maxHealth;
+        return this._health;
       },
       set: function(newVal) {
-        if (newVal !== this._maxHealth && newVal <= this._MAX_STAT) {
-          this._maxHealth = newVal;
-          this._gameModelAdpt.onMaxHealthChange(newVal);
-        }
-      }
-    });
-
-    Object.defineProperty(this, 'curHealth', {
-      get: function() {
-        return this._curHealth;
-      },
-      set: function(newVal) {
-        if (newVal !== this._curHealth && newVal <= this._maxHealth) {
-          this._curHealth = newVal;
-          this._gameModelAdpt.onCurHealthChange(newVal);
+        if (newVal !== this._health && newVal <= this._MAX_STAT) {
+          this._health = newVal;
+          this._gameModelAdpt.onHealthChange(newVal);
         }
       }
     });
@@ -206,8 +190,7 @@ define([
     this._sprite = color; //Initially sprite is the same as color
     this._isTraitor = false;
     this._speed = 5;
-    this._maxHealth = 3;
-    this._curHealth = 3;
+    this._health = 3;
     this._weapon = 1;
     this._relics = 0;
     this._keys = 0;

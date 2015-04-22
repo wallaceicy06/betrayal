@@ -199,7 +199,7 @@ module.exports = {
                                                   + otherPlayer.name + " took "
                                                   + damage + " damage.",
                                          verb: 'info'});
-              var updateObj = {curHealth: otherPlayer.curHealth - damage};
+              var updateObj = {health: otherPlayer.health - damage};
               Player.update(otherPlayer.id, updateObj);
               Player.publishUpdate(otherPlayer.id, updateObj);
             }

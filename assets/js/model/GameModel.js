@@ -76,17 +76,10 @@ define([
                           function (player) {});
           },
 
-          onMaxHealthChange: function(newMaxHealth) {
-            playerViewAdpt.onMaxHealthChange(newMaxHealth);
+          onHealthChange: function(newHealth) {
+            playerViewAdpt.onHealthChange(newHealth);
             io.socket.put('/player/adjustStat/' + player.id,
-                          {stat: 'maxHealth', newValue: newMaxHealth},
-                          function (player) {});
-          },
-
-          onCurHealthChange: function(newCurHealth) {
-            playerViewAdpt.onCurHealthChange(newCurHealth);
-            io.socket.put('/player/adjustStat/' + player.id,
-                          {stat: 'curHealth', newValue: newCurHealth},
+                          {stat: 'health', newValue: newHealth},
                           function (player) {});
           },
 
@@ -172,12 +165,8 @@ define([
               playerViewAdpt.setVisibility(newRoom === that._currentRoom.id);
             },
 
-            onMaxHealthChange: function(newMaxHealth) {
-              playerViewAdpt.onMaxHealthChange(newMaxHealth);
-            },
-
-            onCurHealthChange: function(newCurHealth) {
-              playerViewAdpt.onCurHealthChange(newCurHealth);
+            onHealthChange: function(newHealth) {
+              playerViewAdpt.onHealthChange(newHealth);
             },
 
             onWeaponChange: function(newWeapon) {
@@ -563,12 +552,8 @@ define([
             playerViewAdpt.setVisibility(newRoom === that._currentRoom.id);
           },
 
-          onMaxHealthChange: function(newMaxHealth) {
-            playerViewAdpt.onMaxHealthChange(newMaxHealth);
-          },
-
-          onCurHealthChange: function(newCurHealth) {
-            playerViewAdpt.onCurHealthChange(newCurHealth);
+          onHealthChange: function(newHealth) {
+            playerViewAdpt.onHealthChange(newHealth);
           },
 
           onWeaponChange: function(newWeapon) {

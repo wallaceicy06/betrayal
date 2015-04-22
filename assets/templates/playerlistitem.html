@@ -2,12 +2,10 @@
   <%= name %>
   <div class="player-health">
     <% _.times(7, function(i) {
-      if (i < curHealth) {
+      if (i < health) {
         %><img class="full_heart"><%
-      } else if (i < maxHealth) {
-        %><img class="empty_heart"><%
       } else {
-        %><img class="empty_heart invisible"><%
+        %><img class="full_heart invisible"><%
       }
     }); %>
   </div>

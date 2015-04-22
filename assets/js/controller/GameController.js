@@ -38,12 +38,8 @@ define([
             return playerModel.speed;
           },
 
-          getMaxHealth: function() {
-            return playerModel.maxHealth;
-          },
-
-          getCurHealth: function() {
-            return playerModel.curHealth;
+          getHealth: function() {
+            return playerModel.health;
           },
 
           getWeapon: function() {
@@ -127,8 +123,8 @@ define([
             playerView.setCurHealth(newCurHealth);
           },
 
-          onMaxHealthChange: function(newMaxHealth) {
-            playerView.setMaxHealth(newMaxHealth);
+          onHealthChange: function(newHealth) {
+            playerView.setHealth(newHealth);
           },
 
           lockDoor: function() {
@@ -153,8 +149,8 @@ define([
             return playerModel.speed;
           },
 
-          getMaxHealth: function() {
-            return playerModel.maxHealth;
+          getHealth: function() {
+            return playerModel.health;
           },
 
           getCurHealth: function() {
@@ -221,8 +217,8 @@ define([
             return playerView.setCurHealth(newCurHealth);
           },
 
-          onMaxHealthChange: function(newMaxHealth) {
-            return playerView.setMaxHealth(newMaxHealth);
+          onHealthChange: function(newHealth) {
+            return playerView.setHealth(newHealth);
           },
 
           onSpeedChange: function(newSpeed) {

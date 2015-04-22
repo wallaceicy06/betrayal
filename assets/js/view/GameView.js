@@ -41,8 +41,7 @@ define([
                 'SpriteLockedDoor': [10, 13],
                 'SpriteWhiteRoom': [8, 13],
                 'SpriteSpeedInc': [0, 14],
-                'SpriteMaxHealth': [1, 14],
-                'SpriteCurHealth': [2, 14],
+                'SpriteHealth': [1, 14],
                 'SpriteWeapon': [6, 14],
                 'SpriteRelic': [4, 14],
                 'SpritePlayerRed': [0, COLOR_TO_ROW['red']],
@@ -704,23 +703,10 @@ define([
           });
       },
 
-      setCurHealth: function(newCurHealth) {
+      setHealth: function(newHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-health img').each(function(index) {
-            if (index < newCurHealth) {
-              $(this).removeClass('empty_heart');
-              $(this).addClass('full_heart');
-            } else {
-              $(this).removeClass('full_heart');
-              $(this).addClass('empty_heart');
-            }
-          });
-      },
-
-      setMaxHealth: function(newMaxHealth) {
-        $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('div.player-health img').each(function(index) {
-            if (index < newMaxHealth) {
+            if (index < newHealth) {
               $(this).removeClass('invisible');
             } else {
               $(this).addClass('invisible');
@@ -756,8 +742,7 @@ define([
     var rendered = Templates[PLAYER_LIST_ITEM_TEMPLATE]({ id: playerModelAdpt.getID(),
                                                           name: playerModelAdpt.getName(),
                                                           color: playerModelAdpt.getColor(),
-                                                          curHealth: playerModelAdpt.getCurHealth(),
-                                                          maxHealth: playerModelAdpt.getMaxHealth(),
+                                                          health: playerModelAdpt.getHealth(),
                                                           speed: playerModelAdpt.getSpeed(),
                                                           weapon: playerModelAdpt.getWeapon(),
                                                           relics: playerModelAdpt.getRelics(),
@@ -827,23 +812,10 @@ define([
           });
       },
 
-      setCurHealth: function(newCurHealth) {
+      setHealth: function(newHealth) {
         $('#' + playerModelAdpt.getID() + '.player-list-item')
           .find('div.player-health img').each(function(index) {
-            if (index < newCurHealth) {
-              $(this).removeClass('empty_heart');
-              $(this).addClass('full_heart');
-            } else {
-              $(this).removeClass('full_heart');
-              $(this).addClass('empty_heart');
-            }
-          });
-      },
-
-      setMaxHealth: function(newMaxHealth) {
-        $('#' + playerModelAdpt.getID() + '.player-list-item')
-          .find('div.player-health img').each(function(index) {
-            if (index < newMaxHealth) {
+            if (index < newHealth) {
               $(this).removeClass('invisible');
             } else {
               $(this).addClass('invisible');
