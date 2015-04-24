@@ -135,7 +135,7 @@ module.exports.gameconfig = {
     'flame': {
       stat: 'weapon',
       amount: 1,
-      abundance: 0.2
+      abundance: 0.3
     },
     'stone': {
       stat: 'relics',
