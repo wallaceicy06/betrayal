@@ -30,34 +30,25 @@ module.exports = {
   },
 
   checkWin: function(gameID, roomID) {
-    var game;
-
-    Game.findOne(gameID).populate('players').populate('rooms')
-      .then(function(found) {
-        if (found === undefined) {
+    Game.findOne(gameID).populate('players')
+      .then(function(game) {
+        if (game === undefined) {
           throw new Error('Game could not be found.');
         }
 
-        game = found;
-
         if (game.haunt === undefined) {
-          return -1;
+          return;
         }
 
-        return Item.count({stat: 'keys', game: gameID});
-      })
-      .then(function(keyCount) {
-        if (keyCount === 0) {
-          for (var i = 0; i < game.players.length; i++) {
-            var p = game.players[i];
-            if (!p.isTraitor && p.room !== roomID) {
-              return;
-            }
+        for (var i = 0; i < game.players.length; i++) {
+          var p = game.players[i];
+          if (!p.isTraitor && p.room !== roomID) {
+            return;
           }
-
-          /* If we made it through, then the heroes won. */
-          Game.message(game.id, {verb: 'heroesWon'});
         }
+
+        /* If we made it through, then the heroes won. */
+        Game.message(game.id, {verb: 'heroesWon'});
       })
       .catch(function(err) {
         sails.log.error(err);
