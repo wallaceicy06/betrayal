@@ -31,30 +31,8 @@ define([
       that._viewAdpt.installSpriteMap(game.sprites);
       that._viewAdpt.setGameName(game.name);
 
-      var color;
-      if (game.players.length === 0) {
-        color = 'blue';
-      } else {
-        switch (game.players[game.players.length - 1].color) {
-          case 'blue':
-            color = 'red';
-            break;
-          case 'red':
-            color = 'green';
-            break;
-          case 'green':
-            color = 'purple';
-            break;
-          case 'purple':
-            color = 'blue';
-          default:
-            color = 'green';
-        }
-      }
-
       io.socket.post('/player', {name: playerName,
-                                 game: game.id,
-                                 color: color}, function (player) {
+                                 game: game.id}, function (player) {
 
         that._player = new Player(player.id, player.name, player.color,
                                   player.room, {x: player.locX, y: player.locY});
@@ -896,7 +874,8 @@ define([
       }
     });
 
-    window.test = this;
+    /* Uncomment this to enable cheating. */
+    // window.test = this;
 
     this.joinGame = joinGame.bind(this);
     this.fetchGames = fetchGames.bind(this);

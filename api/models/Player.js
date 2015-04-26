@@ -56,6 +56,16 @@ module.exports = {
 
   defaults: sails.config.gameconfig.playerDefaults,
 
+  assignColor: function(playerNum) {
+    var colors = sails.config.gameconfig.playerColors;
+
+    if (playerNum < colors.length) {
+      return colors[playerNum];
+    } else {
+      return colors[0];
+    }
+  },
+
   afterUpdate: function(player, cb) {
     if (player.health < 1) {
       if (!player.isTraitor) { //If this is a hero, they are dead
@@ -83,6 +93,10 @@ module.exports = {
 
       Game.findOne(player.game)
         .then(function(game) {
+          if (game == undefined) {
+            throw new sails.promise.CancellationError();
+          }
+
           if (game.haunt !== undefined && !player.isTraitor) {
             Game.message(player.game, {verb: 'traitorWon'});
           }
@@ -90,7 +104,9 @@ module.exports = {
           return [game, Player.count({game: player.game})];
         })
         .spread(function(game, count) {
-          if (game.haunt === undefined && count < Game.minPlayers) {
+          if (game.active === false) {
+            return [];
+          } else if (game.haunt === undefined && count < Game.minPlayers) {
             return Game.destroy(player.game);
           } else if (game.haunt !== undefined && count === 0) {
             return Game.destroy(player.game);
@@ -102,6 +118,9 @@ module.exports = {
           _.each(destroyed, function(game) {
             Game.publishDestroy(game.id);
           });
+        })
+        .catch(sails.promise.CancellationError, function(err) {
+          sails.log.warn("Player afterDestroy cancelled. No game was found.");
         })
         .catch(function(err) {
           sails.log.error(err);
