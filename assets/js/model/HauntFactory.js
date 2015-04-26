@@ -25,7 +25,7 @@ define([
         var MIN_POISON_DROP = 5000;
 
         return {
-          itemList: ['poisonLightning', 'poisonFirstAid', 'poisonHeart', 'poisonFlame'],
+          itemList: ['poisonLightning', 'poisonHeart', 'poisonFlame'],
           nextItem: 0,
           lastPlace: new Date().getTime(),
 
