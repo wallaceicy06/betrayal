@@ -874,7 +874,8 @@ define([
       }
     });
 
-    window.test = this;
+    /* Uncomment this to enable cheating. */
+    // window.test = this;
 
     this.joinGame = joinGame.bind(this);
     this.fetchGames = fetchGames.bind(this);
