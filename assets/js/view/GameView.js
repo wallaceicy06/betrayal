@@ -931,7 +931,7 @@ define([
   function addGameOption(game) {
     var gameOptions = document.getElementById('select-game');
 
-    gameOptions.options.add(new Option(game.name, game.id));
+    gameOptions.options.add(new Option(_.unescape(game.name), game.id));
 
     document.getElementById('btn-join').disabled = false;
   }
