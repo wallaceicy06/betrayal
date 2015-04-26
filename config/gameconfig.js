@@ -104,6 +104,9 @@ module.exports.gameconfig = {
     'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10},
     'grass': {gridX: 4, gridY: 15, gridW: 1, gridH: 1}
   },
+  playerColors: [
+    'blue', 'red', 'green', 'purple'
+  ],
   playerDefaults: {
     locX: 272,
     locY: 416,

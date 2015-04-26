@@ -10,18 +10,22 @@ module.exports = {
 	create: function(req, res) {
     var newPlayer;
 
-    Room.findOne({game: req.body.game, name: 'entryway'})
-      .then(function(entryway) {
+    sails.promise.all([
+      Player.count({game: req.body.game}),
+      Room.findOne({game: req.body.game, name: 'entryway'})
+    ]).spread(function(playerCount, entryway) {
         if (_.isEmpty(entryway)) {
           throw new Error('Entryway was not created for this house.');
         }
+
+        var color = Player.assignColor(playerCount);
 
         return Player.create({name: _.escape(req.body.name),
                               game: req.body.game,
                               room: entryway,
                               socket: req.socket.id,
-                              color: req.body.color,
-                              sprite: req.body.color})
+                              color: color,
+                              sprite: color})
       })
       .then(function(player) {
         newPlayer = player;
