@@ -35,7 +35,7 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Sean/Betrayal.git"
+    "url": "https://github.com/wallaceicy06/Betrayal.git"
   },
   "author": "Valerie Baretsky, Sean Harger, Lauren Staal",
   "license": "MIT"
