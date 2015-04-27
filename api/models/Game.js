@@ -75,7 +75,15 @@ module.exports = {
                                    * game.players.length)];
 
         var allHaunts = _.keys(Game.haunts);
-        var haunt = allHaunts[Math.floor(Math.random() * allHaunts.length)];
+        var haunt;
+
+        if (process.env.haunt != undefined) {
+          haunt = process.env.haunt;
+        } else {
+          haunt = allHaunts[Math.floor(Math.random() * allHaunts.length)];
+        }
+
+        sails.log.info("Haunt is " + haunt);
 
         return Game.update(game.id, {traitor: traitor, haunt: haunt});
       })

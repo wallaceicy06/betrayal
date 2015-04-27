@@ -1,8 +1,8 @@
 {
   "name": "Betrayal",
   "private": true,
-  "version": "0.0.0",
-  "description": "a Sails application",
+  "version": "1.0.0",
+  "description": "a web game spinoff of 'Betrayal at the House on the Hill'",
   "keywords": [],
   "dependencies": {
     "bluebird": "^2.9.24",
@@ -37,6 +37,6 @@
     "type": "git",
     "url": "git://github.com/Sean/Betrayal.git"
   },
-  "author": "Sean",
-  "license": ""
+  "author": "Valerie Baretsky, Sean Harger, Lauren Staal",
+  "license": "MIT"
 }
