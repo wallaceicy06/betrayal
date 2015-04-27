@@ -34,6 +34,10 @@ define([
       io.socket.post('/player', {name: playerName,
                                  game: game.id}, function (player) {
 
+        if (_.has(player, 'error')) {
+          return player;
+        }
+
         that._player = new Player(player.id, player.name, player.color,
                                   player.room, {x: player.locX, y: player.locY});
 

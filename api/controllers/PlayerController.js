@@ -18,6 +18,10 @@ module.exports = {
           throw new Error('Entryway was not created for this house.');
         }
 
+        if (playerCount == Game.maxPlayers) {
+          throw new Error('Maximum number of players have joined this game.');
+        }
+
         var color = Player.assignColor(playerCount);
 
         return Player.create({name: _.escape(req.body.name),
@@ -44,8 +48,8 @@ module.exports = {
         res.json(newPlayer);
       })
       .catch(function(err) {
-        sails.log.error(err);
-        res.json(err);
+        sails.log.warn(err);
+        res.json({ error: err });
       });
   },
 

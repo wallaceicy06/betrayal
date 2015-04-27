@@ -456,6 +456,8 @@ module.exports = {
 
   minPlayers: sails.config.gameconfig.minPlayers,
 
+  maxPlayers: sails.config.gameconfig.maxPlayers,
+
   sprites: sails.config.gameconfig.sprites,
 
   cards: sails.config.gameconfig.cards,

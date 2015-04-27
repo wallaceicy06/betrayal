@@ -1,5 +1,6 @@
 module.exports.gameconfig = {
   minPlayers: 2,
+  maxPlayers: 4,
   interactable: {
     rug: {
       prefix: 'You pull back a corner of the rug.'
