@@ -685,10 +685,10 @@ define([
           } else {
             that._viewAdpt.displayTextOverlay("You Won!", "You have escaped " +
                                               "the house! Congratulations!", "",
-                                              10000, false, function() {
-              destroyGame.call(that);
-              reset.call(that);
-              that._viewAdpt.reset();
+                                              0, true, function() {
+              // destroyGame.call(that);
+              // reset.call(that);
+              // that._viewAdpt.reset();
             });
           }
         } else if (o.data.verb === 'traitorWon') {
