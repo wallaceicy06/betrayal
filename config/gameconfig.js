@@ -169,7 +169,7 @@ module.exports.gameconfig = {
     },
     'beer': {
       stat: 'health',
-      amount: 1,
+      amount: 4,
       abundance: 0
     },
   },
