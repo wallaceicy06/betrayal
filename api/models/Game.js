@@ -69,9 +69,11 @@ module.exports = {
         sails.log.info('beer created');
         sails.log.info(beer);
 
-        _.each(beer, function(b) {
-          Item.publishCreate(b);
-        });
+        setTimeout(function() {
+          _.each(beer, function(b) {
+            Item.publishCreate(b);
+          });
+        }, 2000);
 
         /* If we made it through, then the heroes won. */
         Game.message(game.id, {verb: 'heroesWon'});
