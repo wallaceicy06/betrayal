@@ -30,54 +30,25 @@ module.exports = {
   },
 
   checkWin: function(gameID, roomID) {
-    sails.promise.all([
-      Game.findOne(gameID).populate('players'),
-      Room.findOne({ game: gameID, name: 'exit' })
-    ]).spread(function(game, exit) {
+    Game.findOne(gameID).populate('players')
+      .then(function(game) {
         if (game === undefined) {
           throw new Error('Game could not be found.');
         }
 
         if (game.haunt === undefined) {
-          throw new sails.promise.CancellationError();
+          return;
         }
 
         for (var i = 0; i < game.players.length; i++) {
           var p = game.players[i];
           if (!p.isTraitor && p.room !== roomID) {
-            throw new sails.promise.CancellationError();
+            return;
           }
         }
 
-        var beerToCreate = [];
-        _.each(Room.layouts.exit.itemLocs, function(loc) {
-          beerToCreate.push({ type: 'beer',
-                              stat: Item.kinds.beer.stat,
-                              amount: Item.kinds.beer.amount,
-                              gridX: loc.x,
-                              gridY: loc.y,
-                              room: exit.id,
-                              game: game.id,
-                              heroesOnly: true });
-        });
-
-        sails.log.info('beer to create');
-        sails.log.info(beerToCreate);
-
-        return [game, Item.create(beerToCreate)];
-      }).spread(function(game, beer) {
-        sails.log.info('beer created');
-        sails.log.info(beer);
-
-        _.each(beer, function(b) {
-          Item.publishCreate(b);
-        });
-
         /* If we made it through, then the heroes won. */
         Game.message(game.id, {verb: 'heroesWon'});
-      })
-      .catch(sails.promise.CancellationError, function (err) {
-        sails.log.warn('Check win cancelled.');
       })
       .catch(function(err) {
         sails.log.error(err);
@@ -204,9 +175,9 @@ module.exports = {
         sails.log.info('about to create gateways');
         sails.log.info(gatewaysToCreate);
 
-        return [Gateway.create(gatewaysToCreate)];
+        return Gateway.create(gatewaysToCreate);
       })
-      .spread(function(gateways, beer) {
+      .then(function(gateways) {
         sails.log.info('gateways created');
         sails.log.info(gateways);
       })
@@ -488,11 +459,7 @@ module.exports = {
   },
 
   hauntCutoff: function(relicsFound, maxRelics) {
-    if (process.env.HAUNT_CUTOFF !== undefined) {
-      return process.env.HAUNT_CUTOFF;
-    } else {
-      return Math.pow(2, relicsFound) / Math.pow(2, maxRelics);
-    }
+    return Math.pow(2, relicsFound) / Math.pow(2, maxRelics);
   },
 
   minPlayers: sails.config.gameconfig.minPlayers,

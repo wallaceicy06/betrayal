@@ -103,8 +103,7 @@ module.exports.gameconfig = {
     'flame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
     'poisonFlame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
     'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10},
-    'grass': {gridX: 4, gridY: 15, gridW: 1, gridH: 1},
-    'beer': {gridX: 4, gridY: 14, gridW: 1, gridH: 1}
+    'grass': {gridX: 4, gridY: 15, gridW: 1, gridH: 1}
   },
   playerColors: [
     'blue', 'red', 'green', 'purple'
@@ -166,12 +165,7 @@ module.exports.gameconfig = {
       stat: 'keys',
       amount: 1,
       abundance: 0
-    },
-    'beer': {
-      stat: 'health',
-      amount: 4,
-      abundance: 0
-    },
+    }
   },
   rooms: {
     'entryway': {
@@ -249,12 +243,7 @@ module.exports.gameconfig = {
         south: false,
         west: false
       },
-      itemLocs: [
-        {x: 4, y: 13},
-        {x: 15, y: 2},
-        {x: 5, y: 6},
-        {x: 14, y: 14}
-      ],
+      itemLocs: [],
       objects: {
         grass1: {
           type: 'grass',
