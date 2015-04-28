@@ -104,7 +104,7 @@ module.exports.gameconfig = {
     'poisonFlame': {gridX: 6, gridY: 14, gridW: 1, gridH: 1},
     'exitRug': {gridX: 11, gridY: 13, gridW: 4, gridH: 10},
     'grass': {gridX: 4, gridY: 15, gridW: 1, gridH: 1},
-    'beer': {gridX: 5, gridY: 15, gridW: 1, gridH: 1}
+    'beer': {gridX: 4, gridY: 14, gridW: 1, gridH: 1}
   },
   playerColors: [
     'blue', 'red', 'green', 'purple'
